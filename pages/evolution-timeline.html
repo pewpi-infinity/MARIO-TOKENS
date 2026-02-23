@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mario Evolution Timeline — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <style>
+    .timeline-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      padding: 20px 0 40px;
+    }
+    .timeline-spine {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent, var(--gold), var(--gold), transparent);
+      transform: translateX(-50%);
+    }
+    .timeline-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .timeline-item:nth-child(odd)  { flex-direction: row; }
+    .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+    .timeline-card {
+      width: calc(50% - 48px);
+      background: var(--bg-card);
+      border: 2px solid var(--gold-dim);
+      border-radius: 10px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      position: relative;
+    }
+    .timeline-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px var(--gold-glow);
+      transform: scale(1.02);
+    }
+    .timeline-card.expanded {
+      border-color: var(--gold);
+      box-shadow: 0 0 25px var(--gold-glow);
+    }
+    .timeline-item:nth-child(odd)  .timeline-card { margin-right: auto; }
+    .timeline-item:nth-child(even) .timeline-card { margin-left: auto; }
+    .timeline-dot {
+      position: absolute;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 3px solid #000;
+      box-shadow: 0 0 12px var(--gold-glow);
+      z-index: 2;
+      cursor: default;
+    }
+    .timeline-year {
+      position: absolute;
+      left: 50%;
+      top: -2px;
+      transform: translateX(-50%);
+      font-size: 0.58rem;
+      color: var(--gold-dim);
+      letter-spacing: 2px;
+      white-space: nowrap;
+      margin-top: 26px;
+      text-align: center;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .card-sprite {
+      font-size: 2rem;
+      width: 44px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .card-title {
+      font-size: 0.9rem;
+      color: var(--gold);
+      font-weight: bold;
+    }
+    .card-year-badge {
+      font-size: 0.6rem;
+      background: var(--gold);
+      color: #000;
+      border-radius: 4px;
+      padding: 2px 8px;
+      margin-left: 8px;
+      letter-spacing: 1px;
+    }
+    .card-platform {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+    .card-desc {
+      font-size: 0.72rem;
+      color: var(--text);
+      line-height: 1.5;
+      display: none;
+      margin-top: 8px;
+      border-top: 1px solid #333;
+      padding-top: 8px;
+    }
+    .timeline-card.expanded .card-desc { display: block; }
+    .card-facts {
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .timeline-card.expanded .card-facts { display: flex; }
+    .fact-tag {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 4px;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      padding: 3px 8px;
+    }
+    /* Pixel art decorations */
+    .pixel-mario {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      background:
+        linear-gradient(transparent 0px, transparent 3px, #ff0000 3px, #ff0000 6px, transparent 6px),
+        linear-gradient(transparent 6px, #964b00 6px, #964b00 9px, transparent 9px),
+        linear-gradient(transparent 9px, #ff0000 9px, #ff0000 18px, transparent 18px),
+        linear-gradient(transparent 18px, #ffffff 18px, #ffffff 21px, transparent 21px),
+        linear-gradient(transparent 21px, #000080 21px, #000080 28px);
+      image-rendering: pixelated;
+    }
+    @media (max-width: 680px) {
+      .timeline-spine { left: 20px; }
+      .timeline-item,
+      .timeline-item:nth-child(even) { flex-direction: column; padding-left: 50px; }
+      .timeline-card { width: 100%; margin: 0 !important; }
+      .timeline-dot  { left: 20px; }
+      .timeline-year { left: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F4C8; Mario Evolution Timeline</h1>
+    <p class="tagline">1981 &ndash; 2010 &nbsp;&#9679;&nbsp; Click a card to expand &nbsp;&#9679;&nbsp; Synch Pipe Arcade</p>
+  </header>
+
+  <main id="main-content">
+    <section class="panel full-width">
+      <div class="timeline-wrapper">
+        <div class="timeline-spine"></div>
+
+        <!-- 1981 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🦍</div>
+              <div>
+                <div class="card-title">Donkey Kong <span class="card-year-badge">1981</span></div>
+                <div class="card-platform">Arcade · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              Mario (then called Jumpman) makes his debut as a carpenter trying to rescue Lady from the giant ape Donkey Kong. This arcade classic introduced the world to one of gaming's most beloved characters — though his name wouldn't become "Mario" until the following year.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🎮 Arcade original</span>
+              <span class="fact-tag">💡 Shigeru Miyamoto</span>
+              <span class="fact-tag">👷 Jumpman's debut</span>
+              <span class="fact-tag">🏆 1981 Game of Year</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 1983 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🐢</div>
+              <div>
+                <div class="card-title">Mario Bros. <span class="card-year-badge">1983</span></div>
+                <div class="card-platform">Arcade / NES · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              Mario and Luigi team up for the first time in this underground plumbing adventure. The brothers must defeat Shellcreepers, Sidesteppers, and Fighter Flies by hitting platforms from below and kicking them. The name "Mario Bros." officially gives us the Mario family name.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">👨‍👦 Luigi introduced</span>
+              <span class="fact-tag">🔧 Plumber profession</span>
+              <span class="fact-tag">🤝 2-player co-op</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 1985 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🍄</div>
+              <div>
+                <div class="card-title">Super Mario Bros. <span class="card-year-badge">1985</span></div>
+                <div class="card-platform">NES · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              The game that saved the video game industry. Super Mario Bros. introduced the Mushroom Kingdom, Princess Peach, Bowser, Goombas, power mushrooms, fire flowers, and the iconic overworld theme. Sold over 40 million copies, becoming the best-selling game of its era.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🍄 Super Mushroom</span>
+              <span class="fact-tag">🌸 Fire Flower</span>
+              <span class="fact-tag">⭐ Star power</span>
+              <span class="fact-tag">🐢 Koopa Troopas</span>
+              <span class="fact-tag">40M copies sold</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 1988 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🌵</div>
+              <div>
+                <div class="card-title">Super Mario Bros. 2 <span class="card-year-badge">1988</span></div>
+                <div class="card-platform">NES · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              A dream-like adventure in Subcon featuring a radically different gameplay style — pulling vegetables from the ground to throw at enemies. Originally a reskin of Doki Doki Panic, SMB2 introduced Birdo, Shy Guys, and the concept of four playable characters with different abilities.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🌸 Birdo debut</span>
+              <span class="fact-tag">😷 Shy Guy debut</span>
+              <span class="fact-tag">4 playable chars</span>
+              <span class="fact-tag">🥬 Vegetable throwing</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 1990 SMB3 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🦅</div>
+              <div>
+                <div class="card-title">Super Mario Bros. 3 <span class="card-year-badge">1990</span></div>
+                <div class="card-platform">NES · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              Often called the greatest NES game ever made. SMB3 introduced a world map, the Tanooki suit, Hammer Bros. suits, Frog suits, the Koopalings, and a massive variety of power-ups. Its US release was hyped by the movie The Wizard, and it sold 17 million copies.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🦝 Tanooki Suit</span>
+              <span class="fact-tag">🐸 Frog Suit</span>
+              <span class="fact-tag">🌍 World map</span>
+              <span class="fact-tag">👪 Koopalings debut</span>
+              <span class="fact-tag">17M copies sold</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 1990 SMW -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🦕</div>
+              <div>
+                <div class="card-title">Super Mario World <span class="card-year-badge">1990</span></div>
+                <div class="card-platform">SNES · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              The SNES launch title that introduced Yoshi, the spin jump, and the Cape feather. Super Mario World featured 96 exits across 72 levels, secret Star Road, and the special world. It became one of the best-selling SNES games with over 20 million copies.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🦕 Yoshi's debut</span>
+              <span class="fact-tag">🦸 Cape Feather</span>
+              <span class="fact-tag">⭐ Star Road secrets</span>
+              <span class="fact-tag">96 exits</span>
+              <span class="fact-tag">SNES launch title</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 1996 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">⭐</div>
+              <div>
+                <div class="card-title">Super Mario 64 <span class="card-year-badge">1996</span></div>
+                <div class="card-platform">Nintendo 64 · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              The revolutionary leap to 3D. Super Mario 64 redefined platform gaming with its open-world hub (Peach's Castle), 120 Power Stars across 15 courses, and full 360-degree analog movement. It became the template for every 3D platformer that followed. Sold 11 million copies.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🎮 First 3D Mario</span>
+              <span class="fact-tag">⭐ 120 Power Stars</span>
+              <span class="fact-tag">🏰 Peach's Castle hub</span>
+              <span class="fact-tag">🎯 Analog control</span>
+              <span class="fact-tag">N64 launch title</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 2002 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🌊</div>
+              <div>
+                <div class="card-title">Super Mario Sunshine <span class="card-year-badge">2002</span></div>
+                <div class="card-platform">GameCube · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              Mario visits Isle Delfino and is falsely accused of polluting the island. Armed with FLUDD (Flash Liquidizer Ultra Dousing Device), a water-powered backpack, Mario must clean up the mess and rescue Peach. Features secret obstacle courses without FLUDD.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">💦 FLUDD introduced</span>
+              <span class="fact-tag">🏝️ Isle Delfino</span>
+              <span class="fact-tag">☀️ 120 Shine Sprites</span>
+              <span class="fact-tag">GameCube launch</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 2006 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🐚</div>
+              <div>
+                <div class="card-title">New Super Mario Bros. <span class="card-year-badge">2006</span></div>
+                <div class="card-platform">Nintendo DS · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              A return to 2D roots on the Nintendo DS. New Super Mario Bros. brought back classic side-scrolling gameplay with modern graphics and new power-ups like the Mega Mushroom (giant Mario) and Mini Mushroom. It sold over 30 million copies, becoming the best-selling DS game.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🍄 Mega Mushroom</span>
+              <span class="fact-tag">🔬 Mini Mushroom</span>
+              <span class="fact-tag">📱 DS dual screen</span>
+              <span class="fact-tag">30M+ copies</span>
+              <span class="fact-tag">2D revival</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 2007 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🌌</div>
+              <div>
+                <div class="card-title">Super Mario Galaxy <span class="card-year-badge">2007</span></div>
+                <div class="card-platform">Wii · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              Widely considered one of the greatest games ever made. Super Mario Galaxy sends Mario into space with gravity-defying gameplay across spherical planetoids. Features an orchestral soundtrack, 120 Power Stars, and co-star mode using the Wii remote pointer. Won countless Game of the Year awards.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🌌 Space setting</span>
+              <span class="fact-tag">🎻 Orchestral music</span>
+              <span class="fact-tag">🌀 Gravity gameplay</span>
+              <span class="fact-tag">97/100 Metacritic</span>
+              <span class="fact-tag">Wii motion controls</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+        <!-- 2010 -->
+        <div class="timeline-item">
+          <div class="timeline-card" onclick="toggleCard(this)" tabindex="0" role="button" aria-expanded="false">
+            <div class="card-header">
+              <div class="card-sprite">🌠</div>
+              <div>
+                <div class="card-title">Super Mario Galaxy 2 <span class="card-year-badge">2010</span></div>
+                <div class="card-platform">Wii · Nintendo</div>
+              </div>
+            </div>
+            <div class="card-desc">
+              Building on its predecessor's perfection, Galaxy 2 added Yoshi as a rideable companion, new power-ups like the Rock Mushroom and Cloud Flower, and arguably the tightest platforming in any Mario game. Many critics call it the greatest video game ever made.
+            </div>
+            <div class="card-facts">
+              <span class="fact-tag">🦕 Yoshi returns</span>
+              <span class="fact-tag">☁️ Cloud Flower</span>
+              <span class="fact-tag">🪨 Rock Mushroom</span>
+              <span class="fact-tag">97/100 Metacritic</span>
+              <span class="fact-tag">242 Power Stars</span>
+            </div>
+          </div>
+          <div class="timeline-dot"></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/navigation.js"></script>
+  <script>
+    function toggleCard(card) {
+      try {
+        var expanded = card.classList.toggle('expanded');
+        card.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      } catch (e) { /* */ }
+    }
+    document.querySelectorAll('.timeline-card').forEach(function (card) {
+      card.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCard(card); }
+      });
+    });
+  </script>
+</body>
+</html>

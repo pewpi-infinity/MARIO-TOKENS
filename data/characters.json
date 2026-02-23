@@ -1,0 +1,26 @@
+{
+  "templates": [
+    {"id": "mario",    "name": "Mario",         "description": "Classic Italian plumber",  "pixels": []},
+    {"id": "luigi",    "name": "Luigi",          "description": "Taller green brother",     "pixels": []},
+    {"id": "mushroom", "name": "Super Mushroom", "description": "Power-up mushroom",        "pixels": []},
+    {"id": "goomba",   "name": "Goomba",         "description": "Classic enemy",            "pixels": []},
+    {"id": "coin",     "name": "Gold Coin",      "description": "Collectible coin",         "pixels": []}
+  ],
+  "palettes": [
+    {
+      "id":     "mario",
+      "name":   "Mario Classic",
+      "colors": ["#ff0000","#ffaa00","#ffffff","#964b00","#000000","#6b8cff","#00aa00","#ffff00"]
+    },
+    {
+      "id":     "sonic",
+      "name":   "Sonic Blue",
+      "colors": ["#2196f3","#ff9800","#ffffff","#000000","#f44336","#4caf50","#9c27b0","#ffeb3b"]
+    },
+    {
+      "id":     "neon",
+      "name":   "Neon Arcade",
+      "colors": ["#ff00ff","#00ffff","#ffff00","#ff0000","#00ff00","#0000ff","#ffffff","#000000"]
+    }
+  ]
+}

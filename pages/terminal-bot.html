@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terminal &amp; Bot Farm — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <style>
+    .terminal-layout {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    /* Terminal */
+    .terminal-panel {
+      flex: 1;
+      min-width: 300px;
+      background: #000;
+      border: 2px solid #00ff88;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,255,136,0.15);
+      display: flex;
+      flex-direction: column;
+    }
+    .terminal-titlebar {
+      background: #0a1a0a;
+      border-bottom: 1px solid #00ff88;
+      padding: 7px 14px;
+      font-size: 0.6rem;
+      color: #00ff88;
+      letter-spacing: 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .term-dot { width:10px;height:10px;border-radius:50%;display:inline-block; }
+    .term-dot.red   { background:#ff3344; }
+    .term-dot.yellow{ background:#ffcc00; }
+    .term-dot.green { background:#00ff88; }
+    .terminal-output {
+      flex: 1;
+      padding: 12px 16px;
+      min-height: 360px;
+      max-height: 420px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: #00ff88;
+      scrollbar-width: thin;
+      scrollbar-color: #00ff88 #000;
+    }
+    .terminal-output::-webkit-scrollbar { width: 4px; }
+    .terminal-output::-webkit-scrollbar-thumb { background: #00ff88; }
+    .term-line { display: block; word-break: break-word; }
+    .term-line.err   { color: var(--red-alert); }
+    .term-line.warn  { color: var(--gold); }
+    .term-line.info  { color: #88ccff; }
+    .term-line.mint  { color: #00ffcc; }
+    .term-line.dim   { color: #446644; }
+    .terminal-input-row {
+      display: flex;
+      align-items: center;
+      background: #000;
+      border-top: 1px solid #00ff88;
+      padding: 8px 12px;
+      gap: 6px;
+    }
+    .term-prompt {
+      color: #00ff88;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+    #term-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #00ff88;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      caret-color: #00ff88;
+    }
+    .blink-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: #00ff88;
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    /* Bot Farm Panel */
+    .bot-panel {
+      width: 320px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .bot-section {
+      background: var(--bg-card);
+      border: 2px solid var(--gold-dim);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .bot-section-title {
+      background: rgba(255,204,0,0.1);
+      border-bottom: 1px solid var(--gold-dim);
+      color: var(--gold);
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      padding: 8px 14px;
+    }
+    .bot-section-body { padding: 12px; }
+    .bot-btn {
+      display: block;
+      width: 100%;
+      background: #1a1a2e;
+      border: 2px solid #333;
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 9px 14px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .bot-btn:hover { background: rgba(255,204,0,0.1); border-color: var(--gold-dim); color: var(--gold); }
+    .bot-btn:last-child { margin-bottom: 0; }
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid #1a1a2e;
+      font-size: 0.7rem;
+    }
+    .status-row:last-child { border-bottom: none; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      display: inline-block; margin-right: 6px;
+    }
+    .status-dot.on  { background: #00ff88; box-shadow: 0 0 6px rgba(0,255,136,0.5); animation: pulse 1.5s infinite; }
+    .status-dot.off { background: #ff3344; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .form-row { margin-bottom: 8px; }
+    .form-row label { display:block; font-size:0.62rem; color:var(--text-dim); margin-bottom:3px; letter-spacing:1px; }
+    .form-row input, .form-row select {
+      width: 100%;
+      background: #0a0a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 6px 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-row input:focus, .form-row select:focus { border-color: var(--gold-dim); }
+    .submit-btn {
+      width: 100%;
+      background: var(--gold);
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: bold;
+      padding: 9px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F4BB; Terminal &amp; Bot Farm</h1>
+    <p class="tagline">Synch Pipe Arcade &nbsp;&#9679;&nbsp; Mongoose.os integration &nbsp;&#9679;&nbsp; Token builder</p>
+  </header>
+
+  <main id="main-content">
+    <section class="panel full-width">
+      <div class="terminal-layout">
+
+        <!-- Terminal -->
+        <div class="terminal-panel">
+          <div class="terminal-titlebar">
+            <span class="term-dot red"></span>
+            <span class="term-dot yellow"></span>
+            <span class="term-dot green"></span>
+            <span style="margin-left:8px">SYNCH PIPE TERMINAL v1.0 — infinity-coder</span>
+          </div>
+          <div class="terminal-output" id="term-output"></div>
+          <div class="terminal-input-row">
+            <span class="term-prompt">arcade@hub:~$</span>
+            <input type="text" id="term-input" placeholder="type a command..." autocomplete="off" spellcheck="false" aria-label="Terminal input" />
+          </div>
+        </div>
+
+        <!-- Bot & Config panels -->
+        <div class="bot-panel">
+
+          <!-- Connection Status -->
+          <div class="bot-section">
+            <div class="bot-section-title">CONNECTION STATUS</div>
+            <div class="bot-section-body">
+              <div class="status-row">
+                <span><span class="status-dot on"></span>Spark Terminal (infinity-coder)</span>
+                <span style="color:var(--green-token);font-size:0.65rem">ONLINE</span>
+              </div>
+              <div class="status-row">
+                <span><span class="status-dot on" id="mongoose-dot"></span>Mongoose.os webhook</span>
+                <span id="mongoose-status" style="color:var(--green-token);font-size:0.65rem">LISTENING</span>
+              </div>
+              <div class="status-row">
+                <span><span class="status-dot off" id="bot-dot"></span>Bot Farm</span>
+                <span id="bot-status" style="color:var(--red-alert);font-size:0.65rem">STANDBY</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bot Commands -->
+          <div class="bot-section">
+            <div class="bot-section-title">BOT FARM COMMANDS</div>
+            <div class="bot-section-body">
+              <button class="bot-btn" onclick="botCmd('scan')">&#x1F50D; Scan Network</button>
+              <button class="bot-btn" onclick="botCmd('fix')">&#x1F527; Auto-Fix Scripts</button>
+              <button class="bot-btn" onclick="botCmd('generate')">&#x26A1; Generate Token</button>
+              <button class="bot-btn" onclick="botCmd('status')">&#x1F4CA; Farm Status Report</button>
+              <button class="bot-btn" onclick="botCmd('deploy')">&#x1F680; Deploy Bot Agent</button>
+            </div>
+          </div>
+
+          <!-- Mongoose.os Config -->
+          <div class="bot-section">
+            <div class="bot-section-title">MONGOOSE.OS CONFIG</div>
+            <div class="bot-section-body">
+              <div class="form-row">
+                <label>DEVICE ID</label>
+                <input type="text" id="mongoose-device" placeholder="device-001" value="arcade-node-01" />
+              </div>
+              <div class="form-row">
+                <label>WEBHOOK URL</label>
+                <input type="text" id="mongoose-webhook" placeholder="https://..." value="https://hooks.mongoose.os/arcade" />
+              </div>
+              <div class="form-row">
+                <label>PROTOCOL</label>
+                <select id="mongoose-proto">
+                  <option value="mqtt">MQTT</option>
+                  <option value="http" selected>HTTP</option>
+                  <option value="ws">WebSocket</option>
+                </select>
+              </div>
+              <button class="submit-btn" onclick="connectMongoose()">CONNECT</button>
+            </div>
+          </div>
+
+          <!-- Token Builder -->
+          <div class="bot-section">
+            <div class="bot-section-title">TOKEN BUILDER</div>
+            <div class="bot-section-body">
+              <div class="form-row">
+                <label>TOKEN NAME</label>
+                <input type="text" id="token-name" placeholder="MARIO-TOKEN-001" />
+              </div>
+              <div class="form-row">
+                <label>TOKEN TYPE</label>
+                <select id="token-type">
+                  <option value="coin">Gold Coin</option>
+                  <option value="star">Star Token</option>
+                  <option value="mushroom">Mushroom Token</option>
+                  <option value="fire">Fire Flower Token</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label>QUANTITY</label>
+                <input type="number" id="token-qty" placeholder="100" value="100" min="1" max="99999" />
+              </div>
+              <button class="submit-btn" onclick="createToken()">CREATE TOKEN</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/navigation.js"></script>
+  <script>
+    var termOutput = document.getElementById('term-output');
+    var cmdHistory = [];
+    var historyIdx = -1;
+
+    var COMMANDS = {
+      help: function () {
+        termPrint('Available commands:', 'info');
+        termPrint('  help     — show this help', 'dim');
+        termPrint('  status   — system status', 'dim');
+        termPrint('  mint     — mint a token', 'dim');
+        termPrint('  scan     — scan network nodes', 'dim');
+        termPrint('  fix      — repair broken scripts', 'dim');
+        termPrint('  ls       — list modules', 'dim');
+        termPrint('  clear    — clear terminal', 'dim');
+        termPrint('  echo ... — echo text', 'dim');
+      },
+      status: function () {
+        termPrint('[STATUS] Synch Pipe Arcade — all systems operational', 'info');
+        termPrint('[STATUS] Mongoose.os webhook: LISTENING', 'mint');
+        termPrint('[STATUS] Bot Farm: STANDBY (0 active bots)', 'warn');
+        termPrint('[STATUS] Token treasury: ' + (Math.floor(Math.random() * 9000) + 1000) + ' tokens minted', 'mint');
+      },
+      mint: function (args) {
+        var name = args.join(' ') || 'ARCADE-TOKEN';
+        termPrint('[MINT] Creating token: ' + name, 'info');
+        setTimeout(function () { termPrint('[MINT] ✓ Token "' + name + '" minted successfully!', 'mint'); }, 600);
+      },
+      scan: function () {
+        termPrint('[SCAN] Scanning network nodes...', 'info');
+        var nodes = ['arcade-node-01', 'bot-agent-02', 'mongoose-hook-03', 'infinity-coder-04'];
+        nodes.forEach(function (n, i) {
+          setTimeout(function () {
+            termPrint('[SCAN]   ' + n + ' — ONLINE ✓', 'mint');
+          }, 300 * (i + 1));
+        });
+        setTimeout(function () { termPrint('[SCAN] Complete. 4 nodes found.', 'info'); }, 1600);
+      },
+      fix: function () {
+        termPrint('[FIX] Scanning for broken scripts...', 'info');
+        setTimeout(function () {
+          termPrint('[FIX] Found 2 issues. Applying patches...', 'warn');
+          setTimeout(function () { termPrint('[FIX] ✓ All scripts repaired!', 'mint'); }, 800);
+        }, 700);
+      },
+      ls: function () {
+        termPrint('Loaded modules:', 'info');
+        ['mongoose-token-treasury', 'script-repair', 'power-ups', 'bot-farm-hooks', 'navigation', 'emulator-manager', 'rom-search', 'jukebox', 'character-builder'].forEach(function (m) {
+          termPrint('  ✓ ' + m + '.js', 'mint');
+        });
+      },
+      clear: function () {
+        termOutput.innerHTML = '';
+        termPrint('[SYSTEM] Terminal cleared.', 'dim');
+      },
+      echo: function (args) {
+        termPrint(args.join(' '));
+      }
+    };
+
+    function termPrint(text, cls) {
+      var line = document.createElement('span');
+      line.className = 'term-line' + (cls ? ' ' + cls : '');
+      line.textContent = text;
+      termOutput.appendChild(line);
+      termOutput.appendChild(document.createTextNode('\n'));
+      termOutput.scrollTop = termOutput.scrollHeight;
+    }
+
+    function processCommand(raw) {
+      var trimmed = raw.trim();
+      if (!trimmed) return;
+      termPrint('arcade@hub:~$ ' + trimmed);
+      cmdHistory.unshift(trimmed);
+      historyIdx = -1;
+
+      var parts = trimmed.split(/\s+/);
+      var cmd   = parts[0].toLowerCase();
+      var args  = parts.slice(1);
+
+      if (COMMANDS[cmd]) {
+        try { COMMANDS[cmd](args); } catch (e) { termPrint('[ERROR] ' + e.message, 'err'); }
+      } else {
+        termPrint('bash: ' + cmd + ': command not found. Type "help" for commands.', 'err');
+      }
+    }
+
+    var termInput = document.getElementById('term-input');
+    termInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        processCommand(this.value);
+        this.value = '';
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIdx < cmdHistory.length - 1) {
+          historyIdx++;
+          this.value = cmdHistory[historyIdx];
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIdx > 0) {
+          historyIdx--;
+          this.value = cmdHistory[historyIdx];
+        } else {
+          historyIdx = -1;
+          this.value = '';
+        }
+      }
+    });
+
+    function botCmd(cmd) {
+      try {
+        document.getElementById('bot-dot').className  = 'status-dot on';
+        document.getElementById('bot-status').textContent = 'ACTIVE';
+        document.getElementById('bot-status').style.color = 'var(--green-token)';
+        processCommand(cmd);
+        setTimeout(function () {
+          document.getElementById('bot-dot').className  = 'status-dot off';
+          document.getElementById('bot-status').textContent = 'STANDBY';
+          document.getElementById('bot-status').style.color = 'var(--red-alert)';
+        }, 3000);
+      } catch (e) { console.warn('[Terminal] connectBot error:', e); }
+    }
+
+    function connectMongoose() {
+      try {
+        var device  = document.getElementById('mongoose-device').value || 'device-001';
+        var webhook = document.getElementById('mongoose-webhook').value;
+        var proto   = document.getElementById('mongoose-proto').value;
+        termPrint('[MONGOOSE] Connecting to ' + device + ' via ' + proto.toUpperCase() + '...', 'info');
+        setTimeout(function () {
+          termPrint('[MONGOOSE] ✓ Connected to ' + device, 'mint');
+          termPrint('[MONGOOSE] Webhook registered: ' + webhook, 'dim');
+        }, 800);
+      } catch (e) { termPrint('[ERROR] ' + e.message, 'err'); }
+    }
+
+    function createToken() {
+      try {
+        var name = document.getElementById('token-name').value.trim() || 'ARCADE-TOKEN';
+        var type = document.getElementById('token-type').value;
+        var qty  = parseInt(document.getElementById('token-qty').value, 10) || 100;
+        processCommand('mint ' + qty + 'x ' + name + ' [' + type + ']');
+      } catch (e) { termPrint('[ERROR] ' + e.message, 'err'); }
+    }
+
+    // Boot sequence
+    (function boot() {
+      var msgs = [
+        {t:'[SYSTEM] Synch Pipe Arcade Terminal v1.0', cls:'info'},
+        {t:'[SYSTEM] Loading modules...', cls:'dim'},
+        {t:'[SYSTEM] ✓ mongoose-token-treasury ready', cls:'mint'},
+        {t:'[SYSTEM] ✓ script-repair ready', cls:'mint'},
+        {t:'[SYSTEM] ✓ power-ups ready', cls:'mint'},
+        {t:'[SYSTEM] ✓ bot-farm-hooks ready', cls:'mint'},
+        {t:'[SYSTEM] All systems operational. Type "help" for commands.', cls:'info'}
+      ];
+      msgs.forEach(function (m, i) {
+        setTimeout(function () { termPrint(m.t, m.cls); }, i * 150);
+      });
+    }());
+  </script>
+</body>
+</html>

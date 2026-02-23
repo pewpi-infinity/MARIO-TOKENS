@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNES Emulator — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <link rel="stylesheet" href="../css/emulator.css" />
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F3AE; SNES Emulator</h1>
+    <p class="tagline">Synch Pipe Arcade &nbsp;&#9679;&nbsp; Super Nintendo Entertainment System</p>
+  </header>
+
+  <main id="main-content">
+    <section class="panel full-width">
+      <div class="emulator-layout">
+
+        <div class="emulator-main">
+          <div class="emulator-wrapper">
+            <div class="emulator-bezel">
+              <div class="emulator-screen">
+                <div id="game" style="width:100%;height:500px"></div>
+              </div>
+            </div>
+
+            <div class="controller-overlay">
+              <div class="controller-section">
+                <div class="controller-label">D-PAD</div>
+                <div class="dpad">
+                  <div class="dpad-btn dpad-empty"></div>
+                  <div class="dpad-btn" title="Up (↑)">▲</div>
+                  <div class="dpad-btn dpad-empty"></div>
+                  <div class="dpad-btn" title="Left (←)">◀</div>
+                  <div class="dpad-btn dpad-center"></div>
+                  <div class="dpad-btn" title="Right (→)">▶</div>
+                  <div class="dpad-btn dpad-empty"></div>
+                  <div class="dpad-btn" title="Down (↓)">▼</div>
+                  <div class="dpad-btn dpad-empty"></div>
+                </div>
+              </div>
+
+              <div class="controller-section">
+                <div class="controller-label">MENU</div>
+                <div class="menu-buttons">
+                  <button class="menu-btn" title="Select (Shift)">SELECT</button>
+                  <button class="menu-btn" title="Start (Enter)">START</button>
+                </div>
+              </div>
+
+              <div class="controller-section">
+                <div class="controller-label">BUTTONS</div>
+                <div class="action-buttons">
+                  <button class="action-btn btn-y" title="Y (A)">Y</button>
+                  <button class="action-btn btn-x" title="X (S)">X</button>
+                  <button class="action-btn btn-b" title="B (Z)">B</button>
+                  <button class="action-btn btn-a" title="A (X)">A</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="keymap-display">
+              <div class="keymap-item"><span class="key-badge">↑↓←→</span> Move</div>
+              <div class="keymap-item"><span class="key-badge">Z</span> B</div>
+              <div class="keymap-item"><span class="key-badge">X</span> A</div>
+              <div class="keymap-item"><span class="key-badge">A</span> Y</div>
+              <div class="keymap-item"><span class="key-badge">S</span> X</div>
+              <div class="keymap-item"><span class="key-badge">Enter</span> Start</div>
+              <div class="keymap-item"><span class="key-badge">Shift</span> Select</div>
+              <div class="keymap-item"><span class="key-badge">Q/W</span> L/R</div>
+            </div>
+          </div>
+
+          <div class="game-metadata" id="game-metadata">
+            <div class="meta-title" id="meta-title">Super Mario World</div>
+            <div class="meta-row">System: <span>SNES (Nintendo, 1990)</span></div>
+            <div class="meta-row">Genre: <span>Platform</span></div>
+            <div class="meta-row">Players: <span>1-2</span></div>
+          </div>
+
+          <h3 style="margin:16px 0 8px;font-size:0.8rem;letter-spacing:2px;color:var(--gold)">&#x1F50D; SEARCH ROMS (Internet Archive)</h3>
+          <div class="rom-search-bar">
+            <input type="text" id="rom-search-input" placeholder="Search SNES ROMs on archive.org..." aria-label="ROM search" />
+            <button onclick="doRomSearch()">SEARCH</button>
+          </div>
+          <div class="rom-results" id="rom-results"></div>
+        </div>
+
+        <aside class="game-sidebar">
+          <h3>SNES LIBRARY</h3>
+          <div class="sidebar-game active" onclick="loadGame('smw','Super Mario World','Platform','1990','1-2',this)">
+            <span class="g-icon">🦕</span>
+            <span class="g-title">Super Mario World</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('smk','Super Mario Kart','Racing','1992','1-2',this)">
+            <span class="g-icon">🏎️</span>
+            <span class="g-title">Super Mario Kart</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('zelda_lttp','A Link to the Past','Adventure','1991','1',this)">
+            <span class="g-icon">🗡️</span>
+            <span class="g-title">A Link to the Past</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('donkey_kong','Donkey Kong Country','Platform','1994','1-2',this)">
+            <span class="g-icon">🦍</span>
+            <span class="g-title">Donkey Kong Country</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('mega_man_x','Mega Man X','Action','1993','1',this)">
+            <span class="g-icon">🤖</span>
+            <span class="g-title">Mega Man X</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('street_fighter2','Street Fighter II','Fighting','1992','1-2',this)">
+            <span class="g-icon">🥊</span>
+            <span class="g-title">Street Fighter II</span>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/navigation.js"></script>
+  <script src="../js/emulator-manager.js"></script>
+  <script src="../js/rom-search.js"></script>
+
+  <script>
+    var SMW_ROM = 'https://archive.org/download/super-famicom-japan-set-1/Super%20Mario%20World%20(USA).sfc';
+
+    var ROM_URLS = {
+      smw:           SMW_ROM,
+      smk:           'https://archive.org/download/super-famicom-japan-set-1/Super%20Mario%20Kart%20(USA).sfc',
+      zelda_lttp:    'https://archive.org/download/super-famicom-japan-set-1/Legend%20of%20Zelda%2C%20The%20-%20A%20Link%20to%20the%20Past%20(USA).sfc',
+      donkey_kong:   'https://archive.org/download/super-famicom-japan-set-1/Donkey%20Kong%20Country%20(USA).sfc',
+      mega_man_x:    'https://archive.org/download/super-famicom-japan-set-1/Mega%20Man%20X%20(USA).sfc',
+      street_fighter2:'https://archive.org/download/super-famicom-japan-set-1/Street%20Fighter%20II%20Turbo%20-%20Hyper%20Fighting%20(USA).sfc'
+    };
+
+    window.EJS_player      = 1;
+    window.EJS_core        = 'snes9x';
+    window.EJS_pathtodata  = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_gameUrl     = SMW_ROM;
+    window.EJS_startOnLoad = true;
+
+    (function () {
+      try {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+        document.body.appendChild(s);
+      } catch (e) { console.error('[SNES] loader error:', e); }
+    }());
+
+    function loadGame(id, title, genre, year, players, el) {
+      try {
+        document.querySelectorAll('.sidebar-game').forEach(function (g) { g.classList.remove('active'); });
+        if (el) el.classList.add('active');
+        document.getElementById('meta-title').textContent = title;
+        var rows = document.querySelectorAll('.meta-row span');
+        if (rows[0]) rows[0].textContent = 'SNES (Nintendo, ' + year + ')';
+        if (rows[1]) rows[1].textContent = genre;
+        if (rows[2]) rows[2].textContent = players;
+        var url = ROM_URLS[id];
+        if (url) EmulatorManager.loadRom(url);
+      } catch (e) { console.warn('[SNES] loadGame error:', e); }
+    }
+
+    function doRomSearch() {
+      try {
+        var q = document.getElementById('rom-search-input').value.trim();
+        if (!q) return;
+        var container = document.getElementById('rom-results');
+        container.innerHTML = '<div style="padding:10px;color:var(--text-dim);font-size:0.75rem">Searching...</div>';
+        RomSearch.search(q + ' snes', function (err, results) {
+          RomSearch.renderResults(results || [], container);
+        });
+      } catch (e) { console.warn('[SNES] doRomSearch error:', e); }
+    }
+
+    document.getElementById('rom-search-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') doRomSearch();
+    });
+
+    document.querySelectorAll('.dpad-btn:not(.dpad-empty):not(.dpad-center), .action-btn, .menu-btn').forEach(function (btn) {
+      btn.addEventListener('mousedown', function () { btn.classList.add('active'); });
+      btn.addEventListener('mouseup',   function () { btn.classList.remove('active'); });
+      btn.addEventListener('mouseleave',function () { btn.classList.remove('active'); });
+    });
+  </script>
+</body>
+</html>

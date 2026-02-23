@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Gallery — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <style>
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+    .video-card {
+      background: var(--bg-card);
+      border: 2px solid var(--gold-dim);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .video-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+    .video-card.active {
+      border-color: var(--gold);
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+    .video-embed {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-embed iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .video-thumb {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a0a1a, #1a1a3e);
+      cursor: pointer;
+      font-size: 3rem;
+      flex-direction: column;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .video-thumb:hover { background: linear-gradient(135deg, #1a1a2e, #2a2a5e); }
+    .thumb-play {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #000;
+      box-shadow: 0 0 16px var(--gold-glow);
+    }
+    .thumb-label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-align: center;
+    }
+    .video-info {
+      padding: 12px 14px;
+      border-top: 1px solid #1a1a2e;
+    }
+    .video-title {
+      font-size: 0.85rem;
+      color: var(--gold);
+      font-weight: bold;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .video-meta {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    /* Pop-up fact bubbles */
+    .fact-bubble {
+      position: absolute;
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      line-height: 1.4;
+      padding: 6px 10px;
+      border-radius: 8px;
+      max-width: 160px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 100;
+    }
+    .fact-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 16px;
+      border: 6px solid transparent;
+      border-top-color: var(--gold);
+      border-bottom: none;
+    }
+    .fact-bubble.visible { opacity: 1; }
+    /* Sidebar */
+    .gallery-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .gallery-main { flex: 1; min-width: 300px; }
+    .facts-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--bg-card);
+      border: 2px solid var(--gold-dim);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .facts-sidebar h3 {
+      background: var(--gold);
+      color: #000;
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      padding: 9px 14px;
+      text-align: center;
+    }
+    .fact-list { max-height: 500px; overflow-y: auto; }
+    .fact-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #1a1a2e;
+      font-size: 0.7rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .fact-item:last-child { border-bottom: none; }
+    .fact-item .fi-num {
+      display: inline-block;
+      background: var(--gold);
+      color: #000;
+      border-radius: 50%;
+      width: 18px; height: 18px;
+      text-align: center;
+      line-height: 18px;
+      font-size: 0.6rem;
+      font-weight: bold;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F4FA; Video Gallery</h1>
+    <p class="tagline">Synch Pipe Arcade &nbsp;&#9679;&nbsp; Mario Cartoons &amp; Classic Gaming Videos &nbsp;&#9679;&nbsp; VH1 Pop-Up Style</p>
+  </header>
+
+  <main id="main-content">
+    <section class="panel full-width">
+      <div class="gallery-layout">
+
+        <div class="gallery-main">
+          <div class="gallery-grid" id="gallery-grid"></div>
+        </div>
+
+        <aside class="facts-sidebar">
+          <h3>📺 VH1 POP-UP FACTS</h3>
+          <div class="fact-list" id="fact-list"></div>
+        </aside>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/navigation.js"></script>
+  <script>
+    var VIDEOS = [
+      {
+        id: 'mario-cartoon-1',
+        title: 'The Super Mario Bros. Super Show!',
+        year: '1989',
+        type: 'Cartoon · DiC Entertainment',
+        icon: '🍄',
+        embed_url: 'https://archive.org/embed/super-mario-bros-super-show',
+        archive_id: 'super-mario-bros-super-show',
+        facts: [
+          'Lou Albano voiced Mario in the cartoon!',
+          'Each episode ended with a live-action segment',
+          'Ran for 65 episodes in 1989',
+          'Also featured Legend of Zelda segments'
+        ]
+      },
+      {
+        id: 'mario3-promo',
+        title: 'Super Mario Bros. 3 — The Movie (The Wizard)',
+        year: '1989',
+        type: 'Film · Universal Pictures',
+        icon: '🎬',
+        embed_url: 'https://archive.org/embed/the-wizard-1989-film',
+        archive_id: 'the-wizard-1989',
+        facts: [
+          'First public footage of Super Mario Bros. 3',
+          'The Wizard was basically a 90-minute SMB3 commercial',
+          'Corey Feldman auditioned for the lead role',
+          'Fred Savage stars as the older brother'
+        ]
+      },
+      {
+        id: 'mario-kart-promo',
+        title: 'Super Mario Kart — Official Promo (1992)',
+        year: '1992',
+        type: 'Advertisement · Nintendo',
+        icon: '🏎️',
+        embed_url: 'https://archive.org/embed/super-mario-kart-promo-1992',
+        archive_id: 'nintendo-promotional-videos',
+        facts: [
+          'Super Mario Kart sold 8.76M SNES copies',
+          'Mode 7 graphics made the 3D effect possible',
+          'Originally planned with just Mario and Peach',
+          'Inspired by F-Zero\'s Mode 7 tech demo'
+        ]
+      },
+      {
+        id: 'donkey-kong-cartoon',
+        title: 'Donkey Kong Country — The Animated Series',
+        year: '1996',
+        type: 'Cartoon · Nelvana',
+        icon: '🦍',
+        embed_url: 'https://archive.org/embed/donkey-kong-country-cartoon',
+        archive_id: 'donkey-kong-country-animated',
+        facts: [
+          'Used early CGI animation, rare for 1996',
+          'Produced by Nelvana in Canada',
+          '40 episodes across two seasons',
+          'Crystal Coconut was the MacGuffin of the show'
+        ]
+      },
+      {
+        id: 'nes-commercial',
+        title: 'Original NES Christmas Commercial (1985)',
+        year: '1985',
+        type: 'Advertisement · Nintendo',
+        icon: '📺',
+        embed_url: 'https://archive.org/embed/nintendo-nes-original-commercials',
+        archive_id: 'nintendo-nes-commercials-1985',
+        facts: [
+          'NES launched in the US on October 18, 1985',
+          'Rob the Robot was bundled with the NES',
+          'The original price was $199.99',
+          'Came with Super Mario Bros. and Duck Hunt'
+        ]
+      },
+      {
+        id: 'sonic-cartoon',
+        title: 'Adventures of Sonic the Hedgehog (1993)',
+        year: '1993',
+        type: 'Cartoon · DiC Entertainment',
+        icon: '🦔',
+        embed_url: 'https://archive.org/embed/adventures-of-sonic-the-hedgehog',
+        archive_id: 'adventures-of-sonic-the-hedgehog-1993',
+        facts: [
+          'Jaleel White voiced Sonic for all 65 episodes',
+          'Dr. Robotnik had a different design than the games',
+          'Scratch and Grounder were original cartoon villains',
+          '"Sonic Says" safety segment ended each episode'
+        ]
+      },
+      {
+        id: 'mario64-launch',
+        title: 'Super Mario 64 — Launch Coverage (1996)',
+        year: '1996',
+        type: 'News Coverage · Nintendo',
+        icon: '⭐',
+        embed_url: 'https://archive.org/embed/super-mario-64-1996-coverage',
+        archive_id: 'n64-launch-1996',
+        facts: [
+          'Mario 64 launched with the N64 in June 1996 in Japan',
+          'The US launch was September 29, 1996',
+          'It introduced the revolutionary analog stick control',
+          '"It\'s-a me, Mario!" was first heard in this game'
+        ]
+      },
+      {
+        id: 'genesis-commercial',
+        title: 'Sega Genesis vs NES — "Genesis Does" Campaign',
+        year: '1990',
+        type: 'Advertisement · Sega',
+        icon: '🎮',
+        embed_url: 'https://archive.org/embed/sega-genesis-does-commercial',
+        archive_id: 'sega-genesis-commercials-1990',
+        facts: [
+          '"Genesis does what Nintendon\'t" became a famous slogan',
+          'The 16-bit console war was one of gaming\'s greatest rivalries',
+          'Genesis launched in North America in 1989',
+          'Blast Processing was mostly a marketing term'
+        ]
+      }
+    ];
+
+    var ALL_FACTS = VIDEOS.reduce(function (acc, v) {
+      return acc.concat(v.facts.map(function (f) { return { fact: f, video: v.title }; }));
+    }, []);
+
+    // Render gallery
+    function renderGallery() {
+      var grid = document.getElementById('gallery-grid');
+      VIDEOS.forEach(function (v) {
+        var card = document.createElement('div');
+        card.className = 'video-card';
+        card.id = 'vcard-' + v.id;
+        card.innerHTML =
+          '<div class="video-embed">' +
+            '<div class="video-thumb" id="thumb-' + v.id + '" onclick="loadVideo(\'' + v.id + '\')" ' +
+              'role="button" tabindex="0" aria-label="Play ' + escHtml(v.title) + '">' +
+              '<div class="thumb-play">▶</div>' +
+              '<div class="thumb-label">' + v.icon + ' CLICK TO PLAY</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="video-info">' +
+            '<div class="video-title">' + v.icon + ' ' + escHtml(v.title) + '</div>' +
+            '<div class="video-meta">' +
+              '<span>📅 ' + v.year + '</span>' +
+              '<span>' + escHtml(v.type) + '</span>' +
+            '</div>' +
+          '</div>';
+        grid.appendChild(card);
+      });
+    }
+
+    function loadVideo(id) {
+      var v = VIDEOS.find(function (x) { return x.id === id; });
+      if (!v) return;
+      var embed = document.querySelector('#vcard-' + id + ' .video-embed');
+      embed.innerHTML =
+        '<iframe src="' + v.embed_url + '" allowfullscreen allow="autoplay" ' +
+        'title="' + escHtml(v.title) + '"></iframe>';
+      document.getElementById('vcard-' + id).classList.add('active');
+      showFactBubble(v, embed);
+      showFactsForVideo(v);
+    }
+
+    function showFactBubble(v, container) {
+      // Remove old bubbles
+      container.querySelectorAll('.fact-bubble').forEach(function (b) { b.remove(); });
+      var facts = v.facts;
+      var shown = 0;
+      var interval = setInterval(function () {
+        if (shown >= facts.length) { clearInterval(interval); return; }
+        var bubble = document.createElement('div');
+        bubble.className = 'fact-bubble';
+        bubble.textContent = '💡 ' + facts[shown];
+        bubble.style.top  = (10 + Math.random() * 40) + '%';
+        bubble.style.left = (10 + Math.random() * 50) + '%';
+        container.style.position = 'relative';
+        container.appendChild(bubble);
+        setTimeout(function () { bubble.classList.add('visible'); }, 50);
+        var hideDelay = 4000;
+        var removeDelay = 500;
+        setTimeout(function () {
+          bubble.classList.remove('visible');
+          setTimeout(function () { bubble.remove(); }, removeDelay);
+        }, hideDelay);
+        shown++;
+      }, 5000);
+    }
+
+    function showFactsForVideo(v) {
+      var list = document.getElementById('fact-list');
+      list.innerHTML = '';
+      var header = document.createElement('div');
+      header.style.cssText = 'padding:8px 14px;font-size:0.6rem;color:var(--gold);letter-spacing:2px;border-bottom:1px solid #1a1a2e';
+      header.textContent = 'NOW PLAYING: ' + v.title.toUpperCase();
+      list.appendChild(header);
+      v.facts.concat(
+        ALL_FACTS.filter(function (f) { return f.video !== v.title; }).slice(0,6).map(function (f) { return f.fact; })
+      ).forEach(function (f, i) {
+        var item = document.createElement('div');
+        item.className = 'fact-item';
+        item.innerHTML = '<span class="fi-num">' + (i+1) + '</span>' + escHtml(f);
+        list.appendChild(item);
+      });
+    }
+
+    // Populate sidebar with random facts on load
+    function populateSidebar() {
+      var list = document.getElementById('fact-list');
+      list.innerHTML = '';
+      var shuffled = ALL_FACTS.slice().sort(function () { return Math.random() - 0.5; });
+      shuffled.slice(0, 15).forEach(function (item, i) {
+        var div = document.createElement('div');
+        div.className = 'fact-item';
+        div.innerHTML =
+          '<span class="fi-num">' + (i+1) + '</span>' +
+          '<strong style="color:var(--text-dim);font-size:0.62rem">' + escHtml(item.video) + ':</strong><br>' +
+          escHtml(item.fact);
+        list.appendChild(div);
+      });
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    renderGallery();
+    populateSidebar();
+
+    // Keyboard accessibility for thumbnails
+    document.querySelectorAll('.video-thumb').forEach(function (t) {
+      t.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          t.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

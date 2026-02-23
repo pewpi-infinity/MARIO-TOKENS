@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Chat Terminal — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <style>
+    .chat-layout {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 200px);
+      min-height: 500px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .chat-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: #0a0a1a;
+      border: 2px solid var(--gold-dim);
+      border-radius: 8px 8px 0 0;
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .s-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #00ff88;
+      animation: spulse 2s infinite;
+      display: inline-block;
+    }
+    @keyframes spulse { 0%,100%{opacity:1;box-shadow:0 0 4px rgba(0,255,136,0.6)} 50%{opacity:0.6;box-shadow:none} }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg-card);
+      border-left: 2px solid var(--gold-dim);
+      border-right: 2px solid var(--gold-dim);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold-dim) #000;
+    }
+    .chat-messages::-webkit-scrollbar { width: 5px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 75%;
+    }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.ai   { align-self: flex-start; align-items: flex-start; }
+    .msg.sys  { align-self: center; align-items: center; max-width: 100%; }
+    .msg-bubble {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+    .msg.user  .msg-bubble { background: #1a1a3e; border: 1px solid var(--gold-dim); color: var(--text); border-radius: 12px 12px 2px 12px; }
+    .msg.ai    .msg-bubble { background: #0a1a0a; border: 1px solid #336633; color: #a0ffb0; border-radius: 12px 12px 12px 2px; font-family: var(--font-mono); }
+    .msg.sys   .msg-bubble { background: rgba(255,204,0,0.05); border: 1px solid #333; color: var(--text-dim); font-size: 0.65rem; letter-spacing: 1px; }
+    .msg-meta { font-size: 0.58rem; color: var(--text-dim); margin-top: 3px; padding: 0 4px; }
+    .msg.user .msg-meta { text-align: right; }
+    .avatar {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; margin-bottom: 4px;
+    }
+    .msg.ai .avatar { background: #0a1a0a; border: 1px solid #336633; }
+    .msg.user .avatar { background: #1a1a3e; border: 1px solid var(--gold-dim); }
+    /* Typing indicator */
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background: #0a1a0a;
+      border: 1px solid #336633;
+      border-radius: 12px;
+      padding: 8px 14px;
+      gap: 4px;
+      align-items: center;
+    }
+    .typing-indicator.visible { display: flex; }
+    .typing-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #00ff88;
+      animation: tdot 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-6px);opacity:1} }
+    /* Input row */
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      background: #0a0a1a;
+      border: 2px solid var(--gold-dim);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 10px 12px;
+    }
+    #chat-input {
+      flex: 1;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #chat-input:focus { border-color: var(--gold-dim); }
+    #chat-send {
+      background: var(--gold);
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 8px 18px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    #chat-send:hover { opacity: 0.8; }
+    /* Suggested chips */
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+      background: #060610;
+      border-left: 2px solid var(--gold-dim);
+      border-right: 2px solid var(--gold-dim);
+    }
+    .chip {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 16px;
+      color: var(--text-dim);
+      font-size: 0.62rem;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+  </style>
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F916; AI Chat Terminal</h1>
+    <p class="tagline">Synch Pipe Arcade &nbsp;&#9679;&nbsp; Ask about Mario, gaming, tokens &amp; more</p>
+  </header>
+
+  <main id="main-content">
+    <section class="panel full-width" style="padding:12px">
+      <div class="chat-layout">
+
+        <div class="chat-status-bar">
+          <div class="status-pill"><span class="s-dot"></span> ARCADE AI ONLINE</div>
+          <div class="status-pill"><span class="s-dot" style="background:#ffcc00"></span> MARIO KNOWLEDGE BASE</div>
+          <div class="status-pill"><span class="s-dot" style="background:#6b8cff"></span> TOKEN ENGINE ACTIVE</div>
+          <span style="margin-left:auto;font-size:0.6rem" id="msg-count">0 messages</span>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <!-- Messages injected here -->
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+
+        <div class="suggestions" id="suggestions">
+          <button class="chip" onclick="quickSend('Tell me about Mario')">🍄 About Mario</button>
+          <button class="chip" onclick="quickSend('What is Sonic?')">🦔 About Sonic</button>
+          <button class="chip" onclick="quickSend('How do tokens work?')">🪙 Tokens</button>
+          <button class="chip" onclick="quickSend('Help me with the emulator')">🎮 Emulator help</button>
+          <button class="chip" onclick="quickSend('What games are available?')">🎯 Games list</button>
+          <button class="chip" onclick="quickSend('Tell me about the bot farm')">🤖 Bot farm</button>
+        </div>
+
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Ask about Mario, gaming, tokens..." aria-label="Chat input" maxlength="500" />
+          <button id="chat-send">SEND ▶</button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/navigation.js"></script>
+  <script>
+    var msgCount = 0;
+
+    var AI_RESPONSES = {
+      mario: [
+        "🍄 Mario is Nintendo's iconic plumber, created by Shigeru Miyamoto in 1981! He started as 'Jumpman' in Donkey Kong and got his name from Nintendo of America's landlord. His mission: rescue Princess Peach from the evil Bowser across the Mushroom Kingdom!",
+        "🏰 Did you know Mario's full name is **Mario Mario**? It was made official in the 1993 movie, much to everyone's amusement. He's appeared in over 200 games and is the best-selling video game franchise of all time with 800 million+ copies sold!",
+        "⭐ Super Mario Bros. (1985) essentially saved the North American video game industry after the crash of 1983. It sold 40 million copies on the NES and introduced the world to mushrooms, fire flowers, and those iconic green pipes!"
+      ],
+      sonic: [
+        "🦔 Sonic the Hedgehog is Sega's speedy blue mascot, created in 1991 to compete with Nintendo's Mario. He was designed to embody attitude and speed — a direct challenge to Mario's wholesome platforming. The Genesis/Mega Drive rivalry defined a generation!",
+        "💨 Sonic can run at 768 mph according to Sega lore — nearly the speed of sound! His real first name is revealed in some media as 'Ogilvie Maurice Hedgehog', which is why he goes by Sonic. You would too.",
+        "🎮 Sonic the Hedgehog (1991) on the Genesis was Sega's answer to Super Mario Bros. The loop-de-loops, speed gameplay, and attitude made it an instant classic. Check it out in our Genesis Emulator!"
+      ],
+      token: [
+        "🪙 The MARIO-TOKENS system is a retro-gaming economy layer! Tokens are minted through gameplay actions — collect coins, defeat Bowser, complete levels. Each token is stored in the treasury module and can power up bot farm operations!",
+        "💰 Token types include: Gold Coins (basic), Star Tokens (invincibility tier), Mushroom Tokens (growth multiplier), and Fire Flower Tokens (offensive capability). The treasury tracks all minting and burning events in real time!",
+        "⚡ The bot farm can automatically generate tokens through the Mongoose.os webhook integration. Scan the network, detect active nodes, and watch tokens flow into the treasury. Use the Terminal page to run token commands!"
+      ],
+      bot: [
+        "🤖 The Bot Farm module connects to Mongoose.os webhooks to automate token generation and script management. Each bot agent can scan, fix, and deploy on the Synch Pipe network. Try the Terminal & Bot Farm page!",
+        "🔧 Bot commands: SCAN (discover network nodes), FIX (repair broken scripts using ScriptRepair module), GENERATE (mint new tokens), DEPLOY (launch a new bot agent). The terminal accepts all these commands directly!",
+        "📡 Mongoose.os integration uses HTTP/MQTT/WebSocket protocols to connect your device fleet. Configure the device ID and webhook URL in the Terminal & Bot page to get your nodes talking to the arcade hub!"
+      ],
+      emulator: [
+        "🎮 The arcade hub has three emulators powered by EmulatorJS: NES (nintendo), SNES (snes9x core), and Genesis (segaMD core). All ROMs are loaded from Internet Archive — completely legal for classic abandonware titles!",
+        "🕹️ Controls: Arrow keys for movement, Z=B, X=A on NES; Z=B, X=A, A=Y, S=X on SNES; Z/X/C for Genesis A/B/C buttons. Press F for fullscreen. You can also use the on-screen controller buttons!",
+        "📀 ROM Search lets you find games on archive.org's massive collection. The Internet Archive hosts millions of ROMs under preservation rights. Type a game name and hit SEARCH to find it, then click LOAD to play instantly!"
+      ],
+      game: [
+        "🎯 Available games: NES has 8 titles (Mario 1&3, Zelda, Contra, Metroid, DuckTales, Mega Man 2, Castlevania). SNES has 6 (Mario World, Mario Kart, Zelda LttP, DK Country, Mega Man X, Street Fighter II). Genesis has 6 (Sonic 1&2, Streets of Rage, MK, Earthworm Jim, Golden Axe)!",
+        "🏆 Top recommendation: Start with Super Mario Bros. on NES for the classic experience, move to Super Mario World on SNES for the definitive 2D Mario, then try Sonic the Hedgehog on Genesis for the ultimate 16-bit rivalry experience!",
+        "🌟 Pro tip: In Super Mario Bros., hold B and run to the flagpole at full speed to earn maximum points. In Super Mario World, find the secret Star Road by discovering the hidden exit in Donut Plains 1. Happy hunting!"
+      ],
+      help: [
+        "🆘 Here's what I can help with:\n• **Mario** — history, games, facts\n• **Sonic** — Sega lore and trivia\n• **Tokens** — the MARIO-TOKENS economy\n• **Bot farm** — Mongoose.os integration\n• **Emulator** — how to play ROMs\n• **Games** — recommendations and tips\n\nJust ask me anything gaming-related!",
+        "💡 Quick navigation tips:\n🎮 NES/SNES/Genesis Emulator — play classic ROMs\n📈 Evolution Timeline — Mario's history 1981-2010\n🎵 Jukebox Aerobics — 100-track playlist\n💻 Terminal & Bot — run commands & mint tokens\n🎨 Character Builder — pixel art studio\n📺 Video Gallery — classic game videos"
+      ],
+      default: [
+        "🤖 Interesting question! As the Synch Pipe Arcade AI, I specialize in retro gaming knowledge. Try asking me about Mario, Sonic, tokens, the emulators, or the bot farm system!",
+        "🎮 I'm not sure about that one, but I know everything about 80s and 90s gaming! Ask me about Super Mario Bros., the NES/SNES/Genesis era, or how the MARIO-TOKENS system works.",
+        "⭐ That's outside my ROM library! But I can tell you about Mario's 40-year history, explain the token economy, or help you navigate the Synch Pipe Arcade hub. What retro gaming topic interests you?",
+        "🍄 Hmm, let me search my power-up inventory... The answer might be in World 4-2! In the meantime, try asking about Mario, Sonic, tokens, the emulators, or the bot farm."
+      ]
+    };
+
+    function getResponse(input) {
+      var lower = input.toLowerCase();
+      var key = 'default';
+      if (/mario|mushroom|bowser|peach|luigi|toad|koopa|yoshi|nintendo/.test(lower)) key = 'mario';
+      else if (/sonic|sega|genesis|hedgehog|tails|knuckles/.test(lower))             key = 'sonic';
+      else if (/token|coin|mint|treasury|economy|currency/.test(lower))              key = 'token';
+      else if (/bot|farm|mongoose|webhook|agent|deploy|scan/.test(lower))            key = 'bot';
+      else if (/emulator|emulation|rom|core|nes|snes|play|load/.test(lower))         key = 'emulator';
+      else if (/game|play|title|available|recommend|list/.test(lower))               key = 'game';
+      else if (/help|what|how|who|where|guide/.test(lower))                          key = 'help';
+      var arr = AI_RESPONSES[key] || AI_RESPONSES.default;
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function addMessage(text, role) {
+      var msgs = document.getElementById('chat-messages');
+      var now  = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      var div = document.createElement('div');
+      div.className = 'msg ' + role;
+
+      var avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = role === 'ai' ? '🤖' : role === 'sys' ? '⚡' : '👤';
+
+      var bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      bubble.textContent = text;
+
+      var meta = document.createElement('div');
+      meta.className = 'msg-meta';
+      meta.textContent = (role === 'user' ? 'You' : role === 'sys' ? 'SYSTEM' : 'Arcade AI') + ' · ' + now;
+
+      div.appendChild(avatar);
+      div.appendChild(bubble);
+      div.appendChild(meta);
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      msgCount++;
+      document.getElementById('msg-count').textContent = msgCount + ' message' + (msgCount !== 1 ? 's' : '');
+      return bubble;
+    }
+
+    function addSysMsg(text) { addMessage(text, 'sys'); }
+
+    function sendMessage(text) {
+      var trimmed = text.trim();
+      if (!trimmed) return;
+      addMessage(trimmed, 'user');
+      document.getElementById('chat-input').value = '';
+
+      // Show typing indicator
+      var ti = document.getElementById('typing-indicator');
+      ti.classList.add('visible');
+      document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+
+      var delay = 800 + Math.random() * 1200;
+      setTimeout(function () {
+        ti.classList.remove('visible');
+        var response = getResponse(trimmed);
+        addMessage(response, 'ai');
+      }, delay);
+    }
+
+    function quickSend(text) {
+      sendMessage(text);
+    }
+
+    document.getElementById('chat-send').addEventListener('click', function () {
+      sendMessage(document.getElementById('chat-input').value);
+    });
+    document.getElementById('chat-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendMessage(this.value);
+    });
+
+    // System boot messages
+    addSysMsg('▶ ARCADE AI v1.0 ONLINE — Synch Pipe Intelligence Module');
+    addSysMsg('▶ Mario knowledge base loaded: 40 years of gaming history');
+    addSysMsg('▶ Token engine connected: treasury module active');
+    setTimeout(function () {
+      addMessage("🎮 Hello, Player 1! Welcome to the Synch Pipe Arcade AI. I'm your retro gaming assistant — ask me anything about Mario, Sonic, classic games, tokens, or how to use the arcade hub. INSERT COIN to begin! 🪙", 'ai');
+    }, 600);
+  </script>
+</body>
+</html>

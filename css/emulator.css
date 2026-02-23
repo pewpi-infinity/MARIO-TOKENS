@@ -1,0 +1,403 @@
+/* ============================================================
+   EMULATOR.CSS — Retro Emulator Panel Styles
+   Synch Pipe Arcade Hub · pewpi-infinity
+   ============================================================ */
+
+/* ── Emulator Container ─────────────────────────────────── */
+.emulator-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.emulator-bezel {
+  position: relative;
+  width: 100%;
+  background: #0a0a1a;
+  border: 4px solid var(--gold);
+  border-radius: 12px;
+  box-shadow:
+    0 0 30px var(--gold-glow),
+    0 0 60px rgba(255, 204, 0, 0.15),
+    inset 0 0 20px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.emulator-bezel::before {
+  content: 'SYNCH PIPE ARCADE';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--gold-dim);
+  letter-spacing: 4px;
+  z-index: 2;
+}
+
+.emulator-screen {
+  position: relative;
+  width: 100%;
+  padding-top: 28px;
+  background: #000;
+}
+
+#game {
+  width: 100% !important;
+  height: 500px !important;
+  display: block;
+  background: #000;
+}
+
+/* CRT scanline overlay on screen */
+.emulator-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── Controller Overlay ─────────────────────────────────── */
+.controller-overlay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: #0d0d1f;
+  border: 2px solid var(--gold);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 12px 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.controller-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.controller-label {
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* D-Pad */
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 28px);
+  grid-template-rows: repeat(3, 28px);
+  gap: 2px;
+}
+
+.dpad-btn {
+  background: #1a1a2e;
+  border: 2px solid #333;
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, border-color 0.1s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dpad-btn:hover,
+.dpad-btn.active {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+}
+
+.dpad-center {
+  background: #333;
+  border-radius: 50%;
+  cursor: default;
+}
+.dpad-empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 36px);
+  gap: 8px;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.1s, transform 0.1s;
+  font-family: var(--font-mono);
+}
+
+.action-btn:hover,
+.action-btn.active {
+  opacity: 0.75;
+  transform: scale(0.92);
+}
+
+.btn-b { background: #cc3300; border-color: #ff5533; }
+.btn-a { background: #cc0033; border-color: #ff0055; }
+.btn-y { background: #006633; border-color: #00aa55; }
+.btn-x { background: #003399; border-color: #0055ff; }
+
+/* Start / Select */
+.menu-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.menu-btn {
+  background: #1a1a2e;
+  border: 2px solid var(--gold-dim);
+  border-radius: 20px;
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.menu-btn:hover,
+.menu-btn.active {
+  background: var(--gold);
+  color: #000;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* ── Keyboard Map Display ───────────────────────────────── */
+.keymap-display {
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px 16px;
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.keymap-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+}
+
+.key-badge {
+  background: #222;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  color: var(--gold);
+  font-size: 0.65rem;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── ROM Search ─────────────────────────────────────────── */
+.rom-search-bar {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.rom-search-bar input {
+  flex: 1;
+  background: #0a0a1a;
+  border: 2px solid var(--gold-dim);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 8px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.rom-search-bar input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+
+.rom-search-bar button {
+  background: var(--gold);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.rom-search-bar button:hover { opacity: 0.8; }
+
+.rom-results {
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #0a0a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+.rom-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid #1a1a2e;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.rom-result-item:hover { background: rgba(255,204,0,0.08); }
+.rom-result-item:last-child { border-bottom: none; }
+
+.rom-result-item .rom-title { color: var(--text); }
+.rom-result-item .rom-load-btn {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  color: var(--gold);
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+.rom-result-item .rom-load-btn:hover {
+  background: var(--gold);
+  color: #000;
+}
+
+/* ── Game List Sidebar ──────────────────────────────────── */
+.emulator-layout {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.emulator-main { flex: 1; min-width: 0; }
+
+.game-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: #0a0a1a;
+  border: 2px solid var(--gold-dim);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.game-sidebar h3 {
+  background: var(--gold);
+  color: #000;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  padding: 8px 14px;
+  text-align: center;
+}
+
+.sidebar-game {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a1a2e;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.75rem;
+}
+
+.sidebar-game:hover,
+.sidebar-game.active {
+  background: rgba(255,204,0,0.1);
+  color: var(--gold);
+}
+
+.sidebar-game .g-icon { font-size: 1.1rem; }
+.sidebar-game .g-title { color: var(--text); font-size: 0.7rem; line-height: 1.3; }
+.sidebar-game.active .g-title { color: var(--gold); }
+
+/* ── Game Metadata ──────────────────────────────────────── */
+.game-metadata {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 0.72rem;
+}
+
+.game-metadata .meta-title {
+  color: var(--gold);
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.game-metadata .meta-row {
+  display: flex;
+  gap: 12px;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
+
+.game-metadata .meta-row span { color: var(--text); }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .emulator-layout { flex-direction: column; }
+  .game-sidebar { width: 100%; }
+  #game { height: 320px !important; }
+  .controller-overlay { justify-content: center; }
+  .emulator-bezel::before { display: none; }
+}

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jukebox Aerobics — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <link rel="stylesheet" href="../css/jukebox.css" />
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F3B5; Jukebox Aerobics</h1>
+    <p class="tagline">
+      <span id="note-anim" style="animation:noteBounce 0.5s infinite alternate;display:inline-block">♪</span>
+      &nbsp;Synch Pipe Arcade &nbsp;&#9679;&nbsp; 100 Tracks &nbsp;&#9679;&nbsp; Mario + 90s Rock
+      &nbsp;<span style="animation:noteBounce 0.5s 0.25s infinite alternate;display:inline-block">♫</span>
+    </p>
+  </header>
+
+  <style>
+    @keyframes noteBounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+  </style>
+
+  <main id="main-content">
+    <section class="panel full-width">
+      <div class="jukebox-layout">
+
+        <!-- Now Playing -->
+        <div class="now-playing-card">
+          <div class="album-art" id="album-art">🎵</div>
+          <div class="now-playing-info">
+            <div class="np-label">NOW PLAYING</div>
+            <div class="np-title" id="np-title">Select a track to begin</div>
+            <div class="np-artist" id="np-artist">—</div>
+            <div class="np-duration" id="np-time">0:00 / 0:00</div>
+            <div class="progress-bar-track" id="progress-track">
+              <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visualizer -->
+        <canvas id="viz-canvas" width="800" height="60" aria-hidden="true"></canvas>
+
+        <!-- Controls -->
+        <div class="player-controls">
+          <button class="ctrl-btn" id="btn-prev"    title="Previous" aria-label="Previous">⏮</button>
+          <button class="ctrl-btn" id="btn-shuffle"  title="Shuffle"  aria-label="Shuffle">⇄</button>
+          <button class="ctrl-btn primary" id="btn-play" title="Play/Pause" aria-label="Play/Pause">▶</button>
+          <button class="ctrl-btn" id="btn-next"    title="Next"    aria-label="Next">⏭</button>
+          <div class="volume-row">
+            <span class="volume-icon">🔊</span>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.05" value="0.7" aria-label="Volume" />
+          </div>
+        </div>
+
+        <!-- Track list tabs -->
+        <div class="track-list-section">
+          <div class="track-list-header">
+            <button class="track-tab active" id="tab-mario" onclick="switchTab('mario')">🍄 MARIO TUNES (10)</button>
+            <button class="track-tab" id="tab-rock"  onclick="switchTab('rock')">🎸 ROCK CLASSICS (90)</button>
+          </div>
+          <div class="track-list" id="track-list"></div>
+        </div>
+
+        <!-- Search more -->
+        <div style="width:100%">
+          <p style="font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:8px">SEARCH MORE MUSIC (Internet Archive)</p>
+          <div class="music-search-row">
+            <input type="text" id="music-search-input" placeholder="Search archive.org for music..." aria-label="Music search" />
+            <button onclick="doMusicSearch()">SEARCH</button>
+          </div>
+          <div id="music-search-results" style="margin-top:8px"></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Hidden audio element -->
+  <audio id="hidden-audio" crossorigin="anonymous"></audio>
+
+  <script src="../js/navigation.js"></script>
+  <script src="../js/jukebox.js"></script>
+
+  <script>
+    var PLAYLIST = [];
+    var currentTab = 'mario';
+
+    // Load playlist from JSON
+    fetch('../data/music-playlist.json')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        PLAYLIST = data.playlist || [];
+        Jukebox.init(PLAYLIST);
+        Jukebox.setCanvas(document.getElementById('viz-canvas'));
+        renderTrackList(currentTab);
+        Jukebox.onTrackChange(function (track, playing, idx) {
+          updateNowPlaying(track, playing);
+          highlightTrack(idx);
+        });
+      })
+      .catch(function (err) {
+        console.warn('[Jukebox] Failed to load playlist, using inline fallback:', err);
+        // Minimal fallback
+        PLAYLIST = [
+          {id:1,title:"Super Mario Bros. Theme",artist:"Koji Kondo",type:"mario",archive_id:"mario-bros-nes-music",file:"01_overworld_theme.mp3",duration:"1:37"},
+          {id:11,title:"Smells Like Teen Spirit",artist:"Nirvana",type:"rock",archive_id:"nirvana-nevermind-full-album",file:"01_smells_like_teen_spirit.mp3",duration:"5:01"}
+        ];
+        Jukebox.init(PLAYLIST);
+        Jukebox.setCanvas(document.getElementById('viz-canvas'));
+        renderTrackList(currentTab);
+      });
+
+    function renderTrackList(type) {
+      var list = document.getElementById('track-list');
+      list.innerHTML = '';
+      var filtered = PLAYLIST.filter(function (t) { return t.type === type; });
+      filtered.forEach(function (track, i) {
+        var div = document.createElement('div');
+        div.className = 'track-item';
+        div.setAttribute('data-id', track.id);
+        var globalIdx = PLAYLIST.indexOf(track);
+        div.innerHTML =
+          '<span class="track-num">' + (i + 1) + '</span>' +
+          '<div class="track-info">' +
+            '<div class="track-name">' + escHtml(track.title) + '</div>' +
+            '<div class="track-artist">' + escHtml(track.artist) + '</div>' +
+          '</div>' +
+          '<span class="track-dur">' + escHtml(track.duration) + '</span>';
+        div.addEventListener('click', function () {
+          Jukebox.selectTrack(globalIdx);
+        });
+        list.appendChild(div);
+      });
+    }
+
+    function switchTab(type) {
+      currentTab = type;
+      document.getElementById('tab-mario').classList.toggle('active', type === 'mario');
+      document.getElementById('tab-rock').classList.toggle('active',  type === 'rock');
+      renderTrackList(type);
+    }
+
+    function updateNowPlaying(track, playing) {
+      if (!track) return;
+      document.getElementById('np-title').textContent  = track.title  || '—';
+      document.getElementById('np-artist').textContent = track.artist || '—';
+      document.getElementById('btn-play').textContent  = playing ? '⏸' : '▶';
+      var art = document.getElementById('album-art');
+      art.textContent = track.type === 'mario' ? '🍄' : '🎸';
+      if (playing) { art.classList.add('spinning'); } else { art.classList.remove('spinning'); }
+    }
+
+    function highlightTrack(globalIdx) {
+      document.querySelectorAll('.track-item').forEach(function (el) { el.classList.remove('playing'); });
+      var track = PLAYLIST[globalIdx];
+      if (!track) return;
+      var el = document.querySelector('[data-id="' + track.id + '"]');
+      if (el) {
+        el.classList.add('playing');
+        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+
+    // Control buttons
+    document.getElementById('btn-play').addEventListener('click', function () {
+      if (Jukebox.isPlaying()) { Jukebox.pause(); document.getElementById('btn-play').textContent = '▶'; }
+      else { Jukebox.play(); document.getElementById('btn-play').textContent = '⏸'; }
+    });
+    document.getElementById('btn-next').addEventListener('click', function () { Jukebox.next(); });
+    document.getElementById('btn-prev').addEventListener('click', function () { Jukebox.prev(); });
+    document.getElementById('btn-shuffle').addEventListener('click', function () {
+      var on = Jukebox.shuffle();
+      document.getElementById('btn-shuffle').style.color = on ? 'var(--gold)' : '';
+    });
+    document.getElementById('volume-slider').addEventListener('input', function () {
+      Jukebox.setVolume(this.value);
+    });
+
+    // Progress bar click-to-seek (visual only — actual seek is browser-level via audio element)
+    document.getElementById('progress-track').addEventListener('click', function (e) {
+      var rect = this.getBoundingClientRect();
+      var pct  = (e.clientX - rect.left) / rect.width;
+      document.getElementById('progress-fill').style.width = (pct * 100) + '%';
+    });
+
+    function doMusicSearch() {
+      try {
+        var q = document.getElementById('music-search-input').value.trim();
+        if (!q) return;
+        var container = document.getElementById('music-search-results');
+        container.innerHTML = '<div style="color:var(--text-dim);font-size:0.75rem;padding:8px">Searching archive.org...</div>';
+        Jukebox.search(q, function (err, results) {
+          if (err || !results.length) {
+            container.innerHTML = '<div style="color:var(--text-dim);font-size:0.75rem;padding:8px">No results.</div>';
+            return;
+          }
+          container.innerHTML = results.slice(0, 10).map(function (r) {
+            return '<div style="padding:8px 12px;border-bottom:1px solid #1a1a2e;font-size:0.75rem;color:var(--text)">' +
+              escHtml(r.title || r.identifier) +
+              (r.creator ? ' <span style="color:var(--text-dim)">— ' + escHtml(r.creator) + '</span>' : '') +
+              '</div>';
+          }).join('');
+        });
+      } catch (e) { console.warn('[Jukebox] search error:', e); }
+    }
+
+    document.getElementById('music-search-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') doMusicSearch();
+    });
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>

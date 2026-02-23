@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Character Builder — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <link rel="stylesheet" href="../css/character-builder.css" />
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F3A8; Character Builder</h1>
+    <p class="tagline">Synch Pipe Arcade &nbsp;&#9679;&nbsp; Pixel Art Studio &nbsp;&#9679;&nbsp; Draw &bull; Save &bull; Export</p>
+  </header>
+
+  <main id="main-content">
+    <section class="panel full-width">
+      <div class="builder-layout">
+
+        <!-- Canvas area -->
+        <div class="canvas-area">
+          <div class="canvas-container" id="canvas-container">
+            <canvas id="pixel-canvas"></canvas>
+          </div>
+
+          <!-- Action buttons below canvas -->
+          <div class="action-row" style="width:384px;max-width:100%">
+            <button class="export-btn" onclick="CharacterBuilder.exportPNG()">&#x1F4BE; Export PNG</button>
+            <button class="export-btn" onclick="doSave()">&#x1F4BE; Save</button>
+            <button class="export-btn" onclick="doLoad()">&#x1F4C2; Load</button>
+            <button class="clear-btn"  onclick="CharacterBuilder.clear()">&#x1F5D1; Clear</button>
+          </div>
+
+          <!-- Save status -->
+          <div id="save-status" style="font-size:0.65rem;color:var(--text-dim);height:18px"></div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="builder-panel">
+
+          <!-- Color Preview -->
+          <div class="builder-section">
+            <div class="builder-section-title">CURRENT COLOR</div>
+            <div class="builder-section-body">
+              <div class="color-preview">
+                <div class="current-color-box" id="current-color-box" style="background:#ff0000"></div>
+                <span class="color-hex" id="color-hex">#FF0000</span>
+              </div>
+              <div class="custom-color-row">
+                <label for="custom-color">Custom:</label>
+                <input type="color" id="custom-color" value="#ff0000"
+                       onchange="CharacterBuilder.setColor(this.value)" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Color Palette -->
+          <div class="builder-section">
+            <div class="builder-section-title">PALETTE</div>
+            <div class="builder-section-body">
+              <div class="palette-grid" id="palette-grid"></div>
+              <div class="palette-selector" id="palette-selector"></div>
+            </div>
+          </div>
+
+          <!-- Tools -->
+          <div class="builder-section">
+            <div class="builder-section-title">TOOLS</div>
+            <div class="builder-section-body">
+              <div class="tool-buttons">
+                <button class="tool-btn active" id="tool-draw"  onclick="selectTool('draw')">
+                  <span class="tool-icon">✏️</span> Draw
+                </button>
+                <button class="tool-btn" id="tool-erase" onclick="selectTool('erase')">
+                  <span class="tool-icon">🧹</span> Erase
+                </button>
+                <button class="tool-btn" id="tool-fill"  onclick="selectTool('fill')">
+                  <span class="tool-icon">🪣</span> Fill
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid Size -->
+          <div class="builder-section">
+            <div class="builder-section-title">GRID SIZE</div>
+            <div class="builder-section-body">
+              <div class="grid-size-toggle">
+                <button class="size-btn" id="size-8"  onclick="selectSize(8)">8×8</button>
+                <button class="size-btn active" id="size-16" onclick="selectSize(16)">16×16</button>
+                <button class="size-btn" id="size-32" onclick="selectSize(32)">32×32</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Templates -->
+          <div class="builder-section">
+            <div class="builder-section-title">TEMPLATES</div>
+            <div class="builder-section-body">
+              <div class="template-grid">
+                <button class="template-btn" onclick="CharacterBuilder.loadTemplatePattern('mario')">
+                  <span class="t-icon">🍄</span>
+                  <span class="t-name">Mario</span>
+                </button>
+                <button class="template-btn" onclick="CharacterBuilder.loadTemplatePattern('luigi')">
+                  <span class="t-icon">💚</span>
+                  <span class="t-name">Luigi</span>
+                </button>
+                <button class="template-btn" onclick="CharacterBuilder.loadTemplatePattern('mushroom')">
+                  <span class="t-icon">🍄</span>
+                  <span class="t-name">Mushroom</span>
+                </button>
+                <button class="template-btn" onclick="CharacterBuilder.loadTemplatePattern('goomba')">
+                  <span class="t-icon">👾</span>
+                  <span class="t-name">Goomba</span>
+                </button>
+                <button class="template-btn" onclick="CharacterBuilder.loadTemplatePattern('coin')">
+                  <span class="t-icon">🪙</span>
+                  <span class="t-name">Coin</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/navigation.js"></script>
+  <script src="../js/character-builder.js"></script>
+
+  <script>
+    var PALETTES = [
+      {id:'mario', name:'Mario Classic', colors:['#ff0000','#ffaa00','#ffffff','#964b00','#000000','#6b8cff','#00aa00','#ffff00']},
+      {id:'sonic', name:'Sonic Blue',    colors:['#2196f3','#ff9800','#ffffff','#000000','#f44336','#4caf50','#9c27b0','#ffeb3b']},
+      {id:'neon',  name:'Neon Arcade',   colors:['#ff00ff','#00ffff','#ffff00','#ff0000','#00ff00','#0000ff','#ffffff','#000000']}
+    ];
+    var currentPaletteId = 'mario';
+
+    CharacterBuilder.init('pixel-canvas', 16);
+
+    // Render palette grid
+    function renderPalette(paletteId) {
+      currentPaletteId = paletteId;
+      var pal = PALETTES.find(function (p) { return p.id === paletteId; }) || PALETTES[0];
+      var grid = document.getElementById('palette-grid');
+      grid.innerHTML = '';
+      pal.colors.forEach(function (color) {
+        var sw = document.createElement('div');
+        sw.className = 'palette-swatch';
+        sw.style.background = color;
+        sw.title = color;
+        sw.addEventListener('click', function () {
+          document.querySelectorAll('.palette-swatch').forEach(function (s) { s.classList.remove('selected'); });
+          sw.classList.add('selected');
+          CharacterBuilder.setColor(color);
+          document.getElementById('custom-color').value = color;
+        });
+        grid.appendChild(sw);
+      });
+      // Auto-select first color
+      var first = grid.querySelector('.palette-swatch');
+      if (first) first.classList.add('selected');
+      CharacterBuilder.setColor(pal.colors[0]);
+      document.getElementById('custom-color').value = pal.colors[0];
+    }
+
+    // Render palette tabs
+    function renderPaletteTabs() {
+      var sel = document.getElementById('palette-selector');
+      sel.innerHTML = '';
+      PALETTES.forEach(function (p) {
+        var btn = document.createElement('button');
+        btn.className = 'palette-tag' + (p.id === currentPaletteId ? ' active' : '');
+        btn.textContent = p.name;
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.palette-tag').forEach(function (t) { t.classList.remove('active'); });
+          btn.classList.add('active');
+          renderPalette(p.id);
+        });
+        sel.appendChild(btn);
+      });
+    }
+
+    renderPalette('mario');
+    renderPaletteTabs();
+
+    function selectTool(tool) {
+      CharacterBuilder.setTool(tool);
+      document.querySelectorAll('.tool-btn').forEach(function (b) { b.classList.remove('active'); });
+      var el = document.getElementById('tool-' + tool);
+      if (el) el.classList.add('active');
+    }
+
+    function selectSize(size) {
+      CharacterBuilder.resize(size);
+      document.querySelectorAll('.size-btn').forEach(function (b) { b.classList.remove('active'); });
+      var el = document.getElementById('size-' + size);
+      if (el) el.classList.add('active');
+    }
+
+    function doSave() {
+      var ok = CharacterBuilder.save();
+      var status = document.getElementById('save-status');
+      status.textContent = ok ? '✓ Saved to localStorage' : '✗ Save failed';
+      status.style.color = ok ? 'var(--green-token)' : 'var(--red-alert)';
+      setTimeout(function () { status.textContent = ''; }, 2000);
+    }
+
+    function doLoad() {
+      var ok = CharacterBuilder.load();
+      var status = document.getElementById('save-status');
+      status.textContent = ok ? '✓ Loaded from localStorage' : '✗ No saved data found';
+      status.style.color = ok ? 'var(--green-token)' : 'var(--red-alert)';
+      setTimeout(function () { status.textContent = ''; }, 2000);
+    }
+  </script>
+</body>
+</html>
