@@ -1,1 +1,594 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Synch Pipe Arcade Hub</title>\n    <style>\n        body { font-family: 'Courier New', monospace; background-color: #000; color: #fff; }\n        h1, h2 { color: #ffcc00; }\n        #emulator, #cartoon-viewer, #token-system, #game-selector { margin: 20px; padding: 10px; border: 1px solid #ffcc00; background-color: rgba(0, 0, 0, 0.7); }\n    </style>\n</head>\n<body>\n    <h1>Welcome to Synch Pipe Arcade Hub</h1>\n    <div id="emulator">\n        <h2>NES Emulator</h2>\n        <p>[NES Emulator integration will go here]</p>\n    </div>\n    <div id="cartoon-viewer">\n        <h2>Mario Cartoon Viewer</h2>\n        <p>[Mario cartoon viewer will go here]</p>\n    </div>\n    <div id="token-system">\n        <h2>Token System</h2>\n        <p>[Token system for watch-to-earn mechanics will go here]</p>\n    </div>\n    <div id="game-selector">\n        <h2>Game Selector</h2>\n        <p>[Game selector with retro Infinity aesthetic will go here]</p>\n    </div>\n</body>\n</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synch Pipe Arcade Hub — pewpi-infinity</title>
+  <meta name="description" content="Synch Pipe Arcade Hub: NES emulator, Mario cartoon viewer, token economy, power-ups, and bot farm integration." />
+  <link rel="stylesheet" href="css/infinity-theme.css" />
+</head>
+<body>
+
+  <!-- Star Invincibility Overlay -->
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <!-- Hamburger Nav (CSS-only toggle) -->
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="#emulator-panel">&#x1F579;&#xFE0F; NES Emulator</a>
+    <a href="#cartoon-panel">&#x1F4FA; Cartoon Viewer</a>
+    <a href="#token-panel">&#x1F4B0; Token Economy</a>
+    <a href="#power-panel">&#x2B50; Power-Ups</a>
+    <a href="#game-panel">&#x1F3AE; Game Selector</a>
+    <a href="#bot-panel">&#x1F916; Bot Farm</a>
+    <a href="#repair-panel">&#x1F527; Script Repair</a>
+    <a href="#log-panel">&#x1F4CB; Event Log</a>
+    <h3 style="margin-top:20px">&#9658; Links</h3>
+    <a href="https://github.com/pewpi-infinity/MARIO-TOKENS" target="_blank" rel="noopener">GitHub Repo</a>
+    <a href="https://github.com/pewpi-infinity/Emulator-" target="_blank" rel="noopener">Emulator- Repo</a>
+    <a href="https://archive.org/search?query=mario+cartoon" target="_blank" rel="noopener">Internet Archive</a>
+  </nav>
+
+  <!-- Site Header -->
+  <header id="site-header">
+    <h1>&#9829; Synch Pipe Arcade Hub</h1>
+    <p class="tagline">pewpi-infinity &nbsp;&#9679;&nbsp; token economy &nbsp;&#9679;&nbsp; bot farm &nbsp;&#9679;&nbsp; retro infinity</p>
+  </header>
+
+  <!-- Main Content Grid -->
+  <main id="main-content">
+
+    <!-- 1. NES EMULATOR PANEL -->
+    <section id="emulator-panel" class="panel full-width" aria-label="NES Emulator">
+      <h2><span class="icon">&#x1F579;&#xFE0F;</span> NES Emulator</h2>
+
+      <!-- Game Selector -->
+      <div id="game-panel">
+        <p style="font-size:0.78rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px">SELECT GAME ROM:</p>
+        <div id="game-list" role="list">
+          <div class="game-card selected" role="listitem" data-rom="mario1"
+               onclick="ArcadeHub.selectGame('mario1',this)" tabindex="0"
+               onkeypress="if(event.key==='Enter')ArcadeHub.selectGame('mario1',this)">
+            <span class="game-icon">&#x1F344;</span>
+            Super Mario Bros.
+          </div>
+          <div class="game-card" role="listitem" data-rom="mario3"
+               onclick="ArcadeHub.selectGame('mario3',this)" tabindex="0"
+               onkeypress="if(event.key==='Enter')ArcadeHub.selectGame('mario3',this)">
+            <span class="game-icon">&#x1F985;</span>
+            Super Mario Bros. 3
+          </div>
+          <div class="game-card" role="listitem" data-rom="zelda"
+               onclick="ArcadeHub.selectGame('zelda',this)" tabindex="0"
+               onkeypress="if(event.key==='Enter')ArcadeHub.selectGame('zelda',this)">
+            <span class="game-icon">&#x1F5E1;&#xFE0F;</span>
+            The Legend of Zelda
+          </div>
+          <div class="game-card" role="listitem" data-rom="contra"
+               onclick="ArcadeHub.selectGame('contra',this)" tabindex="0"
+               onkeypress="if(event.key==='Enter')ArcadeHub.selectGame('contra',this)">
+            <span class="game-icon">&#x1F52B;</span>
+            Contra
+          </div>
+          <div class="game-card" role="listitem" data-rom="metroid"
+               onclick="ArcadeHub.selectGame('metroid',this)" tabindex="0"
+               onkeypress="if(event.key==='Enter')ArcadeHub.selectGame('metroid',this)">
+            <span class="game-icon">&#x1F680;</span>
+            Metroid
+          </div>
+        </div>
+      </div>
+
+      <!-- Emulator Frame -->
+      <div id="emulator-container" aria-label="NES emulator viewport">
+        <div id="emulator-placeholder">
+          <p>&#9658; NES Emulator</p>
+          <p style="margin-top:8px;font-size:0.72rem">
+            Powered by
+            <a href="https://github.com/pewpi-infinity/Emulator-"
+               target="_blank" rel="noopener"
+               style="color:var(--gold)">pewpi-infinity/Emulator-</a>
+          </p>
+          <p style="margin-top:12px">
+            <button class="btn sm" onclick="ArcadeHub.launchEmulator()">&#9654; Launch Emulator</button>
+          </p>
+          <p style="margin-top:10px;font-size:0.68rem;color:var(--text-dim)">Select a game above, then click Launch.</p>
+        </div>
+      </div>
+
+      <!-- In-game simulation controls -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+        <button class="btn sm" onclick="ArcadeHub.simulateStomp()">&#x1F45F; Stomp Enemy</button>
+        <button class="btn sm" onclick="ArcadeHub.simulateCoin()">&#x1FA99; Collect Coin</button>
+        <button class="btn sm" onclick="ArcadeHub.simulateOneUp()">&#x1F344; 1-UP</button>
+        <button class="btn sm" onclick="ArcadeHub.simulateFlagPole()">&#x1F6A9; Flag Pole</button>
+      </div>
+    </section>
+
+    <!-- 2. CARTOON VIEWER -->
+    <section id="cartoon-panel" class="panel col-2" aria-label="Mario Cartoon Viewer">
+      <h2><span class="icon">&#x1F4FA;</span> Mario Cartoon Viewer
+        <span class="token-badge gold" style="margin-left:auto">+10 MPT/hr</span>
+      </h2>
+
+      <p style="font-size:0.78rem;color:var(--text-dim);margin-bottom:8px">
+        Watch cartoons from the Internet Archive to earn Gold Tokens (10 MPT/hour).
+      </p>
+
+      <div id="cartoon-iframe-wrap">
+        <iframe
+          id="cartoon-iframe"
+          src="https://archive.org/embed/SuperMarioBros1993Episode1"
+          title="Mario Cartoon - Internet Archive"
+          allowfullscreen
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin allow-presentation"
+        ></iframe>
+      </div>
+
+      <p class="earn-ticker" id="earn-ticker">&#9632; WATCH-TO-EARN ACTIVE - +10 MPT/hr</p>
+
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn sm" onclick="ArcadeHub.startWatching()">&#9654; Start Earning</button>
+        <button class="btn sm danger" onclick="ArcadeHub.stopWatching()">&#9632; Stop</button>
+        <button class="btn sm" onclick="ArcadeHub.changeCartoon()">&#8635; Next Episode</button>
+      </div>
+    </section>
+
+    <!-- 3. TOKEN ECONOMY -->
+    <section id="token-panel" class="panel" aria-label="Token Economy">
+      <h2><span class="icon">&#x1F4B0;</span> Token Economy</h2>
+
+      <div id="token-balances">
+        <div class="balance-card gold" aria-label="Gold token balance">
+          <div class="label">Gold (MPT)</div>
+          <div class="amount" id="bal-gold">0.00</div>
+          <div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Active scripts &middot; $1.00 value</div>
+        </div>
+        <div class="balance-card plat" aria-label="Platinum token balance">
+          <div class="label">Platinum</div>
+          <div class="amount" id="bal-plat">0</div>
+          <div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Retired scripts &middot; collectible</div>
+        </div>
+        <div class="balance-card igt" aria-label="In-game token balance">
+          <div class="label">IGT</div>
+          <div class="amount" id="bal-igt">0.00</div>
+          <div style="font-size:0.65rem;color:var(--text-dim);margin-top:3px">Micro-currency &middot; $0.01 value</div>
+        </div>
+      </div>
+
+      <p style="font-size:0.72rem;color:var(--gold);letter-spacing:1px;margin-top:14px;margin-bottom:4px">SCRIPT VERSIONS:</p>
+      <table id="script-version-table" aria-label="Script version history">
+        <thead>
+          <tr>
+            <th>Script</th>
+            <th>Version</th>
+            <th>Status</th>
+            <th>Token</th>
+          </tr>
+        </thead>
+        <tbody id="script-version-tbody">
+          <tr>
+            <td>mario-jump</td><td>mario1</td>
+            <td style="color:var(--gold)">ACTIVE</td>
+            <td><span class="token-badge gold">MPT</span></td>
+          </tr>
+          <tr>
+            <td>mario-fly</td><td>mario3</td>
+            <td style="color:var(--gold)">ACTIVE</td>
+            <td><span class="token-badge gold">MPT</span></td>
+          </tr>
+          <tr>
+            <td>mario-jump</td><td>classic</td>
+            <td style="color:var(--platinum)">RETIRED</td>
+            <td><span class="token-badge platinum">PLAT</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:10px;font-size:0.72rem;color:var(--text-dim);letter-spacing:1px">
+        Script capacity: <span id="script-capacity">NORMAL</span>
+      </div>
+    </section>
+
+    <!-- 4. POWER-UPS PANEL -->
+    <section id="power-panel" class="panel" aria-label="Power-Ups">
+      <h2><span class="icon">&#x2B50;</span> Power-Ups</h2>
+
+      <div id="power-ups-row" role="group" aria-label="Power-up controls">
+        <button class="power-btn" id="btn-star"
+                onclick="PowerUps.activateStar()"
+                aria-label="Activate Star - invincibility">
+          <span class="pu-icon">&#x2B50;</span>
+          STAR
+          <div style="font-size:0.65rem;margin-top:4px;color:var(--text-dim)">Invincibility &middot; 15s</div>
+        </button>
+
+        <button class="power-btn" id="btn-mushroom"
+                onclick="PowerUps.activateMushroom()"
+                aria-label="Activate Mushroom - doubles size">
+          <span class="pu-icon">&#x1F344;</span>
+          MUSHROOM
+          <div style="font-size:0.65rem;margin-top:4px;color:var(--text-dim)">2&times; tokens &middot; 30s</div>
+        </button>
+
+        <button class="power-btn" id="btn-brick"
+                onclick="PowerUps.breakBrick('demo-brick')"
+                aria-label="Break Brick - reveals restructured scripts"
+                data-brick>
+          <span class="pu-icon">&#x1F9F1;</span>
+          BRICK
+          <div style="font-size:0.65rem;margin-top:4px;color:var(--text-dim)">Script restructure</div>
+        </button>
+      </div>
+
+      <div style="margin-top:12px;font-size:0.72rem;color:var(--text-dim)">
+        <strong style="color:var(--gold)">&#x2B50; Star</strong> &mdash; Invincibility, clears enemies, protection window<br/>
+        <strong style="color:#ff8844">&#x1F344; Mushroom</strong> &mdash; 2&times; jump, 2&times; token rate, expanded capacity<br/>
+        <strong style="color:#cc8844">&#x1F9F1; Brick</strong> &mdash; Reveals restructured scripts (code changes)
+      </div>
+
+      <div id="mario-character" aria-hidden="true" style="display:none"></div>
+    </section>
+
+    <!-- 5. BOT FARM -->
+    <section id="bot-panel" class="panel" aria-label="Bot Farm">
+      <h2><span class="icon">&#x1F916;</span> Bot Farm</h2>
+
+      <div id="bot-status-grid" aria-label="Bot status"></div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+        <button class="btn sm" onclick="ArcadeHub.runBotScan()">&#x1F50D; Scan Page</button>
+        <button class="btn sm" onclick="ArcadeHub.runBotFix()">&#x1F527; Auto-Fix</button>
+        <button class="btn sm" onclick="ArcadeHub.runBotGenerate()">&#x1F95A; Generate Egg</button>
+        <button class="btn sm" onclick="ArcadeHub.runScanAndFix()">&#x26A1; Scan+Fix</button>
+      </div>
+
+      <p style="font-size:0.68rem;color:var(--text-dim);margin-top:8px">
+        Queue: <span id="bot-queue-count">0</span> tasks pending
+      </p>
+    </section>
+
+    <!-- 6. SCRIPT REPAIR -->
+    <section id="repair-panel" class="panel" aria-label="Script Repair">
+      <h2><span class="icon">&#x1F527;</span> Script Repair</h2>
+
+      <div style="font-size:0.78rem;margin-bottom:10px">
+        <span style="color:var(--text-dim)">Fixes:</span>
+        <span id="fix-count" style="color:var(--gold);font-weight:bold">0</span>
+        &nbsp;|&nbsp;
+        <span style="color:var(--text-dim)">Scriptwriter tier:</span>
+        <span id="scriptwriter-status" style="color:var(--red-alert)">LOCKED</span>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:0.72rem" aria-label="Script chunk status">
+        <thead>
+          <tr>
+            <th style="color:var(--gold);padding:4px 6px;border-bottom:1px solid var(--gold-dim);text-align:left">Chunk</th>
+            <th style="color:var(--gold);padding:4px 6px;border-bottom:1px solid var(--gold-dim);text-align:left">Status</th>
+          </tr>
+        </thead>
+        <tbody id="chunk-table-body">
+          <tr>
+            <td style="padding:4px 6px;color:var(--text-dim);border-bottom:1px solid rgba(255,204,0,0.08)">No chunks registered</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. EVENT LOG -->
+    <section id="log-panel" class="panel full-width" aria-label="Event Log">
+      <h2><span class="icon">&#x1F4CB;</span> Event Log
+        <button class="btn sm" style="margin-left:auto" onclick="ArcadeHub.clearLog()">Clear</button>
+      </h2>
+      <div id="event-log" role="log" aria-live="polite" aria-label="Live event log">
+        <div class="log-entry info">[SYSTEM] Synch Pipe Arcade Hub initializing...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer id="site-footer">
+    <span>Synch Pipe Arcade Hub</span> &nbsp;&middot;&nbsp; pewpi-infinity &nbsp;&middot;&nbsp;
+    Powered by <a href="https://github.com/pewpi-infinity/Emulator-"
+                  target="_blank" rel="noopener" style="color:var(--gold)">Emulator-</a>
+    &nbsp;&middot;&nbsp;
+    Cartoons via <a href="https://archive.org" target="_blank" rel="noopener"
+                    style="color:var(--gold)">Internet Archive</a>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/mongoose-token-treasury.js"></script>
+  <script src="js/script-repair.js"></script>
+  <script src="js/power-ups.js"></script>
+  <script src="js/bot-farm-hooks.js"></script>
+
+  <!-- Arcade Hub Orchestrator -->
+  <script>
+  (function () {
+    'use strict';
+
+    var logLimit   = 200;
+    var _watchStop  = null;
+    var _currentRom = 'mario1';
+
+    var CARTOONS = [
+      'https://archive.org/embed/SuperMarioBros1993Episode1',
+      'https://archive.org/embed/SuperMarioBrosSupershowEp1',
+      'https://archive.org/embed/mario-cartoon-collection'
+    ];
+    var _cartoonIdx = 0;
+
+    var ROMS = {
+      mario1:  'https://pewpi-infinity.github.io/Emulator-/?rom=mario1',
+      mario3:  'https://pewpi-infinity.github.io/Emulator-/?rom=mario3',
+      zelda:   'https://pewpi-infinity.github.io/Emulator-/?rom=zelda',
+      contra:  'https://pewpi-infinity.github.io/Emulator-/?rom=contra',
+      metroid: 'https://pewpi-infinity.github.io/Emulator-/?rom=metroid'
+    };
+
+    function _log(msg, cls) {
+      var log = document.getElementById('event-log');
+      if (!log) return;
+      var div = document.createElement('div');
+      div.className = 'log-entry ' + (cls || 'info');
+      div.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+      log.appendChild(div);
+      while (log.children.length > logLimit) { log.removeChild(log.firstChild); }
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function _updateBalances() {
+      if (!window.Treasury) return;
+      var bal = Treasury.getBalance('player1');
+      var g = document.getElementById('bal-gold');
+      var p = document.getElementById('bal-plat');
+      var i = document.getElementById('bal-igt');
+      if (g) g.textContent = (bal.MPT  || 0).toFixed(2);
+      if (p) p.textContent = (bal.PLAT || 0).toFixed(0);
+      if (i) i.textContent = (bal.IGT  || 0).toFixed(2);
+    }
+
+    function _updateBotStatus() {
+      if (!window.BotFarm) return;
+      var grid = document.getElementById('bot-status-grid');
+      var bots = BotFarm.getBots();
+      if (!grid) return;
+      grid.innerHTML = bots.map(function (b) {
+        return '<div class="bot-card ' + (b.status === 'idle' ? 'active' : '') + '">' +
+          '<div class="bot-name">' + b.botId + '</div>' +
+          '<div class="bot-state">' + b.status.toUpperCase() + ' &middot; ' + b.tasksCompleted + ' done</div>' +
+          '</div>';
+      }).join('');
+      var q = document.getElementById('bot-queue-count');
+      var pending = BotFarm.getQueue().filter(function (t) { return t.status === 'pending'; }).length;
+      if (q) q.textContent = pending;
+    }
+
+    function _updateRepairPanel() {
+      if (!window.ScriptRepair) return;
+      var fc = document.getElementById('fix-count');
+      var sw = document.getElementById('scriptwriter-status');
+      var tb = document.getElementById('chunk-table-body');
+      if (fc) fc.textContent = ScriptRepair.getFixCount();
+      if (sw) {
+        sw.textContent = ScriptRepair.isScriptwriterUnlocked() ? 'UNLOCKED' : 'LOCKED';
+        sw.style.color = ScriptRepair.isScriptwriterUnlocked() ? 'var(--green-token)' : 'var(--red-alert)';
+      }
+      if (tb) {
+        var chunks = ScriptRepair.getChunks();
+        if (chunks.length === 0) return;
+        tb.innerHTML = chunks.map(function (c) {
+          return '<tr>' +
+            '<td style="padding:4px 6px;color:var(--text);border-bottom:1px solid rgba(255,204,0,0.08)">' + c.id + '</td>' +
+            '<td style="padding:4px 6px;border-bottom:1px solid rgba(255,204,0,0.08);color:' +
+              (c.status === 'fixed' ? 'var(--green-token)' : 'var(--red-alert)') + '">' +
+              c.status.toUpperCase() + '</td>' +
+            '</tr>';
+        }).join('');
+      }
+    }
+
+    function _updateScriptVersionTable() {
+      if (!window.Treasury) return;
+      var tbody = document.getElementById('script-version-tbody');
+      if (!tbody) return;
+      var versions = Treasury.getScriptVersions();
+      if (versions.length === 0) return;
+      tbody.innerHTML = versions.map(function (v) {
+        return '<tr>' +
+          '<td>' + v.scriptId + '</td>' +
+          '<td>' + v.version  + '</td>' +
+          '<td style="color:' + (v.retired ? 'var(--platinum)' : 'var(--gold)') + '">' +
+            (v.retired ? 'RETIRED' : 'ACTIVE') + '</td>' +
+          '<td><span class="token-badge ' + (v.retired ? 'platinum' : 'gold') + '">' +
+            (v.retired ? 'PLAT' : 'MPT') + '</span></td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    window.ArcadeHub = window.ArcadeHub || {};
+
+    ArcadeHub.selectGame = function (rom, el) {
+      _currentRom = rom;
+      document.querySelectorAll('.game-card').forEach(function (c) { c.classList.remove('selected'); });
+      if (el) el.classList.add('selected');
+      _log('Game selected: ' + rom, 'info');
+      console.log('[ARCADE] Game selected:', rom);
+    };
+
+    ArcadeHub.launchEmulator = function () {
+      var container = document.getElementById('emulator-container');
+      if (!container) return;
+      var url = ROMS[_currentRom] || ROMS.mario1;
+      container.innerHTML =
+        '<iframe src="' + url + '" title="NES Emulator" allowfullscreen ' +
+        'sandbox="allow-scripts allow-same-origin"></iframe>';
+      _log('Emulator launched: ' + _currentRom, 'info');
+      console.log('[ARCADE] Emulator launched:', url);
+      if (window.Treasury) {
+        Treasury.registerScriptVersion('game-' + _currentRom, _currentRom, 'player1', 'game loaded: ' + _currentRom);
+        _updateBalances();
+      }
+    };
+
+    ArcadeHub.startWatching = function () {
+      if (_watchStop) { _log('Watch session already active', 'info'); return; }
+      if (!window.Treasury) { _log('Treasury not loaded', 'error'); return; }
+      _watchStop = Treasury.startWatchSession('player1', function (entry) {
+        var multiplier = window.PowerUps ? PowerUps.getTokenRateMultiplier() : 1;
+        if (multiplier > 1) {
+          Treasury.mint('player1', 'MPT', entry.amount * (multiplier - 1), 'mushroom watch-bonus');
+        }
+        _updateBalances();
+        _log('Watch earn: +' + entry.amount.toFixed(4) + ' MPT', 'mint');
+      });
+      _log('Watch session started - earning 10 MPT/hour', 'info');
+    };
+
+    ArcadeHub.stopWatching = function () {
+      if (_watchStop) { _watchStop(); _watchStop = null; }
+      _log('Watch session stopped', 'info');
+    };
+
+    ArcadeHub.changeCartoon = function () {
+      _cartoonIdx = (_cartoonIdx + 1) % CARTOONS.length;
+      var iframe = document.getElementById('cartoon-iframe');
+      if (iframe) iframe.src = CARTOONS[_cartoonIdx];
+      _log('Cartoon changed to episode ' + (_cartoonIdx + 1), 'info');
+    };
+
+    ArcadeHub.simulateStomp = function () {
+      var enemyId = 'goomba-' + Date.now();
+      if (window.ScriptRepair) { ScriptRepair.onEnemyStomp(enemyId); }
+      _updateBalances();
+      _updateRepairPanel();
+      _log('Stomped ' + enemyId + ' - +1 MPT', 'mint');
+    };
+
+    ArcadeHub.simulateCoin = function () {
+      if (window.ScriptRepair) { ScriptRepair.onCoinCollect('coin-' + Date.now()); }
+      _updateBalances();
+      _log('Coin collected - +0.01 IGT', 'mint');
+    };
+
+    ArcadeHub.simulateOneUp = function () {
+      if (window.ScriptRepair) { ScriptRepair.onOneUp(); }
+      _updateBalances();
+      _log('1-UP! - +1.00 MPT', 'mint');
+    };
+
+    ArcadeHub.simulateFlagPole = function () {
+      if (window.ScriptRepair) { ScriptRepair.onFlagPole('world-1-1'); }
+      _updateBalances();
+      _updateRepairPanel();
+      _log('Flag pole! Level complete - +5 MPT', 'mint');
+    };
+
+    ArcadeHub.runBotScan = function () {
+      if (!window.BotFarm) return;
+      var task = BotFarm.enqueueTask('scan', { target: 'page' });
+      BotFarm.runTask(task.id);
+      var issues = (task.result && task.result.issues) || [];
+      _updateBotStatus();
+      _log('Bot scan complete: ' + issues.length + ' issues found', 'bot');
+    };
+
+    ArcadeHub.runBotFix = function () {
+      if (!window.BotFarm) return;
+      var scanTask = BotFarm.enqueueTask('scan', { target: 'page' });
+      BotFarm.runTask(scanTask.id);
+      var issues = (scanTask.result && scanTask.result.issues) || [];
+      var fixTask = BotFarm.enqueueTask('fix', { issues: issues });
+      BotFarm.runTask(fixTask.id);
+      var fixed = (fixTask.result && fixTask.result.fixed) || [];
+      _updateBotStatus();
+      _updateRepairPanel();
+      _log('Bot fix: ' + fixed.length + ' issues fixed', 'fix');
+    };
+
+    ArcadeHub.runBotGenerate = function () {
+      if (!window.BotFarm) return;
+      var task = BotFarm.enqueueTask('generate', {
+        pattern: 'world-' + Date.now(),
+        type: 'script',
+        userId: 'player1'
+      });
+      BotFarm.runTask(task.id);
+      _updateBalances();
+      _updateBotStatus();
+      _log('Bot generated content egg', 'bot');
+    };
+
+    ArcadeHub.runScanAndFix = function () {
+      if (!window.BotFarm) return;
+      var result = BotFarm.scanAndFix();
+      var issues = (result.scanTask.result && result.scanTask.result.issues) || [];
+      var fixed  = (result.fixTask.result  && result.fixTask.result.fixed)  || [];
+      _updateBotStatus();
+      _updateRepairPanel();
+      _log('Scan+Fix: ' + issues.length + ' found, ' + fixed.length + ' fixed', 'fix');
+    };
+
+    ArcadeHub.clearLog = function () {
+      var log = document.getElementById('event-log');
+      if (log) log.innerHTML = '<div class="log-entry info">[SYSTEM] Log cleared.</div>';
+    };
+
+    window.addEventListener('treasury:event', function (e) {
+      var d = e.detail;
+      if (!d) return;
+      _updateBalances();
+      var cls = d.type === 'MINT' ? 'mint' : 'info';
+      _log('[TREASURY:' + d.type + '] ' + (d.reason || d.action || ''), cls);
+      if (d.type === 'SCRIPT_VERSION' || d.type === 'SCRIPT_RETIRED') {
+        _updateScriptVersionTable();
+      }
+    });
+
+    window.addEventListener('powerup:star:activate',    function () { _log('STAR activated - invincibility ON', 'mint'); });
+    window.addEventListener('powerup:star:deactivate',  function () { _log('Star expired', 'info'); });
+    window.addEventListener('powerup:mushroom:activate', function (e) {
+      _log('MUSHROOM activated - ' + e.detail.multiplier + 'x tokens', 'mint');
+    });
+    window.addEventListener('powerup:brick:break', function (e) {
+      _log('BRICK BREAK: ' + e.detail.restructuredScript, 'fix');
+      _updateRepairPanel();
+    });
+    window.addEventListener('botfarm:status', function () { _updateBotStatus(); });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('[ARCADE] Synch Pipe Arcade Hub - initializing');
+      window.ARCADE_USER_ID = 'player1';
+
+      if (window.BotFarm) {
+        BotFarm.initDefaultBots();
+        _updateBotStatus();
+      }
+
+      if (window.Treasury) {
+        Treasury.registerScriptVersion('mario-jump', 'classic', 'player1', 'Mario 1 - cannot fly');
+        Treasury.registerScriptVersion('mario-jump', 'mario1',  'player1', 'Mario 1 standard jump');
+        Treasury.registerScriptVersion('mario-fly',  'mario3',  'player1', 'Mario 3 - can fly (Tanooki)');
+        _updateBalances();
+        _updateScriptVersionTable();
+      }
+
+      _updateRepairPanel();
+      _log('[SYSTEM] All modules loaded. Welcome to Synch Pipe Arcade Hub!', 'info');
+      _log('[SYSTEM] Treasury - ScriptRepair - PowerUps - BotFarm - ready.', 'info');
+      console.log('[ARCADE] Initialization complete.');
+    });
+
+  }());
+  </script>
+
+</body>
+</html>
