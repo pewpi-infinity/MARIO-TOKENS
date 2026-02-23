@@ -15,11 +15,13 @@ var CharacterBuilder = (function () {
   var _tool      = 'draw';   // 'draw' | 'erase' | 'fill'
   var _drawing   = false;
 
+  var ALLOWED_GRID_SIZES = [8, 16, 32];
+
   function init(canvasId, size) {
     try {
       _canvas = document.getElementById(canvasId);
       if (!_canvas) { console.error('[CharacterBuilder] canvas not found:', canvasId); return; }
-      _gridSize = (size === 8 || size === 16 || size === 32) ? size : 16;
+      _gridSize = ALLOWED_GRID_SIZES.indexOf(size) !== -1 ? size : 16;
       _cellSize = Math.floor(384 / _gridSize);
       _canvas.width  = _gridSize * _cellSize;
       _canvas.height = _gridSize * _cellSize;

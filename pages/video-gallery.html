@@ -395,7 +395,12 @@
         container.style.position = 'relative';
         container.appendChild(bubble);
         setTimeout(function () { bubble.classList.add('visible'); }, 50);
-        setTimeout(function () { bubble.classList.remove('visible'); setTimeout(function () { bubble.remove(); }, 500); }, 4000);
+        var hideDelay = 4000;
+        var removeDelay = 500;
+        setTimeout(function () {
+          bubble.classList.remove('visible');
+          setTimeout(function () { bubble.remove(); }, removeDelay);
+        }, hideDelay);
         shown++;
       }, 5000);
     }

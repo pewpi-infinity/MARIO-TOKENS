@@ -439,7 +439,7 @@
           document.getElementById('bot-status').textContent = 'STANDBY';
           document.getElementById('bot-status').style.color = 'var(--red-alert)';
         }, 3000);
-      } catch (e) { /* */ }
+      } catch (e) { console.warn('[Terminal] connectBot error:', e); }
     }
 
     function connectMongoose() {

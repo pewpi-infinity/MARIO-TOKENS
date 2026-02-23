@@ -252,10 +252,14 @@ var Jukebox = (function () {
 
   // ── Visualizer ──────────────────────────────────────────
 
+  var VIZ_MAX_HEIGHT  = 0.3;
+  var VIZ_MAX_VEL     = 0.05;
+  var VIZ_MIN_VEL     = 0.01;
+
   function _initVizBars() {
     _vizBars = [];
     for (var i = 0; i < 32; i++) {
-      _vizBars.push({ height: Math.random() * 0.3, velocity: (Math.random() * 0.05) + 0.01 });
+      _vizBars.push({ height: Math.random() * VIZ_MAX_HEIGHT, velocity: (Math.random() * VIZ_MAX_VEL) + VIZ_MIN_VEL });
     }
   }
 
