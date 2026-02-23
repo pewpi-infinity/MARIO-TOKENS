@@ -1,0 +1,28 @@
+{
+  "nes": [
+    {"id": "mario1",      "title": "Super Mario Bros.",       "icon": "🍄", "archive_id": "super-mario-bros-nes",         "rom": "Super Mario Bros (U).nes",           "preloaded": true},
+    {"id": "mario3",      "title": "Super Mario Bros. 3",     "icon": "🦅", "archive_id": "super-mario-bros-3-nes",       "rom": "Super Mario Bros 3 (U).nes"},
+    {"id": "zelda",       "title": "The Legend of Zelda",     "icon": "🗡️", "archive_id": "the-legend-of-zelda-nes",      "rom": "Legend of Zelda, The (U).nes"},
+    {"id": "contra",      "title": "Contra",                  "icon": "🔫", "archive_id": "contra-nes",                   "rom": "Contra (U).nes"},
+    {"id": "metroid",     "title": "Metroid",                 "icon": "🚀", "archive_id": "metroid-nes",                  "rom": "Metroid (U).nes"},
+    {"id": "duck_tales",  "title": "DuckTales",               "icon": "🦆", "archive_id": "ducktales-nes",                "rom": "DuckTales (U).nes"},
+    {"id": "mega_man2",   "title": "Mega Man 2",              "icon": "🤖", "archive_id": "mega-man-2-nes",               "rom": "Mega Man 2 (U).nes"},
+    {"id": "castlevania", "title": "Castlevania",             "icon": "🏰", "archive_id": "castlevania-nes",              "rom": "Castlevania (U).nes"}
+  ],
+  "snes": [
+    {"id": "smw",           "title": "Super Mario World",       "icon": "🦕", "archive_id": "super-mario-world-snes",       "rom": "Super Mario World (U).sfc",          "preloaded": true},
+    {"id": "smk",           "title": "Super Mario Kart",        "icon": "🏎️", "archive_id": "super-mario-kart-snes",        "rom": "Super Mario Kart (U).sfc"},
+    {"id": "zelda_lttp",    "title": "A Link to the Past",      "icon": "🗡️", "archive_id": "zelda-link-to-the-past-snes",  "rom": "Zelda - A Link to the Past (U).sfc"},
+    {"id": "donkey_kong",   "title": "Donkey Kong Country",     "icon": "🦍", "archive_id": "donkey-kong-country-snes",     "rom": "Donkey Kong Country (U).sfc"},
+    {"id": "mega_man_x",    "title": "Mega Man X",              "icon": "🤖", "archive_id": "mega-man-x-snes",              "rom": "Mega Man X (U).sfc"},
+    {"id": "street_fighter2","title": "Street Fighter II",      "icon": "🥊", "archive_id": "street-fighter-2-snes",        "rom": "Street Fighter II (U).sfc"}
+  ],
+  "genesis": [
+    {"id": "sonic1",          "title": "Sonic the Hedgehog",    "icon": "🦔", "archive_id": "sonic-the-hedgehog-genesis",   "rom": "Sonic the Hedgehog (USA, Europe).md", "preloaded": true},
+    {"id": "sonic2",          "title": "Sonic the Hedgehog 2",  "icon": "🦔", "archive_id": "sonic-the-hedgehog-2-genesis", "rom": "Sonic the Hedgehog 2 (World).md"},
+    {"id": "streets_of_rage", "title": "Streets of Rage",       "icon": "👊", "archive_id": "streets-of-rage-genesis",      "rom": "Streets of Rage (USA, Europe).md"},
+    {"id": "mortal_kombat",   "title": "Mortal Kombat",         "icon": "🥷", "archive_id": "mortal-kombat-genesis",         "rom": "Mortal Kombat (USA).md"},
+    {"id": "earthworm_jim",   "title": "Earthworm Jim",         "icon": "🪱", "archive_id": "earthworm-jim-genesis",         "rom": "Earthworm Jim (USA).md"},
+    {"id": "golden_axe",      "title": "Golden Axe",            "icon": "⚔️", "archive_id": "golden-axe-genesis",           "rom": "Golden Axe (USA, Europe).md"}
+  ]
+}

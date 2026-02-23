@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NES Emulator — Synch Pipe Arcade</title>
+  <link rel="stylesheet" href="../css/infinity-theme.css" />
+  <link rel="stylesheet" href="../css/emulator.css" />
+</head>
+<body>
+
+  <div id="star-overlay" aria-hidden="true"></div>
+
+  <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation" />
+  <label class="hamburger" for="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </label>
+
+  <nav class="nav-drawer" aria-label="Site navigation">
+    <h3>&#9658; Navigate</h3>
+    <a href="../index.html">&#x1F3E0; Hub</a>
+    <h3 style="margin-top:16px">&#9658; Pages</h3>
+    <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
+    <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
+    <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
+    <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
+    <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
+    <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
+    <a href="character-builder.html">&#x1F3A8; Character Builder</a>
+    <a href="ai-chat.html">&#x1F916; AI Chat</a>
+    <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+  </nav>
+
+  <header id="site-header">
+    <h1>&#x1F3AE; NES Emulator</h1>
+    <p class="tagline">Synch Pipe Arcade &nbsp;&#9679;&nbsp; Nintendo Entertainment System</p>
+  </header>
+
+  <main id="main-content">
+    <section class="panel full-width">
+      <div class="emulator-layout">
+
+        <!-- Main emulator column -->
+        <div class="emulator-main">
+          <div class="emulator-wrapper">
+            <div class="emulator-bezel">
+              <div class="emulator-screen">
+                <div id="game" style="width:100%;height:500px"></div>
+              </div>
+            </div>
+
+            <!-- Controller overlay -->
+            <div class="controller-overlay">
+              <div class="controller-section">
+                <div class="controller-label">D-PAD</div>
+                <div class="dpad">
+                  <div class="dpad-btn dpad-empty"></div>
+                  <div class="dpad-btn" id="dpad-up"    title="Up (↑)">▲</div>
+                  <div class="dpad-btn dpad-empty"></div>
+                  <div class="dpad-btn" id="dpad-left"  title="Left (←)">◀</div>
+                  <div class="dpad-btn dpad-center"></div>
+                  <div class="dpad-btn" id="dpad-right" title="Right (→)">▶</div>
+                  <div class="dpad-btn dpad-empty"></div>
+                  <div class="dpad-btn" id="dpad-down"  title="Down (↓)">▼</div>
+                  <div class="dpad-btn dpad-empty"></div>
+                </div>
+              </div>
+
+              <div class="controller-section">
+                <div class="controller-label">MENU</div>
+                <div class="menu-buttons">
+                  <button class="menu-btn" id="btn-select" title="Select (Shift)">SELECT</button>
+                  <button class="menu-btn" id="btn-start"  title="Start (Enter)">START</button>
+                </div>
+              </div>
+
+              <div class="controller-section">
+                <div class="controller-label">BUTTONS</div>
+                <div class="action-buttons">
+                  <button class="action-btn btn-b" title="B (Z)">B</button>
+                  <button class="action-btn btn-a" title="A (X)">A</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Keyboard map -->
+            <div class="keymap-display">
+              <div class="keymap-item"><span class="key-badge">↑↓←→</span> Move</div>
+              <div class="keymap-item"><span class="key-badge">Z</span> B Button</div>
+              <div class="keymap-item"><span class="key-badge">X</span> A Button</div>
+              <div class="keymap-item"><span class="key-badge">Enter</span> Start</div>
+              <div class="keymap-item"><span class="key-badge">Shift</span> Select</div>
+              <div class="keymap-item"><span class="key-badge">F</span> Fullscreen</div>
+            </div>
+          </div>
+
+          <!-- Game metadata -->
+          <div class="game-metadata" id="game-metadata">
+            <div class="meta-title" id="meta-title">Super Mario Bros.</div>
+            <div class="meta-row">System: <span>NES (Nintendo, 1985)</span></div>
+            <div class="meta-row">Genre: <span>Platform</span></div>
+            <div class="meta-row">Players: <span>1-2</span></div>
+          </div>
+
+          <!-- ROM Search -->
+          <h3 style="margin:16px 0 8px;font-size:0.8rem;letter-spacing:2px;color:var(--gold)">&#x1F50D; SEARCH ROMS (Internet Archive)</h3>
+          <div class="rom-search-bar">
+            <input type="text" id="rom-search-input" placeholder="Search NES ROMs on archive.org..." aria-label="ROM search" />
+            <button onclick="doRomSearch()">SEARCH</button>
+          </div>
+          <div class="rom-results" id="rom-results"></div>
+        </div>
+
+        <!-- Game sidebar -->
+        <aside class="game-sidebar">
+          <h3>NES LIBRARY</h3>
+          <div class="sidebar-game active" onclick="loadGame('mario1','Super Mario Bros.','Platform','1985','1-2',this)">
+            <span class="g-icon">🍄</span>
+            <span class="g-title">Super Mario Bros.</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('mario3','Super Mario Bros. 3','Platform','1990','1-2',this)">
+            <span class="g-icon">🦅</span>
+            <span class="g-title">Super Mario Bros. 3</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('zelda','The Legend of Zelda','Adventure','1986','1',this)">
+            <span class="g-icon">🗡️</span>
+            <span class="g-title">Legend of Zelda</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('contra','Contra','Shooter','1987','1-2',this)">
+            <span class="g-icon">🔫</span>
+            <span class="g-title">Contra</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('metroid','Metroid','Adventure','1986','1',this)">
+            <span class="g-icon">🚀</span>
+            <span class="g-title">Metroid</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('duck_tales','DuckTales','Platform','1989','1',this)">
+            <span class="g-icon">🦆</span>
+            <span class="g-title">DuckTales</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('mega_man2','Mega Man 2','Platform','1988','1',this)">
+            <span class="g-icon">🤖</span>
+            <span class="g-title">Mega Man 2</span>
+          </div>
+          <div class="sidebar-game" onclick="loadGame('castlevania','Castlevania','Action','1986','1',this)">
+            <span class="g-icon">🏰</span>
+            <span class="g-title">Castlevania</span>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/navigation.js"></script>
+  <script src="../js/emulator-manager.js"></script>
+  <script src="../js/rom-search.js"></script>
+
+  <script>
+    var MARIO_ROM = 'https://archive.org/download/nintendo-usa-set-1/Super%20Mario%20Bros.%20(World).nes';
+
+    var ROM_URLS = {
+      mario1:      MARIO_ROM,
+      mario3:      'https://archive.org/download/nintendo-usa-set-1/Super%20Mario%20Bros.%203%20(USA).nes',
+      zelda:       'https://archive.org/download/nintendo-usa-set-1/Legend%20of%20Zelda%2C%20The%20(USA).nes',
+      contra:      'https://archive.org/download/nintendo-usa-set-1/Contra%20(USA).nes',
+      metroid:     'https://archive.org/download/nintendo-usa-set-1/Metroid%20(USA).nes',
+      duck_tales:  'https://archive.org/download/nintendo-usa-set-1/DuckTales%20(USA).nes',
+      mega_man2:   'https://archive.org/download/nintendo-usa-set-1/Mega%20Man%202%20(USA).nes',
+      castlevania: 'https://archive.org/download/nintendo-usa-set-1/Castlevania%20(USA).nes'
+    };
+
+    // Init emulator with Super Mario Bros.
+    window.EJS_player      = 1;
+    window.EJS_core        = 'nes';
+    window.EJS_pathtodata  = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_gameUrl     = MARIO_ROM;
+    window.EJS_startOnLoad = true;
+
+    (function () {
+      try {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+        document.body.appendChild(s);
+      } catch (e) { console.error('[NES] loader error:', e); }
+    }());
+
+    function loadGame(id, title, genre, year, players, el) {
+      try {
+        // Update sidebar active state
+        document.querySelectorAll('.sidebar-game').forEach(function (g) { g.classList.remove('active'); });
+        if (el) el.classList.add('active');
+
+        // Update metadata
+        document.getElementById('meta-title').textContent = title;
+        var rows = document.querySelectorAll('.meta-row span');
+        if (rows[0]) rows[0].textContent = 'NES (Nintendo, ' + year + ')';
+        if (rows[1]) rows[1].textContent = genre;
+        if (rows[2]) rows[2].textContent = players;
+
+        // Load ROM
+        var url = ROM_URLS[id];
+        if (url) EmulatorManager.loadRom(url);
+      } catch (e) { console.warn('[NES] loadGame error:', e); }
+    }
+
+    function doRomSearch() {
+      try {
+        var q = document.getElementById('rom-search-input').value.trim();
+        if (!q) return;
+        var container = document.getElementById('rom-results');
+        container.innerHTML = '<div style="padding:10px;color:var(--text-dim);font-size:0.75rem">Searching...</div>';
+        RomSearch.search(q + ' nes', function (err, results) {
+          RomSearch.renderResults(results || [], container);
+        });
+      } catch (e) { console.warn('[NES] doRomSearch error:', e); }
+    }
+
+    document.getElementById('rom-search-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') doRomSearch();
+    });
+
+    // Controller button visual feedback
+    document.querySelectorAll('.dpad-btn:not(.dpad-empty):not(.dpad-center), .action-btn, .menu-btn').forEach(function (btn) {
+      btn.addEventListener('mousedown', function () { btn.classList.add('active'); });
+      btn.addEventListener('mouseup',   function () { btn.classList.remove('active'); });
+      btn.addEventListener('mouseleave',function () { btn.classList.remove('active'); });
+    });
+  </script>
+</body>
+</html>
