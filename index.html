@@ -176,7 +176,7 @@
       <div id="cartoon-iframe-wrap">
         <iframe
           id="cartoon-iframe"
-          src="https://archive.org/embed/SuperMarioBros1993Episode1"
+          src="https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein"
           title="Mario Cartoon - Internet Archive"
           allowfullscreen
           loading="lazy"
@@ -373,18 +373,18 @@
     var _currentRom = 'mario1';
 
     var CARTOONS = [
-      'https://archive.org/embed/SuperMarioBros1993Episode1',
-      'https://archive.org/embed/SuperMarioBrosSupershowEp1',
-      'https://archive.org/embed/mario-cartoon-collection'
+      'https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein',
+      'https://archive.org/embed/the-super-mario-bros.-super-show-01x-01-the-bird-the-bird-naughty-word',
+      'https://archive.org/embed/the-super-mario-bros.-super-show-01x-02-king-mario-of-cramalot-george-washington-slept-here'
     ];
     var _cartoonIdx = 0;
 
     var ROMS = {
-      mario1:  'https://pewpi-infinity.github.io/Emulator-/?rom=mario1',
-      mario3:  'https://pewpi-infinity.github.io/Emulator-/?rom=mario3',
-      zelda:   'https://pewpi-infinity.github.io/Emulator-/?rom=zelda',
-      contra:  'https://pewpi-infinity.github.io/Emulator-/?rom=contra',
-      metroid: 'https://pewpi-infinity.github.io/Emulator-/?rom=metroid'
+      mario1:  'https://pewpi-infinity.github.io/Emulator-/run/lj65',       // LJ65 (Tetris-like homebrew)
+      mario3:  'https://pewpi-infinity.github.io/Emulator-/run/croom',      // Concentration Room
+      zelda:   'https://pewpi-infinity.github.io/Emulator-/run/owlia',      // The Legends of Owlia
+      contra:  'https://pewpi-infinity.github.io/Emulator-/run/nomolos',    // Nomolos: Storming the Catsle
+      metroid: 'https://pewpi-infinity.github.io/Emulator-/run/accuracycoin' // AccuracyCoin NES tests
     };
 
     function _log(msg, cls) {
@@ -483,7 +483,7 @@
       var url = ROMS[_currentRom] || ROMS.mario1;
       container.innerHTML =
         '<iframe src="' + url + '" title="NES Emulator" allowfullscreen ' +
-        'sandbox="allow-scripts allow-same-origin"></iframe>';
+        'sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"></iframe>';
       _log('Emulator launched: ' + _currentRom, 'info');
       console.log('[ARCADE] Emulator launched:', url);
       if (window.Treasury) {
