@@ -38,8 +38,8 @@
       container.innerHTML =
         '<iframe src="' + src + '" ' +
         'style="width:100%;height:' + height + ';border:none;background:#000;" ' +
-        'allowfullscreen allow="autoplay;fullscreen;gamepad" ' +
-        'sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups" ' +
+        'allowfullscreen ' +
+        'allow="autoplay; fullscreen; gamepad *; microphone; pointer-lock" ' +
         'title="NES Emulator" loading="lazy"></iframe>';
 
       if (window.Treasury) {
