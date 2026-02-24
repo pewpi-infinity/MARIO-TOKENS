@@ -143,44 +143,69 @@
   <script src="../js/emulator-manager.js"></script>
   <script src="../js/rom-search.js"></script>
 
+  
   <script>
-    var SONIC_ROM = 'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Sonic%20the%20Hedgehog%20(USA%2C%20Europe).md';
+    /* ── Archive.org embed player ─────────────────────────────────
+       No ROM downloads, no CORS, no decompression errors.
+       Archive.org hosts the emulator + ROM — we just embed it.
+    ─────────────────────────────────────────────────────────────── */
 
-    var ROM_URLS = {
-      sonic1:         SONIC_ROM,
-      sonic2:         'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Sonic%20the%20Hedgehog%202%20(World).md',
-      streets_of_rage:'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Streets%20of%20Rage%20(USA%2C%20Europe).md',
-      mortal_kombat:  'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Mortal%20Kombat%20(USA).md',
-      earthworm_jim:  'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Earthworm%20Jim%20(USA).md',
-      golden_axe:     'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Golden%20Axe%20(USA%2C%20Europe).md'
-    };
+    var GAME_IDS = {
+      "mario1": "super-mario-bros-nes",
+      "mario3": "super-mario-bros-3-nes",
+      "zelda": "the-legend-of-zelda-nes",
+      "contra": "contra-nes",
+      "metroid": "metroid-nes",
+      "duck_tales": "ducktales-nes",
+      "mega_man2": "mega-man-2-nes",
+      "castlevania": "castlevania-nes",
+      "smw": "super-mario-world-snes",
+      "smk": "super-mario-kart-snes",
+      "zelda_lttp": "zelda-link-to-the-past-snes",
+      "donkey_kong": "donkey-kong-country-snes",
+      "mega_man_x": "mega-man-x-snes",
+      "street_fighter2": "street-fighter-2-snes",
+      "sonic1": "sonic-the-hedgehog-genesis",
+      "sonic2": "sonic-the-hedgehog-2-genesis",
+      "streets_of_rage": "streets-of-rage-genesis",
+      "mortal_kombat": "mortal-kombat-genesis",
+      "earthworm_jim": "earthworm-jim-genesis",
+      "golden_axe": "golden-axe-genesis"
+};
 
-    window.EJS_player      = '#game';
-    window.EJS_core        = 'segaMD';
-    window.EJS_pathtodata  = 'https://cdn.emulatorjs.org/stable/data/';
-    window.EJS_gameUrl     = SONIC_ROM;
-    window.EJS_startOnLoaded = true;
-
-    (function () {
-      try {
-        var s = document.createElement('script');
-        s.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-        document.body.appendChild(s);
-      } catch (e) { console.error('[Genesis] loader error:', e); }
-    }());
+    function embedGame(archiveId) {
+      var gameDiv = document.getElementById('game');
+      if (!gameDiv) return;
+      gameDiv.style.height = '500px';
+      gameDiv.innerHTML =
+        '<iframe src="https://archive.org/embed/' + archiveId + '" ' +
+        'style="width:100%;height:100%;border:none;background:#000;" ' +
+        'allowfullscreen allow="autoplay;fullscreen;gamepad" ' +
+        'sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups" ' +
+        'title="Game Emulator" loading="eager"></iframe>';
+    }
 
     function loadGame(id, title, genre, year, players, el) {
       try {
-        document.querySelectorAll('.sidebar-game').forEach(function (g) { g.classList.remove('active'); });
+        document.querySelectorAll('.sidebar-game').forEach(function(g) {
+          g.classList.remove('active');
+        });
         if (el) el.classList.add('active');
-        document.getElementById('meta-title').textContent = title;
+
+        var mt = document.getElementById('meta-title');
+        if (mt) mt.textContent = title;
         var rows = document.querySelectorAll('.meta-row span');
-        if (rows[0]) rows[0].textContent = 'Sega Genesis (' + year + ')';
+        if (rows[0]) rows[0].textContent = 'System (Nintendo, ' + year + ')';
         if (rows[1]) rows[1].textContent = genre;
         if (rows[2]) rows[2].textContent = players;
-        var url = ROM_URLS[id];
-        if (url) EmulatorManager.loadRom(url);
-      } catch (e) { console.warn('[Genesis] loadGame error:', e); }
+
+        var archiveId = GAME_IDS[id];
+        if (archiveId) {
+          embedGame(archiveId);
+        } else {
+          console.warn('[EMU] no archive ID for:', id);
+        }
+      } catch(e) { console.warn('[loadGame]', e); }
     }
 
     function doRomSearch() {
@@ -189,21 +214,40 @@
         if (!q) return;
         var container = document.getElementById('rom-results');
         container.innerHTML = '<div style="padding:10px;color:var(--text-dim);font-size:0.75rem">Searching...</div>';
-        RomSearch.search(q + ' genesis sega', function (err, results) {
-          RomSearch.renderResults(results || [], container);
-        });
-      } catch (e) { console.warn('[Genesis] doRomSearch error:', e); }
+        if (window.RomSearch) {
+          RomSearch.search(q, function(err, results) {
+            RomSearch.renderResults(results || [], container);
+          });
+        }
+      } catch(e) { console.warn('[doRomSearch]', e); }
     }
 
-    document.getElementById('rom-search-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') doRomSearch();
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+      /* Auto-load the first (active) game */
+      var active = document.querySelector('.sidebar-game.active');
+      if (active) {
+        var m = (active.getAttribute('onclick') || '').match(/loadGame\('([^']+)'/);
+        if (m && GAME_IDS[m[1]]) embedGame(GAME_IDS[m[1]]);
+      }
 
-    document.querySelectorAll('.dpad-btn:not(.dpad-empty):not(.dpad-center), .action-btn, .menu-btn').forEach(function (btn) {
-      btn.addEventListener('mousedown', function () { btn.classList.add('active'); });
-      btn.addEventListener('mouseup',   function () { btn.classList.remove('active'); });
-      btn.addEventListener('mouseleave',function () { btn.classList.remove('active'); });
+      /* ROM search enter key */
+      var inp = document.getElementById('rom-search-input');
+      if (inp) inp.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') doRomSearch();
+      });
+
+      /* Controller button visual feedback */
+      document.querySelectorAll(
+        '.dpad-btn:not(.dpad-empty):not(.dpad-center), .action-btn, .menu-btn'
+      ).forEach(function(btn) {
+        btn.addEventListener('mousedown',  function() { btn.classList.add('active'); });
+        btn.addEventListener('touchstart', function() { btn.classList.add('active'); }, {passive:true});
+        btn.addEventListener('mouseup',    function() { btn.classList.remove('active'); });
+        btn.addEventListener('touchend',   function() { btn.classList.remove('active'); }, {passive:true});
+        btn.addEventListener('mouseleave', function() { btn.classList.remove('active'); });
+      });
     });
   </script>
+
 </body>
 </html>
