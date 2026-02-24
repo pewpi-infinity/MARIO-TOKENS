@@ -144,22 +144,22 @@
   <script src="../js/rom-search.js"></script>
 
   <script>
-    var SONIC_ROM = 'https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Sonic%20the%20Hedgehog%20(USA%2C%20Europe).md';
+    var SONIC_ROM = 'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Sonic%20the%20Hedgehog%20(USA%2C%20Europe).md';
 
     var ROM_URLS = {
       sonic1:         SONIC_ROM,
-      sonic2:         'https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Sonic%20the%20Hedgehog%202%20(World).md',
-      streets_of_rage:'https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Streets%20of%20Rage%20(USA%2C%20Europe).md',
-      mortal_kombat:  'https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Mortal%20Kombat%20(USA).md',
-      earthworm_jim:  'https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Earthworm%20Jim%20(USA).md',
-      golden_axe:     'https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Golden%20Axe%20(USA%2C%20Europe).md'
+      sonic2:         'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Sonic%20the%20Hedgehog%202%20(World).md',
+      streets_of_rage:'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Streets%20of%20Rage%20(USA%2C%20Europe).md',
+      mortal_kombat:  'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Mortal%20Kombat%20(USA).md',
+      earthworm_jim:  'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Earthworm%20Jim%20(USA).md',
+      golden_axe:     'https://corsproxy.io/?url=https://archive.org/download/sg-1000-master-system-game-gear-sega-mega-drive-genesis/Golden%20Axe%20(USA%2C%20Europe).md'
     };
 
-    window.EJS_player      = 1;
+    window.EJS_player      = '#game';
     window.EJS_core        = 'segaMD';
     window.EJS_pathtodata  = 'https://cdn.emulatorjs.org/stable/data/';
     window.EJS_gameUrl     = SONIC_ROM;
-    window.EJS_startOnLoad = true;
+    window.EJS_startOnLoaded = true;
 
     (function () {
       try {

@@ -24,11 +24,11 @@ var EmulatorManager = (function () {
 
       var core = CORE_MAP[_currentSystem] || 'nes';
 
-      window.EJS_player      = 1;
+      window.EJS_player      = '#game';
       window.EJS_core        = core;
       window.EJS_pathtodata  = EJS_PATH;
       window.EJS_gameUrl     = _currentRom;
-      window.EJS_startOnLoad = true;
+      window.EJS_startOnLoaded = true;
 
       _saveState();
 

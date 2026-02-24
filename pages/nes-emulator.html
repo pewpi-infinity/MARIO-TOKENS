@@ -158,25 +158,25 @@
   <script src="../js/rom-search.js"></script>
 
   <script>
-    var MARIO_ROM = 'https://archive.org/download/nintendo-usa-set-1/Super%20Mario%20Bros.%20(World).nes';
+    var MARIO_ROM = 'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/Super%20Mario%20Bros.%20(World).nes';
 
     var ROM_URLS = {
       mario1:      MARIO_ROM,
-      mario3:      'https://archive.org/download/nintendo-usa-set-1/Super%20Mario%20Bros.%203%20(USA).nes',
-      zelda:       'https://archive.org/download/nintendo-usa-set-1/Legend%20of%20Zelda%2C%20The%20(USA).nes',
-      contra:      'https://archive.org/download/nintendo-usa-set-1/Contra%20(USA).nes',
-      metroid:     'https://archive.org/download/nintendo-usa-set-1/Metroid%20(USA).nes',
-      duck_tales:  'https://archive.org/download/nintendo-usa-set-1/DuckTales%20(USA).nes',
-      mega_man2:   'https://archive.org/download/nintendo-usa-set-1/Mega%20Man%202%20(USA).nes',
-      castlevania: 'https://archive.org/download/nintendo-usa-set-1/Castlevania%20(USA).nes'
+      mario3:      'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/Super%20Mario%20Bros.%203%20(USA).nes',
+      zelda:       'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/Legend%20of%20Zelda%2C%20The%20(USA).nes',
+      contra:      'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/Contra%20(USA).nes',
+      metroid:     'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/Metroid%20(USA).nes',
+      duck_tales:  'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/DuckTales%20(USA).nes',
+      mega_man2:   'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/Mega%20Man%202%20(USA).nes',
+      castlevania: 'https://corsproxy.io/?url=https://archive.org/download/nintendo-usa-set-1/Castlevania%20(USA).nes'
     };
 
     // Init emulator with Super Mario Bros.
-    window.EJS_player      = 1;
+    window.EJS_player      = '#game';
     window.EJS_core        = 'nes';
     window.EJS_pathtodata  = 'https://cdn.emulatorjs.org/stable/data/';
     window.EJS_gameUrl     = MARIO_ROM;
-    window.EJS_startOnLoad = true;
+    window.EJS_startOnLoaded = true;
 
     (function () {
       try {

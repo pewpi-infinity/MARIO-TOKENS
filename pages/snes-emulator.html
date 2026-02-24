@@ -148,22 +148,22 @@
   <script src="../js/rom-search.js"></script>
 
   <script>
-    var SMW_ROM = 'https://archive.org/download/super-famicom-japan-set-1/Super%20Mario%20World%20(USA).sfc';
+    var SMW_ROM = 'https://corsproxy.io/?url=https://archive.org/download/super-famicom-japan-set-1/Super%20Mario%20World%20(USA).sfc';
 
     var ROM_URLS = {
       smw:           SMW_ROM,
-      smk:           'https://archive.org/download/super-famicom-japan-set-1/Super%20Mario%20Kart%20(USA).sfc',
-      zelda_lttp:    'https://archive.org/download/super-famicom-japan-set-1/Legend%20of%20Zelda%2C%20The%20-%20A%20Link%20to%20the%20Past%20(USA).sfc',
-      donkey_kong:   'https://archive.org/download/super-famicom-japan-set-1/Donkey%20Kong%20Country%20(USA).sfc',
-      mega_man_x:    'https://archive.org/download/super-famicom-japan-set-1/Mega%20Man%20X%20(USA).sfc',
-      street_fighter2:'https://archive.org/download/super-famicom-japan-set-1/Street%20Fighter%20II%20Turbo%20-%20Hyper%20Fighting%20(USA).sfc'
+      smk:           'https://corsproxy.io/?url=https://archive.org/download/super-famicom-japan-set-1/Super%20Mario%20Kart%20(USA).sfc',
+      zelda_lttp:    'https://corsproxy.io/?url=https://archive.org/download/super-famicom-japan-set-1/Legend%20of%20Zelda%2C%20The%20-%20A%20Link%20to%20the%20Past%20(USA).sfc',
+      donkey_kong:   'https://corsproxy.io/?url=https://archive.org/download/super-famicom-japan-set-1/Donkey%20Kong%20Country%20(USA).sfc',
+      mega_man_x:    'https://corsproxy.io/?url=https://archive.org/download/super-famicom-japan-set-1/Mega%20Man%20X%20(USA).sfc',
+      street_fighter2:'https://corsproxy.io/?url=https://archive.org/download/super-famicom-japan-set-1/Street%20Fighter%20II%20Turbo%20-%20Hyper%20Fighting%20(USA).sfc'
     };
 
-    window.EJS_player      = 1;
+    window.EJS_player      = '#game';
     window.EJS_core        = 'snes9x';
     window.EJS_pathtodata  = 'https://cdn.emulatorjs.org/stable/data/';
     window.EJS_gameUrl     = SMW_ROM;
-    window.EJS_startOnLoad = true;
+    window.EJS_startOnLoaded = true;
 
     (function () {
       try {
