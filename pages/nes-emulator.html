@@ -181,13 +181,22 @@
     function embedGame(archiveId) {
       var gameDiv = document.getElementById('game');
       if (!gameDiv) return;
-      gameDiv.style.height = '500px';
+      gameDiv.style.height = window.innerWidth < 600 ? '520px' : '500px';
       gameDiv.innerHTML =
+        '<div style="position:relative;width:100%;height:100%">' +
         '<iframe src="https://archive.org/embed/' + archiveId + '" ' +
-        'style="width:100%;height:100%;border:none;background:#000;" ' +
+        'style="width:100%;height:100%;border:none;background:#000;display:block" ' +
         'allowfullscreen ' +
         'allow="autoplay; fullscreen; gamepad *; microphone; pointer-lock" ' +
-        'title="Game Emulator" loading="eager"></iframe>';
+        'title="Game Emulator" loading="eager"></iframe>' +
+        '<div id="tap-msg" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);' +
+        'background:rgba(0,0,0,.75);color:#ffcc00;font-size:.8rem;padding:5px 14px;' +
+        'border-radius:14px;pointer-events:none">&#x1F50A; Tap game screen to enable sound &amp; controls</div>' +
+        '</div>';
+      gameDiv.addEventListener('click', function() {
+        var m = document.getElementById('tap-msg');
+        if (m) m.style.display = 'none';
+      }, {once: true});
     }
 
     function loadGame(id, title, genre, year, players, el) {
