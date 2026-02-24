@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --font-main: 'Nunito', 'Segoe UI', Arial, sans-serif;
+}
+
+body, button, input, select, textarea,
+.panel, .game-card, .token-badge, .bot-card, .btn, .earn-ticker {
+  font-family: var(--font-main) !important;
+}
+h1 { font-family: var(--font-main) !important; font-weight: 900; }
+h2, h3 { font-family: var(--font-main) !important; font-weight: 800; }
+
+#event-log .log-entry, .terminal-output, .terminal-line, code, pre {
+  font-family: 'Courier New', Courier, monospace !important;
+  font-size: 0.82rem;
+}
+
+body { font-size: 15px; line-height: 1.55; }
+.nav-drawer a { font-weight: 700; }
+.btn { font-weight: 800; letter-spacing: 0.04em; }
+.token-badge { font-weight: 800; font-size: 0.8rem; }
+
+@media (max-width: 600px) {
+  body { font-size: 14px; }
+  .btn { font-size: 0.95rem; padding: 10px 16px; min-height: 44px; }
+  #game-list { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .game-card { padding: 10px 8px !important; font-size: 0.8rem !important; min-height: 56px; }
+  #emulator-container { width: 100% !important; min-height: 320px; border-radius: 0 !important; }
+  .nav-drawer a { font-size: 1rem; padding: 10px 16px !important; display: block; }
+  .balance-value { font-size: 1.4rem !important; font-weight: 900; }
+  #bot-status-grid { grid-template-columns: 1fr 1fr !important; }
+  #cartoon-iframe-wrap iframe { width: 100% !important; height: 200px !important; }
+  #site-header h1 { font-size: 1.2rem !important; }
+}
+
+#emulator-container iframe { width: 100% !important; height: 100% !important; min-height: 300px; border: none; }
