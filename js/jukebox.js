@@ -19,6 +19,7 @@ var Jukebox = (function () {
   var _onTrackChange = null;
 
   var IA_STREAM = 'https://archive.org/download/';
+  var IA_PROXY  = 'https://corsproxy.io/?url=';
 
   function init(playlist) {
     try {
@@ -45,8 +46,8 @@ var Jukebox = (function () {
       var track = _getCurrentTrack();
       if (!track) return;
 
-      if (_audio.src !== _trackUrl(track)) {
-        _audio.src = _trackUrl(track);
+      if (_audio.src !== _trackUrl(track, false)) {
+        _audio.src = _trackUrl(track, false);
         _audio.load();
       }
       var promise = _audio.play();
@@ -188,11 +189,12 @@ var Jukebox = (function () {
     return list[_currentIndex] || null;
   }
 
-  function _trackUrl(track) {
+  function _trackUrl(track, useProxy) {
     if (!track) return '';
     if (track.url) return track.url;
     if (track.archive_id && track.file) {
-      return IA_STREAM + encodeURIComponent(track.archive_id) + '/' + encodeURIComponent(track.file);
+      var direct = IA_STREAM + track.archive_id + '/' + encodeURIComponent(track.file);
+      return useProxy ? (IA_PROXY + encodeURIComponent(direct)) : direct;
     }
     return '';
   }
@@ -200,7 +202,7 @@ var Jukebox = (function () {
   function _loadAndPlay() {
     var track = _getCurrentTrack();
     if (!track || !_audio) return;
-    var url = _trackUrl(track);
+    var url = _trackUrl(track, false);
     if (!url) { next(); return; }
     _audio.src = url;
     _audio.load();
@@ -219,8 +221,9 @@ var Jukebox = (function () {
   }
 
   function _handleAudioError() {
-    console.warn('[Jukebox] audio error, skipping to next track');
-    setTimeout(function () { next(); }, 1200);
+    var t=_getCurrentTrack(),pu=t?_trackUrl(t,true):'';
+    if(pu&&_audio&&_audio.src.indexOf('corsproxy')===-1){_audio.src=pu;_audio.load();if(_isPlaying){var p=_audio.play();if(p&&p.catch)p.catch(function(){setTimeout(next,1200);})}}
+    else{console.warn('[Jukebox] skipping');setTimeout(next,1200);}
   }
 
   function _updateProgress() {

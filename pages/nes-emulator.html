@@ -147,7 +147,6 @@
   </main>
 
   <script src="../js/navigation.js"></script>
-  <script src="../js/rom-loader.js"></script>
   <script src="../js/rom-search.js"></script>
 
   <script>
@@ -163,6 +162,12 @@
       "castlevania": "https://archive.org/download/castlevania-nes/Castlevania%20(U).nes"
     };
 
+    function embedGame(archiveId, title) {
+      var d = document.getElementById('game');
+      if (!d) return;
+      d.style.height = '500px';
+      d.innerHTML = '<iframe src="https://archive.org/embed/' + archiveId + '" style="width:100%;height:100%;border:none;background:#000;" allowfullscreen allow="autoplay;fullscreen;gamepad *;pointer-lock" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox" title="' + (title||'NES') + '" loading=\"eager\"></iframe>';
+    }
     function loadGame(id, title, genre, year, players, el) {
       try {
         document.querySelectorAll('.sidebar-game').forEach(function(g) { g.classList.remove('active'); });
@@ -171,9 +176,8 @@
         document.getElementById('meta-system').textContent  = 'NES (Nintendo, ' + year + ')';
         document.getElementById('meta-genre').textContent   = genre;
         document.getElementById('meta-players').textContent = players;
-        if (GAMES[id]) {
-          RomLoader.load(GAMES[id], 'nes', 'game');
-        } else {
+        var archiveId = {'mario1':'super-mario-bros-nes','mario3':'super-mario-bros-3-nes','zelda':'the-legend-of-zelda-nes','contra':'contra-nes','metroid':'metroid-nes','duck_tales':'ducktales-nes','mega_man2':'mega-man-2-nes','castlevania':'castlevania-nes'}[id];
+        if (archiveId) embedGame(archiveId, title); else {
           console.warn('[EMU] no URL for:', id);
         }
       } catch(e) { console.warn('[loadGame]', e); }
@@ -195,7 +199,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       /* Auto-load Super Mario Bros. on page open */
-      RomLoader.load(GAMES['mario1'], 'nes', 'game');
+      embedGame('super-mario-bros-nes', 'Super Mario Bros.');
 
       var inp = document.getElementById('rom-search-input');
       if (inp) inp.addEventListener('keypress', function(e) {
