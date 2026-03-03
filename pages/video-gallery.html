@@ -13,14 +13,25 @@
 .vthumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a0a1a,#1a1a3e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .vthumb:active{opacity:.8}
 .play-btn{width:56px;height:56px;border-radius:50%;background:var(--gold,#ffcc00);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#000;box-shadow:0 0 20px rgba(255,204,0,.5)}
-.vlabel{font-size:.65rem;color:var(--text-dim,#888);letter-spacing:2px}
+.vlabel{font-size:.65rem;color:#888;letter-spacing:2px}
 .vembed{width:100%;aspect-ratio:16/9;display:none}
 .vembed iframe{width:100%;height:100%;border:none;display:block}
 .vinfo{padding:10px 14px}
 .vtitle{font-size:.85rem;color:var(--gold,#ffcc00);font-weight:bold;margin-bottom:4px}
-.vmeta{font-size:.65rem;color:var(--text-dim,#888);display:flex;gap:10px}
-.vfact{background:rgba(255,204,0,.08);border-left:3px solid var(--gold,#ffcc00);padding:8px 12px;margin:0 14px 12px;border-radius:0 6px 6px 0;font-size:.7rem;color:var(--text,#e0e0e0);display:none;line-height:1.5}
+.vmeta{font-size:.65rem;color:#888;display:flex;gap:10px}
+.vfact{background:rgba(255,204,0,.08);border-left:3px solid var(--gold,#ffcc00);padding:8px 12px;margin:0 14px 12px;border-radius:0 6px 6px 0;font-size:.7rem;color:#e0e0e0;display:none;line-height:1.5}
 .vfact.show{display:block}
+.search-box{display:flex;gap:8px;margin-bottom:10px}
+.search-box input{flex:1;padding:10px 12px;background:#0d0d1f;border:2px solid rgba(255,204,0,.2);border-radius:8px;color:#e0e0e0;font-size:.8rem;outline:none;-webkit-tap-highlight-color:transparent}
+.search-box input:focus{border-color:var(--gold,#ffcc00)}
+.search-box button{padding:10px 16px;background:var(--gold,#ffcc00);color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;flex-shrink:0}
+.qtags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.qtag{padding:5px 10px;background:rgba(255,204,0,.1);color:var(--gold,#ffcc00);border:1px solid rgba(255,204,0,.25);border-radius:20px;font-size:.65rem;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.scard{background:#0d0d1f;border:2px solid rgba(255,204,0,.2);border-radius:8px;overflow:hidden;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent}
+.sthumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a0a1a,#1a1a3e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.scard-info{padding:8px 12px}
+.scard-title{font-size:.8rem;color:var(--gold,#ffcc00);font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard-meta{font-size:.65rem;color:#888;margin-top:3px}
 </style>
 </head>
 <body>
@@ -43,49 +54,42 @@
 </nav>
 <header id="site-header">
   <h1>&#x1F4FA; Video Gallery</h1>
-  <p class="tagline">Synch Pipe Arcade &#9679; Mario Cartoons &amp; Classic Gaming</p>
+  <p class="tagline">Synch Pipe Arcade &#9679; Cartoons &amp; Classic Gaming &#9679; Internet Archive</p>
 </header>
 <main id="main-content">
 <section class="panel full-width">
+  <h3 style="font-size:.75rem;letter-spacing:2px;color:var(--gold,#ffcc00);margin-bottom:12px">&#x1F4FA; FEATURED VIDEOS</h3>
   <div class="vgrid" id="vgrid"></div>
+</section>
+<section class="panel full-width" style="margin-top:16px">
+  <h3 style="font-size:.75rem;letter-spacing:2px;color:var(--gold,#ffcc00);margin-bottom:10px">&#x1F50D; SEARCH CARTOONS &amp; ANIMATION</h3>
+  <div class="search-box">
+    <input type="text" id="vid-q" placeholder="Mario, Sonic, DuckTales, X-Men, Batman…"/>
+    <button onclick="doVidSearch()">&#x1F50D;</button>
+  </div>
+  <div class="qtags" id="qtags"></div>
+  <div id="sresults"></div>
 </section>
 </main>
 <script src="../js/navigation.js"></script>
 <script>
 var VIDEOS=[
-  {id:'ep1',icon:'🍄',title:'Super Mario Super Show — Ep.1',year:'1989',type:'Cartoon · DiC',
-   embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-01-the-bird-the-bird-naughty-word',
-   fact:'Lou Albano played Mario in live-action segments. Each episode ends with Do the Mario!'},
-  {id:'ep2',icon:'🍄',title:'Super Mario Super Show — Ep.2',year:'1989',type:'Cartoon · DiC',
-   embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-02-king-mario-of-cramalot-george-washington-slept-here',
-   fact:'The show ran 65 episodes and also included Legend of Zelda cartoon segments.'},
-  {id:'ep21',icon:'🍄',title:'Super Mario Super Show — Baby Mario Love',year:'1989',type:'Cartoon · DiC',
-   embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein',
-   fact:'Danny Wells played Luigi. Princess Peach was called Princess Toadstool in the series.'},
-  {id:'smb',icon:'🕹️',title:'Super Mario Bros. — NES',year:'1985',type:'NES Gameplay',
-   embed:'https://archive.org/embed/super-mario-bros-nes',
-   fact:'Super Mario Bros. sold 40M+ copies. World 1-1 is the most recognised level in gaming.'},
-  {id:'smb3',icon:'🦅',title:'Super Mario Bros. 3 — NES',year:'1990',type:'NES Gameplay',
-   embed:'https://archive.org/embed/super-mario-bros-3-nes',
-   fact:'SMB3 was first revealed to the public in the 1989 film The Wizard.'},
-  {id:'zelda',icon:'🗡️',title:'Legend of Zelda — NES',year:'1986',type:'NES Gameplay',
-   embed:'https://archive.org/embed/the-legend-of-zelda-nes',
-   fact:'Zelda was one of the first cartridge games with a battery save feature.'},
-  {id:'contra',icon:'🔫',title:'Contra — NES',year:'1987',type:'NES Gameplay',
-   embed:'https://archive.org/embed/contra-nes',
-   fact:'Up Up Down Down Left Right Left Right B A — the Konami Code gives 30 lives.'},
-  {id:'sonic',icon:'🦔',title:'Sonic the Hedgehog — Genesis',year:'1991',type:'Genesis Gameplay',
-   embed:'https://archive.org/embed/sonic-the-hedgehog-genesis',
-   fact:'Sonic was made to rival Mario. Green Hill Zone is one of gaming\'s most iconic levels.'}
+  {id:'ep1',icon:'🍄',title:'Super Mario Super Show — Ep.1',year:'1989',type:'Cartoon · DiC',embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-01-the-bird-the-bird-naughty-word',fact:'Lou Albano played Mario live-action. Each episode ends with Do the Mario!'},
+  {id:'ep2',icon:'🍄',title:'Super Mario Super Show — Ep.2',year:'1989',type:'Cartoon · DiC',embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-02-king-mario-of-cramalot-george-washington-slept-here',fact:'The show ran 65 episodes and included Legend of Zelda cartoon segments.'},
+  {id:'ep21',icon:'🍄',title:'Super Mario Super Show — Baby Mario Love',year:'1989',type:'Cartoon · DiC',embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein',fact:'Danny Wells played Luigi. Princess Peach was called Princess Toadstool in the series.'},
+  {id:'smb',icon:'🕹️',title:'Super Mario Bros. — NES',year:'1985',type:'NES Gameplay',embed:'https://archive.org/embed/super-mario-bros-nes',fact:'Super Mario Bros. sold 40M+ copies. World 1-1 is the most iconic level in gaming.'},
+  {id:'smb3',icon:'🦅',title:'Super Mario Bros. 3 — NES',year:'1990',type:'NES Gameplay',embed:'https://archive.org/embed/super-mario-bros-3-nes',fact:'SMB3 was first shown in the 1989 film The Wizard before release.'},
+  {id:'zelda',icon:'🗡️',title:'Legend of Zelda — NES',year:'1986',type:'NES Gameplay',embed:'https://archive.org/embed/the-legend-of-zelda-nes',fact:'One of the first cartridge games with a battery save feature.'},
+  {id:'contra',icon:'🔫',title:'Contra — NES',year:'1987',type:'NES Gameplay',embed:'https://archive.org/embed/contra-nes',fact:'Up Up Down Down Left Right Left Right B A — 30 lives from the Konami Code.'},
+  {id:'sonic',icon:'🦔',title:'Sonic the Hedgehog — Genesis',year:'1991',type:'Genesis Gameplay',embed:'https://archive.org/embed/sonic-the-hedgehog-genesis',fact:'Sonic was made to rival Mario. Green Hill Zone is one of gaming\'s most iconic levels.'}
 ];
 function playVideo(id){
-  var v=VIDEOS.find(function(x){return x.id===id;});
-  if(!v)return;
+  var v=VIDEOS.find(function(x){return x.id===id;});if(!v)return;
   var card=document.getElementById('vc-'+id);
   card.querySelector('.vthumb').style.display='none';
   var em=card.querySelector('.vembed');
   em.style.display='block';
-  em.innerHTML='<iframe src="'+v.embed+'?autoplay=1" allowfullscreen allow="autoplay;fullscreen;gamepad *;pointer-lock" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-pointer-lock" title="'+v.title+'" loading="eager"></iframe>';
+  em.innerHTML='<iframe src="'+v.embed+'?autoplay=1" allowfullscreen allow="autoplay;fullscreen;pointer-lock" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-pointer-lock" title="'+v.title+'" loading="eager"></iframe>';
   card.classList.add('playing');
   card.querySelector('.vfact').classList.add('show');
   if(navigator.vibrate)navigator.vibrate(15);
@@ -103,6 +107,56 @@ function playVideo(id){
     g.appendChild(d);
   });
 })();
+var TAGS=['Mario','Sonic','Zelda','DuckTales','Darkwing Duck','X-Men animated','Spider-Man animated','Batman animated','Ninja Turtles','Disney cartoon','Looney Tunes','Tom and Jerry','He-Man','Transformers','GI Joe'];
+(function(){
+  var c=document.getElementById('qtags');
+  TAGS.forEach(function(t){
+    var b=document.createElement('button');b.className='qtag';b.textContent=t;
+    b.onclick=function(){document.getElementById('vid-q').value=t;doVidSearch();};
+    c.appendChild(b);
+  });
+})();
+function doVidSearch(){
+  var q=document.getElementById('vid-q').value.trim();if(!q)return;
+  if(navigator.vibrate)navigator.vibrate(10);
+  var c=document.getElementById('sresults');
+  c.innerHTML='<div style="padding:12px;color:#aaa;font-size:.75rem">Searching…</div>';
+  var query='('+q+') AND mediatype:movies AND (subject:animation OR subject:cartoon OR subject:"animated series" OR collection:animation OR collection:classic_tv) AND NOT subject:gameplay AND NOT subject:speedrun AND NOT subject:AMV AND NOT subject:"fan made"';
+  var params=new URLSearchParams({q:query,fl:'identifier,title,year',rows:18,page:1,output:'json',sort:'downloads desc'});
+  fetch('https://archive.org/advancedsearch.php?'+params)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      var docs=(data&&data.response&&data.response.docs)||[];
+      var junk=['amv','gameplay','walkthrough','speedrun','fan made','fandub','reupload','240p','slideshow'];
+      docs=docs.filter(function(d){var t=(d.title||'').toLowerCase();return !junk.some(function(j){return t.includes(j);});});
+      renderSearch(docs,c);
+    })
+    .catch(function(){c.innerHTML='<div style="padding:12px;color:#f66;font-size:.75rem">Search failed — check connection.</div>';});
+}
+function renderSearch(docs,container){
+  container.innerHTML='';
+  if(!docs.length){container.innerHTML='<div style="padding:12px;color:#aaa;font-size:.75rem">No cartoons found. Try: Mario · Sonic · DuckTales · X-Men</div>';return;}
+  var grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px';
+  docs.forEach(function(item){
+    var card=document.createElement('div');card.className='scard';
+    var thumb=document.createElement('div');thumb.className='sthumb';
+    thumb.innerHTML='<div style="width:46px;height:46px;border-radius:50%;background:var(--gold,#ffcc00);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#000">&#9654;</div><div style="font-size:.6rem;color:#888;letter-spacing:2px">TAP TO PLAY</div>';
+    var info=document.createElement('div');info.className='scard-info';
+    info.innerHTML='<div class="scard-title">'+(item.title||item.identifier)+'</div><div class="scard-meta">'+(item.year?'&#x1F4C5; '+item.year+' · ':'')+'Internet Archive</div>';
+    card.appendChild(thumb);card.appendChild(info);
+    card.addEventListener('click',function(){
+      if(navigator.vibrate)navigator.vibrate(15);
+      thumb.className='';thumb.style.cssText='width:100%;aspect-ratio:16/9';
+      thumb.innerHTML='<iframe src="https://archive.org/embed/'+item.identifier+'?autoplay=1" style="width:100%;height:100%;border:none" allowfullscreen allow="autoplay;fullscreen" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>';
+      card.style.borderColor='var(--gold,#ffcc00)';card.style.boxShadow='0 0 16px rgba(255,204,0,.3)';
+      card.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+    grid.appendChild(card);
+  });
+  container.appendChild(grid);
+}
+document.getElementById('vid-q').addEventListener('keypress',function(e){if(e.key==='Enter')doVidSearch();});
 </script>
 </body>
 </html>

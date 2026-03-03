@@ -1,86 +1,64 @@
-/* ============================================================
-   rom-search.js — Internet Archive ROM Search
-   Synch Pipe Arcade Hub · pewpi-infinity
-   ============================================================ */
-var RomSearch = (function () {
+var RomSearch=(function(){
   'use strict';
-
-  var IA_API = 'https://archive.org/advancedsearch.php';
-  var ROM_BASE = 'https://archive.org/download/';
-
-  function search(query, callback) {
-    if (!query || !callback) return;
-    try {
-      var params = new URLSearchParams({
-        q:      query + ' AND mediatype:software',
-        fl:     'identifier,title,description',
-        rows:   20,
-        page:   1,
-        output: 'json'
-      });
-      var url = IA_API + '?' + params.toString();
-
-      fetch(url)
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          var docs = (data && data.response && data.response.docs) ? data.response.docs : [];
-          callback(null, docs);
-        })
-        .catch(function (err) {
-          console.warn('[RomSearch] fetch error:', err);
-          callback(err, []);
+  var IA='https://archive.org/advancedsearch.php';
+  var SYS_Q={
+    nes:'mediatype:software AND (subject:NES OR subject:"Nintendo Entertainment System")',
+    snes:'mediatype:software AND (subject:SNES OR subject:"Super Nintendo")',
+    segaMD:'mediatype:software AND (subject:Genesis OR subject:"Mega Drive" OR subject:Sega)'
+  };
+  var EXT={nes:'.nes',snes:'.sfc',segaMD:'.md'};
+  function search(query,core,callback){
+    if(!query||!callback)return;
+    var q='('+query+') AND '+(SYS_Q[core]||SYS_Q.nes);
+    var params=new URLSearchParams({q:q,fl:'identifier,title',rows:12,page:1,output:'json'});
+    fetch(IA+'?'+params)
+      .then(function(r){return r.json();})
+      .then(function(data){
+        var docs=(data&&data.response&&data.response.docs)||[];
+        docs=docs.filter(function(d){
+          var t=(d.title||d.identifier||'').toLowerCase();
+          return !t.includes('manual')&&!t.includes('magazine')&&!t.includes('screenshot');
         });
-    } catch (e) {
-      console.error('[RomSearch] search error:', e);
-      callback(e, []);
-    }
+        callback(null,docs);
+      })
+      .catch(function(err){callback(err,[]);});
   }
-
-  function renderResults(results, container) {
-    if (!container) return;
-    try {
-      container.innerHTML = '';
-      if (!results || results.length === 0) {
-        container.innerHTML = '<div style="padding:12px;color:var(--text-dim);font-size:0.75rem">No results found.</div>';
-        return;
-      }
-      results.forEach(function (item) {
-        var div = document.createElement('div');
-        div.className = 'rom-result-item';
-
-        var titleSpan = document.createElement('span');
-        titleSpan.className = 'rom-title';
-        titleSpan.textContent = item.title || item.identifier;
-
-        var btn = document.createElement('button');
-        btn.className = 'rom-load-btn';
-        btn.textContent = 'LOAD';
-        btn.addEventListener('click', function () {
-          loadRom(item.identifier, item.identifier + '.nes');
-        });
-
-        div.appendChild(titleSpan);
-        div.appendChild(btn);
-        container.appendChild(div);
+  function renderResults(results,container,core){
+    if(!container)return;
+    container.innerHTML='';
+    if(!results||!results.length){
+      container.innerHTML='<div style="padding:12px;color:#888;font-size:.75rem">No ROMs found. Try a different search.</div>';
+      return;
+    }
+    var ext=EXT[core]||'.nes';
+    results.forEach(function(item){
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid rgba(255,204,0,.08)';
+      var title=document.createElement('span');
+      title.style.cssText='font-size:.75rem;color:#e0e0e0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+      title.textContent=item.title||item.identifier;
+      var btn=document.createElement('button');
+      btn.textContent='LOAD';
+      btn.style.cssText='padding:5px 12px;background:#ffcc00;color:#000;border:none;border-radius:4px;font-size:.7rem;font-weight:bold;cursor:pointer;flex-shrink:0';
+      btn.addEventListener('click',function(){
+        if(navigator.vibrate)navigator.vibrate(20);
+        btn.textContent='…';btn.disabled=true;
+        fetch('https://archive.org/metadata/'+item.identifier+'/files')
+          .then(function(r){return r.json();})
+          .then(function(meta){
+            var files=meta.result||[];
+            var rom=files.find(function(f){return f.name&&f.name.toLowerCase().endsWith(ext);});
+            if(!rom)rom=files.find(function(f){return f.name&&f.name.toLowerCase().endsWith('.zip');});
+            if(rom&&window.RomLoader){
+              RomLoader.load('https://archive.org/download/'+item.identifier+'/'+encodeURIComponent(rom.name),core,'game');
+              container.innerHTML='<div style="padding:10px;color:#ffcc00;font-size:.75rem">✓ Loading: '+(item.title||item.identifier)+'</div>';
+            }else{btn.textContent='✗';setTimeout(function(){btn.textContent='LOAD';btn.disabled=false;},2000);}
+          })
+          .catch(function(){btn.textContent='LOAD';btn.disabled=false;});
       });
-    } catch (e) {
-      console.error('[RomSearch] renderResults error:', e);
-    }
+      row.appendChild(title);row.appendChild(btn);
+      container.appendChild(row);
+    });
   }
-
-  function loadRom(identifier, filename) {
-    try {
-      if (!identifier || !filename) return;
-      var url = ROM_BASE + encodeURIComponent(identifier) + '/' + encodeURIComponent(filename);
-      if (window.EmulatorManager) {
-        EmulatorManager.loadRom(url);
-      } else {
-        console.warn('[RomSearch] EmulatorManager not available. ROM URL:', url);
-      }
-    } catch (e) {
-      console.error('[RomSearch] loadRom error:', e);
-    }
-  }
-
-  return { search: search, renderResults: renderResults, loadRom: loadRom };
+  return{search:search,renderResults:renderResults};
 }());
