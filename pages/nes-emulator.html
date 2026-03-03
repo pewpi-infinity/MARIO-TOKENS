@@ -48,6 +48,47 @@
                 <div id="game" style="width:100%;height:500px"></div>
               </div>
             </div>
+
+            <div class="controller-overlay">
+              <div class="controller-section">
+                <div class="controller-label">D-PAD</div>
+                <div class="dpad">
+                  <div class="dpad-btn dpad-empty"></div>
+                  <button class="dpad-btn" title="Up (↑)" data-key="ArrowUp">▲</button>
+                  <div class="dpad-btn dpad-empty"></div>
+                  <button class="dpad-btn" title="Left (←)" data-key="ArrowLeft">◀</button>
+                  <div class="dpad-btn dpad-center"></div>
+                  <button class="dpad-btn" title="Right (→)" data-key="ArrowRight">▶</button>
+                  <div class="dpad-btn dpad-empty"></div>
+                  <button class="dpad-btn" title="Down (↓)" data-key="ArrowDown">▼</button>
+                  <div class="dpad-btn dpad-empty"></div>
+                </div>
+              </div>
+
+              <div class="controller-section">
+                <div class="controller-label">MENU</div>
+                <div class="menu-buttons">
+                  <button class="menu-btn" title="Select (Shift)" data-key="Shift">SELECT</button>
+                  <button class="menu-btn" title="Start (Enter)" data-key="Enter">START</button>
+                </div>
+              </div>
+
+              <div class="controller-section">
+                <div class="controller-label">BUTTONS</div>
+                <div class="action-buttons">
+                  <button class="action-btn btn-b" title="B (Z)" data-key="z">B</button>
+                  <button class="action-btn btn-a" title="A (X)" data-key="x">A</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="keymap-display">
+              <div class="keymap-item"><span class="key-badge">↑↓←→</span> Move</div>
+              <div class="keymap-item"><span class="key-badge">Z</span> B</div>
+              <div class="keymap-item"><span class="key-badge">X</span> A</div>
+              <div class="keymap-item"><span class="key-badge">Enter</span> Start</div>
+              <div class="keymap-item"><span class="key-badge">Shift</span> Select</div>
+            </div>
           </div>
 
           <div class="game-metadata" id="game-metadata">
@@ -159,6 +200,25 @@
       var inp = document.getElementById('rom-search-input');
       if (inp) inp.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') doRomSearch();
+      });
+
+      document.querySelectorAll('[data-key]').forEach(function(btn) {
+        var key = btn.getAttribute('data-key');
+        var down = function(e) {
+          if (e && e.cancelable) e.preventDefault();
+          btn.classList.add('active');
+          window.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true }));
+        };
+        var up = function(e) {
+          if (e && e.cancelable) e.preventDefault();
+          btn.classList.remove('active');
+          window.dispatchEvent(new KeyboardEvent('keyup', { key: key, bubbles: true }));
+        };
+        btn.addEventListener('mousedown', down);
+        btn.addEventListener('touchstart', down);
+        btn.addEventListener('mouseup', up);
+        btn.addEventListener('touchend', up);
+        btn.addEventListener('mouseleave', up);
       });
     });
   </script>

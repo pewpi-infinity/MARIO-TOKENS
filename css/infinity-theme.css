@@ -11,18 +11,18 @@
 }
 
 :root {
-  --gold:        #ffcc00;
-  --gold-dim:    #b89000;
-  --gold-glow:   rgba(255, 204, 0, 0.35);
+  --gold:        #4da3ff;
+  --gold-dim:    #1f57b8;
+  --gold-glow:   rgba(77, 163, 255, 0.4);
   --platinum:    #e0e8f0;
-  --bg-dark:     #000000;
+  --bg-dark:     #070b1f;
   --bg-panel:    rgba(0, 0, 0, 0.78);
   --bg-card:     rgba(10, 10, 20, 0.90);
-  --border:      #ffcc00;
+  --border:      #4da3ff;
   --text:        #f0f0f0;
   --text-dim:    #888;
   --green-token: #00ff88;
-  --red-alert:   #ff3344;
+  --red-alert:   #ff304a;
   --font-mono:   'Courier New', Courier, monospace;
   --scanline-opacity: 0.06;
 }
@@ -61,8 +61,8 @@ body::after {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 204, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 204, 0, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(77, 163, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 48, 74, 0.08) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
@@ -154,7 +154,7 @@ body::after {
   text-align: center;
   padding: 40px 20px 20px;
   border-bottom: 2px solid var(--gold-dim);
-  background: linear-gradient(180deg, rgba(20,10,0,0.95) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(16, 34, 96, 0.92) 0%, rgba(80, 12, 24, 0.3) 100%);
 }
 
 #site-header h1 {
