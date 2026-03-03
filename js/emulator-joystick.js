@@ -17,7 +17,7 @@
     function down(e) {
       e.preventDefault();
       pressKey(key, true);
-      if (navigator.vibrate) navigator.vibrate(12);
+      if (navigator.vibrate) navigator.vibrate(50);
     }
     function up(e) {
       e.preventDefault();
@@ -57,7 +57,7 @@
     dpad.appendChild(createButton('▲', 'ArrowUp'));
     dpad.appendChild(createButton('', '', 'joy-empty'));
     dpad.appendChild(createButton('◀', 'ArrowLeft'));
-    dpad.appendChild(createButton('●', 'Enter'));
+    dpad.appendChild(createButton('START', 'Enter'));
     dpad.appendChild(createButton('▶', 'ArrowRight'));
     dpad.appendChild(createButton('', '', 'joy-empty'));
     dpad.appendChild(createButton('▼', 'ArrowDown'));
