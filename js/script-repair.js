@@ -127,6 +127,9 @@
     const t = _treasury();
     if (t) {
       t.mint(_userId(), 'IGT', 0.01, 'coin collect: ' + (coinId || 'coin'));
+      if (typeof t.printMongooseResearchWriterToken === 'function') {
+        t.printMongooseResearchWriterToken(_userId(), coinId || 'coin');
+      }
     }
 
     _emit('coin:collect', { coinId });
