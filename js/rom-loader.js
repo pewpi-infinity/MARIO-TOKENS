@@ -7,7 +7,7 @@ var RomLoader = (function () {
   'use strict';
 
   var EJS_PATH = 'https://cdn.emulatorjs.org/stable/data/';
-  var PROXY    = 'https://corsproxy.io/?url=';
+  var PROXIES  = ['', 'https://corsproxy.io/?url=', 'https://api.allorigins.win/raw?url='];
 
   function isMobile() {
     return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
@@ -22,7 +22,7 @@ var RomLoader = (function () {
   }
 
   function startEmulator(container, blobUrl, core) {
-    var mobile = isMobile();
+    var mobile = isMobile() || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 
     /* EmulatorJS needs an empty target div */
     container.innerHTML = '<div id="ejs-target" style="width:100%;height:100%"></div>';
@@ -70,19 +70,25 @@ var RomLoader = (function () {
       if (el) el.textContent = msg;
     };
 
-    var proxyUrl = PROXY + encodeURIComponent(romUrl);
-    status('Fetching game data via proxy&hellip;');
-
-    fetch(proxyUrl)
-      .then(function (r) {
+    function fetchRom(i, lastError) {
+      if (i >= PROXIES.length) return Promise.reject(lastError || new Error('ROM fetch failed'));
+      var prefix = PROXIES[i];
+      var url = prefix ? (prefix + encodeURIComponent(romUrl)) : romUrl;
+      status(prefix ? 'Fetching game data via proxy...' : 'Fetching game data...');
+      return fetch(url).then(function (r) {
         if (!r.ok) throw new Error('Server returned ' + r.status);
         var kb = r.headers.get('content-length');
-        if (kb) status('Downloading ' + Math.round(kb / 1024) + ' KB&hellip;');
-        else    status('Downloading&hellip;');
+        if (kb) status('Downloading ' + Math.round(kb / 1024) + ' KB...');
+        else    status('Downloading...');
         return r.arrayBuffer();
+      }).catch(function (err) {
+        return fetchRom(i + 1, err);
       })
+    }
+
+    fetchRom(0)
       .then(function (buf) {
-        status('Starting emulator&hellip;');
+        status('Starting emulator...');
         var blob    = new Blob([buf]);
         var blobUrl = URL.createObjectURL(blob);
         startEmulator(container, blobUrl, core);
