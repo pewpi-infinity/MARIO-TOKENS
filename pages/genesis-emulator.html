@@ -7,30 +7,22 @@
 <link rel="stylesheet" href="../css/infinity-theme.css"/>
 <link rel="stylesheet" href="../css/fixes.css"/>
 <style>
-#game{width:100%!important;height:62vw!important;min-height:320px;max-height:520px;display:block;background:#000;touch-action:none}
 .emu-bezel{border:3px solid var(--gold,#ffcc00);border-radius:10px;overflow:hidden;background:#000;box-shadow:0 0 24px rgba(255,204,0,.25);width:100%}
-.game-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+#game-frame{width:100%;height:60vw;min-height:340px;max-height:540px;border:none;display:block;background:#000}
+.game-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .game-tile{display:flex;align-items:center;gap:8px;padding:11px 14px;background:var(--bg-card,#0d0d1f);border:2px solid rgba(255,204,0,.2);border-radius:8px;cursor:pointer;font-size:.82rem;color:#e0e0e0;flex:1 1 140px;-webkit-tap-highlight-color:transparent;user-select:none;transition:border-color .15s,color .15s}
 .game-tile.active,.game-tile:active{border-color:var(--gold,#ffcc00);color:var(--gold,#ffcc00)}
 .g-icon{font-size:1.3rem;flex-shrink:0}
-#load-btn{display:block;width:100%;margin:10px 0 4px;padding:15px;background:var(--gold,#ffcc00);color:#000;font-weight:bold;font-size:1rem;letter-spacing:2px;border:none;border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-#load-btn:active{opacity:.8}
-#load-btn:disabled{opacity:.5}
 .meta-bar{display:flex;gap:12px;flex-wrap:wrap;padding:8px 12px;background:rgba(255,204,0,.05);border:1px solid rgba(255,204,0,.12);border-radius:6px;margin-top:10px;font-size:.7rem;color:#888}
 .meta-bar b{color:var(--gold,#ffcc00)}
-.tip{font-size:.62rem;color:#888;text-align:center;margin:4px 0 10px;letter-spacing:1px}
-.search-row{display:flex;gap:8px;margin-top:14px}
-.search-row input{flex:1;padding:10px 12px;background:#0d0d1f;border:2px solid rgba(255,204,0,.2);border-radius:8px;color:#e0e0e0;font-size:.8rem;outline:none;-webkit-tap-highlight-color:transparent}
-.search-row input:focus{border-color:var(--gold,#ffcc00)}
-.search-row button{padding:10px 16px;background:var(--gold,#ffcc00);color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;flex-shrink:0}
-#rom-results{margin-top:8px;background:#0d0d1f;border:1px solid rgba(255,204,0,.1);border-radius:8px;max-height:260px;overflow-y:auto}
+.tip{font-size:.62rem;color:#888;text-align:center;margin:6px 0;letter-spacing:1px}
 </style>
 </head>
 <body>
 <div id="star-overlay" aria-hidden="true"></div>
-<input type="checkbox" id="nav-toggle" aria-label="Toggle navigation"/>
-<label class="hamburger" for="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></label>
-<nav class="nav-drawer" aria-label="Site navigation">
+<input type="checkbox" id="nav-toggle"/>
+<label class="hamburger" for="nav-toggle"><span></span><span></span><span></span></label>
+<nav class="nav-drawer">
   <h3>&#9658; Navigate</h3>
   <a href="../index.html">&#x1F3E0; Hub</a>
   <h3 style="margin-top:16px">&#9658; Pages</h3>
@@ -50,55 +42,38 @@
 </header>
 <main id="main-content">
 <section class="panel full-width">
-  <div class="emu-bezel"><div id="game"></div></div>
+  <div class="emu-bezel">
+    <iframe id="game-frame"
+      src="https://archive.org/embed/sonic-the-hedgehog-genesis"
+      allowfullscreen
+      allow="autoplay;fullscreen;gamepad *;pointer-lock"
+      title="Genesis Emulator">
+    </iframe>
+  </div>
   <div class="meta-bar"><b id="mt">Sonic the Hedgehog</b><span id="ms">Genesis · 1991</span><span id="mg">Platform</span><span id="mp">1P</span></div>
-  <button id="load-btn" onclick="loadSelected()">&#9654; LOAD GAME</button>
-  <p class="tip">&#x1F3AE; On-screen joystick appears after game loads · Haptic feedback on buttons</p>
+  <p class="tip">&#x1F3AE; Tap a game to load it · Touch controls appear in the player</p>
   <div class="game-grid">
-    <div class="game-tile active" data-title="Sonic the Hedgehog Sega Genesis" data-year="1991" data-genre="Platform" data-players="1" onclick="pick(this)"><span class="g-icon">🦔</span><span>Sonic the Hedgehog</span></div>
-    <div class="game-tile" data-title="Sonic the Hedgehog 2 Genesis" data-year="1992" data-genre="Platform" data-players="1-2" onclick="pick(this)"><span class="g-icon">🦔</span><span>Sonic 2</span></div>
-    <div class="game-tile" data-title="Streets of Rage Sega Genesis" data-year="1991" data-genre="Beat-em-up" data-players="1-2" onclick="pick(this)"><span class="g-icon">👊</span><span>Streets of Rage</span></div>
-    <div class="game-tile" data-title="Mortal Kombat Genesis" data-year="1993" data-genre="Fighting" data-players="1-2" onclick="pick(this)"><span class="g-icon">🥷</span><span>Mortal Kombat</span></div>
-    <div class="game-tile" data-title="Earthworm Jim Genesis" data-year="1994" data-genre="Platform" data-players="1" onclick="pick(this)"><span class="g-icon">🪱</span><span>Earthworm Jim</span></div>
-    <div class="game-tile" data-title="Golden Axe Sega Genesis" data-year="1990" data-genre="Beat-em-up" data-players="1-2" onclick="pick(this)"><span class="g-icon">⚔️</span><span>Golden Axe</span></div>
+    <div class="game-tile active" onclick="load(this,'sonic-the-hedgehog-genesis','Sonic the Hedgehog','1991','Platform','1')"><span class="g-icon">🦔</span><span>Sonic the Hedgehog</span></div>
+    <div class="game-tile" onclick="load(this,'sonic-the-hedgehog-2-genesis','Sonic 2','1992','Platform','1-2')"><span class="g-icon">🦔</span><span>Sonic 2</span></div>
+    <div class="game-tile" onclick="load(this,'streets-of-rage-genesis','Streets of Rage','1991','Beat-em-up','1-2')"><span class="g-icon">👊</span><span>Streets of Rage</span></div>
+    <div class="game-tile" onclick="load(this,'mortal-kombat-genesis','Mortal Kombat','1993','Fighting','1-2')"><span class="g-icon">🥷</span><span>Mortal Kombat</span></div>
+    <div class="game-tile" onclick="load(this,'earthworm-jim-genesis','Earthworm Jim','1994','Platform','1')"><span class="g-icon">🪱</span><span>Earthworm Jim</span></div>
+    <div class="game-tile" onclick="load(this,'golden-axe-genesis','Golden Axe','1990','Beat-em-up','1-2')"><span class="g-icon">⚔️</span><span>Golden Axe</span></div>
   </div>
-  <div class="search-row">
-    <input type="text" id="rom-search-input" placeholder="Search any Genesis game…"/>
-    <button onclick="doSearch()">&#x1F50D;</button>
-  </div>
-  <div id="rom-results"></div>
 </section>
 </main>
 <script src="../js/navigation.js"></script>
-<script src="../js/rom-loader.js"></script>
-<script src="../js/rom-search.js"></script>
 <script>
-var sel='Sonic the Hedgehog Sega Genesis';
-function pick(el){
+function load(el,id,title,year,genre,players){
   document.querySelectorAll('.game-tile').forEach(function(g){g.classList.remove('active');});
-  el.classList.add('active');sel=el.dataset.title;
-  document.getElementById('mt').textContent=el.querySelector('span:last-child').textContent;
-  document.getElementById('ms').textContent='Genesis · '+el.dataset.year;
-  document.getElementById('mg').textContent=el.dataset.genre;
-  document.getElementById('mp').textContent=el.dataset.players+'P';
-  if(navigator.vibrate)navigator.vibrate(12);
+  el.classList.add('active');
+  document.getElementById('game-frame').src='https://archive.org/embed/'+id;
+  document.getElementById('mt').textContent=title;
+  document.getElementById('ms').textContent='Genesis · '+year;
+  document.getElementById('mg').textContent=genre;
+  document.getElementById('mp').textContent=players+'P';
+  if(navigator.vibrate)navigator.vibrate(20);
 }
-function loadSelected(){
-  if(navigator.vibrate)navigator.vibrate(25);
-  var b=document.getElementById('load-btn');
-  b.textContent='⏳ Searching & Loading…';b.disabled=true;
-  RomLoader.search(sel,'segaMD','game');
-  setTimeout(function(){b.textContent='▶ LOAD GAME';b.disabled=false;},18000);
-}
-function doSearch(){
-  var q=document.getElementById('rom-search-input').value.trim();if(!q)return;
-  if(navigator.vibrate)navigator.vibrate(10);
-  var c=document.getElementById('rom-results');
-  c.innerHTML='<div style="padding:10px;color:#aaa;font-size:.75rem">Searching…</div>';
-  RomSearch.search(q,'segaMD',function(err,results){RomSearch.renderResults(results||[],c,'segaMD');});
-}
-document.getElementById('rom-search-input').addEventListener('keypress',function(e){if(e.key==='Enter')doSearch();});
-document.addEventListener('DOMContentLoaded',function(){RomLoader.search('Sonic the Hedgehog Sega Genesis','segaMD','game');});
 </script>
 </body>
 </html>
