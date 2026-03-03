@@ -204,18 +204,20 @@
 
       document.querySelectorAll('[data-key]').forEach(function(btn) {
         var key = btn.getAttribute('data-key');
-        var down = function() {
+        var down = function(e) {
+          if (e && e.cancelable) e.preventDefault();
           btn.classList.add('active');
           window.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true }));
         };
-        var up = function() {
+        var up = function(e) {
+          if (e && e.cancelable) e.preventDefault();
           btn.classList.remove('active');
           window.dispatchEvent(new KeyboardEvent('keyup', { key: key, bubbles: true }));
         };
         btn.addEventListener('mousedown', down);
-        btn.addEventListener('touchstart', down, { passive: true });
+        btn.addEventListener('touchstart', down);
         btn.addEventListener('mouseup', up);
-        btn.addEventListener('touchend', up, { passive: true });
+        btn.addEventListener('touchend', up);
         btn.addEventListener('mouseleave', up);
       });
     });

@@ -71,7 +71,9 @@ var RomLoader = (function () {
     };
 
     function fetchRom(i, lastError) {
-      if (i >= PROXIES.length) return Promise.reject(lastError || new Error('ROM fetch failed'));
+      if (i >= PROXIES.length) {
+        return Promise.reject(lastError || new Error('ROM fetch failed after trying direct + proxy sources'));
+      }
       var prefix = PROXIES[i];
       var url = prefix ? (prefix + encodeURIComponent(romUrl)) : romUrl;
       status(prefix ? 'Fetching game data via proxy...' : 'Fetching game data...');
@@ -84,7 +86,7 @@ var RomLoader = (function () {
       }).catch(function (err) {
         return fetchRom(i + 1, err);
       })
-    }
+    };
 
     fetchRom(0)
       .then(function (buf) {
