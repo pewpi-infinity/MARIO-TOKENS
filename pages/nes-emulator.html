@@ -65,7 +65,9 @@
 </section>
 </main>
 <script src="../js/navigation.js"></script>
+<script src="../js/emulator-joystick.js"></script>
 <script>
+if(window.EmulatorJoystick){EmulatorJoystick.init();}
 function load(el,id,title,year,genre,players){
   document.querySelectorAll('.game-tile').forEach(function(g){g.classList.remove('active');});
   el.classList.add('active');

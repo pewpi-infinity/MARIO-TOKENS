@@ -243,6 +243,15 @@
     };
   }
 
+  function printMongooseResearchWriterToken(userId, coinId) {
+    return _logEvent('MONGOOSE_RESEARCH_WRITER_TOKEN', {
+      tokenId: 'MRW-' + (_nextTokenId++),
+      userId,
+      coinId: coinId || null,
+      reason: 'coin collection print event',
+    });
+  }
+
   /* ── Public API ─────────────────────────────────────── */
   const Treasury = {
     TOKEN_TYPES,
@@ -254,6 +263,7 @@
     getScriptVersions,
     getEventLog,
     startWatchSession,
+    printMongooseResearchWriterToken,
   };
 
   // Export for both CommonJS and browser globals

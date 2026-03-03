@@ -359,11 +359,13 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="js/navigation.js"></script>
   <script src="js/mongoose-token-treasury.js"></script>
   <script src="js/script-repair.js"></script>
   <script src="js/power-ups.js"></script>
   <script src="js/bot-farm-hooks.js"></script>
   <script src="js/emulator-fix.js"></script>
+  <script src="js/emulator-joystick.js"></script>
 
   <!-- Arcade Hub Orchestrator -->
   <script>
@@ -497,6 +499,11 @@
     ArcadeHub.startWatching = function () {
       if (_watchStop) { _log('Watch session already active', 'info'); return; }
       if (!window.Treasury) { _log('Treasury not loaded', 'error'); return; }
+      var emu = document.querySelector('#emulator-container iframe');
+      if (emu) {
+        emu.style.pointerEvents = 'none';
+        emu.style.opacity = '.6';
+      }
       _watchStop = Treasury.startWatchSession('player1', function (entry) {
         var multiplier = window.PowerUps ? PowerUps.getTokenRateMultiplier() : 1;
         if (multiplier > 1) {
@@ -510,6 +517,11 @@
 
     ArcadeHub.stopWatching = function () {
       if (_watchStop) { _watchStop(); _watchStop = null; }
+      var emu = document.querySelector('#emulator-container iframe');
+      if (emu) {
+        emu.style.pointerEvents = '';
+        emu.style.opacity = '';
+      }
       _log('Watch session stopped', 'info');
     };
 
@@ -622,6 +634,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       console.log('[ARCADE] Synch Pipe Arcade Hub - initializing');
       window.ARCADE_USER_ID = 'player1';
+      if (window.EmulatorJoystick) EmulatorJoystick.init();
 
       if (window.BotFarm) {
         BotFarm.initDefaultBots();
