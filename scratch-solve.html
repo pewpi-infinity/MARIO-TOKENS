@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🎴 Scratch & Solve — Synch Pipe</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Barlow+Condensed:wght@400;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f;--surf:#13131f;--panel:#1c1c2e;--bord:#2a2a45;
+  --gold:#ffd700;--silver:#c0c0c0;--red:#ff3355;--green:#00cc66;
+  --text:#eeeeff;--dim:#666688;
+  --pixel:'Press Start 2P',monospace;
+  --marker:'Permanent Marker',cursive;
+  --ui:'Barlow Condensed',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:var(--ui);-webkit-tap-highlight-color:transparent;user-select:none}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:999}
+
+/* TOP BAR */
+#topbar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surf);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:100}
+#topbar h1{font-family:var(--pixel);font-size:7px;color:var(--gold);flex:1;letter-spacing:1px}
+.tb-btn{padding:6px 14px;background:var(--panel);border:1px solid var(--bord);border-radius:6px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer}
+.tb-btn:active{border-color:var(--gold)}
+
+/* MAIN */
+#main{padding:16px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+/* HINT BANNER */
+#hint-banner{
+  background:linear-gradient(135deg,#1a0a00,#2a1500);
+  border:2px solid var(--gold);
+  border-radius:10px;
+  padding:10px 14px;
+  text-align:center;
+  font-family:var(--pixel);
+  font-size:6px;
+  color:var(--gold);
+  letter-spacing:1px;
+  line-height:2;
+}
+#hint-banner span{color:#fff;font-size:7px}
+
+/* THE CARD */
+.scratch-card{
+  background:linear-gradient(145deg,#e8e0d0,#d4c8b0);
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.4);
+  border:3px solid var(--gold);
+  position:relative;
+  overflow:hidden;
+}
+
+/* card header stripe - classic 90s look */
+.card-header{
+  background:linear-gradient(90deg,#cc0000,#880000);
+  margin:-14px -14px 12px -14px;
+  padding:8px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.card-header-title{
+  font-family:var(--pixel);
+  font-size:7px;
+  color:var(--gold);
+  letter-spacing:1px;
+  text-shadow:1px 1px 0 #000;
+}
+.card-serial{font-size:10px;color:rgba(255,215,0,.6);font-family:monospace}
+
+/* REBUS PUZZLE AREA */
+.rebus-area{
+  background:#fff;
+  border:2px solid #8B6914;
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  flex-wrap:wrap;
+  min-height:80px;
+}
+.rebus-panel{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding:6px 8px;
+  border:1px dashed #8B6914;
+  border-radius:6px;
+  background:#fffef5;
+  min-width:60px;
+}
+.rebus-img{font-size:36px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.rebus-sign{
+  font-family:var(--pixel);
+  font-size:8px;
+  color:#cc0000;
+  font-weight:900;
+}
+.rebus-label{
+  font-family:var(--marker);
+  font-size:13px;
+  color:#333;
+}
+.rebus-op{
+  font-family:var(--pixel);
+  font-size:14px;
+  color:#cc0000;
+  font-weight:900;
+  padding:0 4px;
+  align-self:center;
+}
+
+/* SCRATCH PANELS */
+.scratch-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-bottom:12px;
+}
+.scratch-panel{
+  position:relative;
+  border-radius:8px;
+  overflow:hidden;
+  aspect-ratio:1;
+  background:#f5f0e8;
+  border:2px solid #8B6914;
+  cursor:pointer;
+}
+.scratch-reveal{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:4px;
+  background:#f5f0e8;
+}
+.scratch-emoji{font-size:28px;line-height:1}
+.scratch-label{
+  font-family:var(--pixel);
+  font-size:5px;
+  color:#333;
+  text-align:center;
+  line-height:1.4;
+}
+.scratch-cover{
+  position:absolute;
+  inset:0;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--pixel);
+  font-size:6px;
+  color:#fff;
+  flex-direction:column;
+  gap:4px;
+  transition:opacity .3s;
+  cursor:pointer;
+}
+.scratch-cover.silver{background:linear-gradient(135deg,#b8b8b8,#888,#d0d0d0,#999,#c0c0c0);background-size:200% 200%}
+.scratch-cover.gold{background:linear-gradient(135deg,#ffd700,#b8860b,#ffd700,#daa520)}
+.scratch-cover.hidden{opacity:0;pointer-events:none}
+.scratch-lines{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.15) 3px,rgba(255,255,255,.15) 4px);pointer-events:none}
+.scratch-icon{font-size:20px}
+
+/* ANSWER BOX */
+.answer-section{
+  background:#fff;
+  border:2px solid #8B6914;
+  border-radius:8px;
+  padding:10px;
+}
+.answer-label{
+  font-family:var(--pixel);
+  font-size:6px;
+  color:#8B6914;
+  margin-bottom:6px;
+  letter-spacing:1px;
+}
+.answer-boxes{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  margin-bottom:8px;
+}
+.answer-box{
+  width:44px;
+  height:44px;
+  border:2px solid #333;
+  border-radius:6px;
+  background:#fffef5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--marker);
+  font-size:22px;
+  color:#333;
+  text-transform:uppercase;
+  transition:all .2s;
+}
+.answer-box.correct{background:#d4edda;border-color:#28a745;color:#155724}
+.answer-box.wrong{background:#f8d7da;border-color:#dc3545;color:#721c24}
+.answer-box.blank{color:#ccc;font-size:14px}
+
+.guess-row{display:flex;gap:6px}
+#guess-input{
+  flex:1;
+  padding:10px 12px;
+  background:#fffef5;
+  border:2px solid #8B6914;
+  border-radius:8px;
+  font-family:var(--marker);
+  font-size:18px;
+  color:#333;
+  text-transform:uppercase;
+}
+#guess-input::placeholder{color:#ccc;font-size:14px;font-family:var(--ui)}
+#guess-input:focus{outline:none;border-color:#cc0000}
+#guess-btn{
+  padding:10px 16px;
+  background:linear-gradient(135deg,#cc0000,#880000);
+  border:none;
+  border-radius:8px;
+  color:var(--gold);
+  font-family:var(--pixel);
+  font-size:7px;
+  cursor:pointer;
+  letter-spacing:.5px;
+}
+#guess-btn:active{filter:brightness(1.2)}
+
+/* RESULT */
+#result{
+  text-align:center;
+  font-family:var(--pixel);
+  font-size:8px;
+  padding:10px;
+  border-radius:8px;
+  display:none;
+}
+#result.win{background:#d4edda;color:#155724;border:2px solid #28a745;display:block}
+#result.lose{background:#f8d7da;color:#721c24;border:2px solid #dc3545;display:block}
+
+/* CARD FOOTER */
+.card-footer{
+  background:linear-gradient(90deg,#880000,#cc0000);
+  margin:12px -14px -14px -14px;
+  padding:6px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.card-footer-text{font-size:9px;color:rgba(255,215,0,.8);font-family:var(--ui);font-weight:700}
+
+/* NEW CARD BTN */
+#new-card-btn{
+  width:100%;
+  padding:14px;
+  background:linear-gradient(135deg,var(--gold),#b8860b);
+  border:none;
+  border-radius:10px;
+  color:#000;
+  font-family:var(--pixel);
+  font-size:8px;
+  cursor:pointer;
+  letter-spacing:1px;
+  box-shadow:0 4px 16px rgba(255,215,0,.3);
+}
+#new-card-btn:active{filter:brightness(1.1);transform:scale(.98)}
+
+/* SCORE */
+#scoreboard{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
+.score-box{
+  background:var(--panel);
+  border:1px solid var(--bord);
+  border-radius:8px;
+  padding:8px 16px;
+  text-align:center;
+}
+.score-num{font-family:var(--pixel);font-size:14px;color:var(--gold)}
+.score-lbl{font-size:11px;color:var(--dim);font-weight:700;margin-top:2px}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <h1>🎴 SCRATCH & SOLVE</h1>
+  <button class="tb-btn" onclick="location.href='../index.html'">🏠 HUB</button>
+</div>
+
+<div id="main">
+
+  <!-- HINT -->
+  <div id="hint-banner">
+    🤠 FAMOUS TV SHOW — COUNTRY COMEDY 📺<br>
+    <span>SCRATCH TO REVEAL THE CLUES · SOLVE THE REBUS</span>
+  </div>
+
+  <!-- SCOREBOARD -->
+  <div id="scoreboard">
+    <div class="score-box"><div class="score-num" id="score-wins">0</div><div class="score-lbl">WINS</div></div>
+    <div class="score-box"><div class="score-num" id="score-streak">0</div><div class="score-lbl">STREAK</div></div>
+    <div class="score-box"><div class="score-num" id="score-played">0</div><div class="score-lbl">PLAYED</div></div>
+  </div>
+
+  <!-- SCRATCH CARD -->
+  <div class="scratch-card" id="card">
+    <div class="card-header">
+      <span class="card-header-title">🎴 SYNCH PIPE REBUS</span>
+      <span class="card-serial" id="card-serial">#0001</span>
+    </div>
+
+    <!-- REBUS PUZZLE -->
+    <div class="rebus-area" id="rebus-area">
+      <!-- built by JS -->
+    </div>
+
+    <!-- SCRATCH PANELS -->
+    <div class="scratch-grid" id="scratch-grid">
+      <!-- built by JS -->
+    </div>
+
+    <!-- ANSWER -->
+    <div class="answer-section">
+      <div class="answer-label">► YOUR ANSWER</div>
+      <div class="answer-boxes" id="answer-boxes"></div>
+      <div class="guess-row">
+        <input type="text" id="guess-input" placeholder="type your answer..." maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button id="guess-btn" onclick="checkAnswer()">CHECK</button>
+      </div>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="card-footer">
+      <span class="card-footer-text">SYNCH PIPE ARCADE</span>
+      <span class="card-footer-text">©2025 PEWPI</span>
+    </div>
+  </div>
+
+  <button id="new-card-btn" onclick="nextCard()">🎴 NEXT CARD</button>
+
+</div>
+
+<script>
+// ── PUZZLE DATA ──
+// Each puzzle: rebus panels (emoji + label + optional modifier), answer
+const PUZZLES = [
+  {
+    hint: '🤠 FAMOUS TV SHOW — COUNTRY COMEDY 📺',
+    answer: 'HEEHAW',
+    rebus: [
+      {emoji:'🤠', label:'HE', sign:null},
+      {op:'+'},
+      {emoji:'🌾', label:'HAY', sign:'-Y'},
+      {op:'+'},
+      {emoji:'🐴', label:'HAW', sign:null},
+    ],
+    scratches: [
+      {emoji:'🤠', label:'COWBOY HAT MAN\n= HE'},
+      {emoji:'🌾', label:'STRAW -Y\n= HA'},
+      {emoji:'🐴', label:'DONKEY SOUND\n= HAW'},
+    ]
+  },
+  {
+    hint: '🎮 80s CLASSIC PLUMBER 🍄',
+    answer: 'MARIO',
+    rebus: [
+      {emoji:'🎯', label:'MAR', sign:null},
+      {op:'+'},
+      {emoji:'👁️', label:'EYE', sign:'-EY'},
+      {op:'+'},
+      {emoji:'🅾️', label:'O', sign:null},
+    ],
+    scratches: [
+      {emoji:'🎯', label:'TARGET = MAR'},
+      {emoji:'👁️', label:'EYE -EY = I'},
+      {emoji:'🅾️', label:'LETTER O = O'},
+    ]
+  },
+  {
+    hint: '🕹️ CLASSIC ARCADE GHOST GAME 👻',
+    answer: 'PACMAN',
+    rebus: [
+      {emoji:'📦', label:'PACK', sign:'-K'},
+      {op:'+'},
+      {emoji:'👨', label:'MAN', sign:null},
+    ],
+    scratches: [
+      {emoji:'📦', label:'PACK -K = PAC'},
+      {emoji:'👨', label:'MAN = MAN'},
+      {emoji:'👻', label:'HINT: GHOSTS!'},
+    ]
+  },
+  {
+    hint: '🗡️ ELF HERO OF HYRULE 🌟',
+    answer: 'ZELDA',
+    rebus: [
+      {emoji:'⚡', label:'ZAP', sign:'-AP'},
+      {op:'+'},
+      {emoji:'💪', label:'EL', sign:null},
+      {op:'+'},
+      {emoji:'🦆', label:'DA', sign:null},
+    ],
+    scratches: [
+      {emoji:'⚡', label:'ZAP -AP = Z'},
+      {emoji:'💪', label:'ELBOW = EL'},
+      {emoji:'🦆', label:'DA DUCK = DA'},
+    ]
+  },
+  {
+    hint: '🦔 FAST BLUE GAME CHARACTER 💨',
+    answer: 'SONIC',
+    rebus: [
+      {emoji:'🎵', label:'SONG', sign:'-G'},
+      {op:'+'},
+      {emoji:'🧊', label:'ICE', sign:'-E'},
+    ],
+    scratches: [
+      {emoji:'🎵', label:'SONG -G = SON'},
+      {emoji:'🧊', label:'ICE -E = IC'},
+      {emoji:'💨', label:'HINT: FAST!'},
+    ]
+  },
+];
+
+let cardNum = 0;
+let currentPuzzle = null;
+let revealed = [];
+let wins = 0, streak = 0, played = 0;
+
+function nextCard() {
+  cardNum++;
+  document.getElementById('card-serial').textContent = '#' + String(cardNum).padStart(4,'0');
+  document.getElementById('result').className = '';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('guess-input').value = '';
+  currentPuzzle = PUZZLES[(cardNum - 1) % PUZZLES.length];
+  revealed = new Array(currentPuzzle.scratches.length).fill(false);
+  buildRebus();
+  buildScratches();
+  buildAnswerBoxes();
+}
+
+function buildRebus() {
+  const area = document.getElementById('rebus-area');
+  area.innerHTML = '';
+  currentPuzzle.rebus.forEach(item => {
+    if (item.op) {
+      const op = document.createElement('div');
+      op.className = 'rebus-op';
+      op.textContent = item.op;
+      area.appendChild(op);
+    } else {
+      const panel = document.createElement('div');
+      panel.className = 'rebus-panel';
+      panel.innerHTML = `
+        <div class="rebus-img">${item.emoji}</div>
+        ${item.sign ? `<div class="rebus-sign">${item.sign}</div>` : ''}
+        <div class="rebus-label">${item.label}</div>
+      `;
+      area.appendChild(panel);
+    }
+  });
+}
+
+function buildScratches() {
+  const grid = document.getElementById('scratch-grid');
+  grid.innerHTML = '';
+  currentPuzzle.scratches.forEach((s, i) => {
+    const panel = document.createElement('div');
+    panel.className = 'scratch-panel';
+    panel.innerHTML = `
+      <div class="scratch-reveal">
+        <div class="scratch-emoji">${s.emoji}</div>
+        <div class="scratch-label">${s.label.replace(/\n/g,'<br>')}</div>
+      </div>
+      <div class="scratch-cover ${i === currentPuzzle.scratches.length - 1 ? 'gold' : 'silver'}" id="cover-${i}" onclick="scratch(${i})">
+        <div class="scratch-lines"></div>
+        <div class="scratch-icon">🪙</div>
+        <div style="font-family:var(--pixel);font-size:5px;color:#fff;margin-top:4px">TAP</div>
+      </div>
+    `;
+    grid.appendChild(panel);
+  });
+}
+
+function buildAnswerBoxes() {
+  const boxes = document.getElementById('answer-boxes');
+  boxes.innerHTML = '';
+  const ans = currentPuzzle.answer;
+  for (let i = 0; i < ans.length; i++) {
+    const box = document.createElement('div');
+    box.className = 'answer-box blank';
+    box.id = `box-${i}`;
+    box.textContent = '_';
+    boxes.appendChild(box);
+  }
+}
+
+function scratch(i) {
+  const cover = document.getElementById(`cover-${i}`);
+  if (!cover) return;
+  // animate scratch reveal
+  cover.style.transition = 'opacity .4s, transform .4s';
+  cover.style.opacity = '0';
+  cover.style.transform = 'scale(1.05)';
+  setTimeout(() => cover.classList.add('hidden'), 400);
+  revealed[i] = true;
+}
+
+function checkAnswer() {
+  const guess = document.getElementById('guess-input').value.trim().toUpperCase().replace(/\s/g,'');
+  const answer = currentPuzzle.answer.toUpperCase();
+  const boxes = document.getElementById('answer-boxes');
+  const result = document.getElementById('result');
+
+  // fill boxes
+  for (let i = 0; i < answer.length; i++) {
+    const box = document.getElementById(`box-${i}`);
+    if (!box) continue;
+    const guessChar = guess[i] || '';
+    box.textContent = guessChar || '_';
+    box.className = 'answer-box ' + (guessChar === answer[i] ? 'correct' : guessChar ? 'wrong' : 'blank');
+  }
+
+  played++;
+  document.getElementById('score-played').textContent = played;
+
+  if (guess === answer) {
+    wins++;
+    streak++;
+    result.className = 'win';
+    result.textContent = '🎉 CORRECT! ' + answer + '!';
+    result.style.display = 'block';
+    document.getElementById('score-wins').textContent = wins;
+    document.getElementById('score-streak').textContent = streak;
+    // reveal all scratches
+    currentPuzzle.scratches.forEach((_, i) => scratch(i));
+  } else {
+    streak = 0;
+    result.className = 'lose';
+    result.textContent = '❌ NOPE! TRY AGAIN...';
+    result.style.display = 'block';
+    document.getElementById('score-streak').textContent = streak;
+    setTimeout(() => { result.style.display = 'none'; }, 1500);
+  }
+}
+
+document.getElementById('guess-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAnswer();
+});
+
+// start
+nextCard();
+</script>
+</body>
+</html>
