@@ -1,58 +1,463 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Synch Pipe Arcade Hub — pewpi-infinity</title><link rel="stylesheet" href="css/infinity-theme.css"/><link rel="stylesheet" href="css/fixes.css"/><style>#ham{position:fixed;top:10px;left:10px;z-index:300;width:38px;height:38px;background:#0f0f1c;border:1px solid #252540;border-radius:7px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer}#ham span{display:block;width:18px;height:2px;background:#ffd700;border-radius:2px}#sidenav{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f0f1c;border-right:1px solid #252540;z-index:200;transform:translateX(-100%);transition:transform .25s;display:flex;flex-direction:column;padding:16px 0;overflow-y:auto}#sidenav.open{transform:translateX(0)}#sidenav h3{font-size:10px;color:#ffd700;padding:10px 16px 12px;border-bottom:1px solid #252540;margin-bottom:4px;letter-spacing:1px}#sidenav a{display:flex;align-items:center;gap:10px;padding:11px 16px;color:#55557a;text-decoration:none;font-size:14px;font-weight:700;transition:all .15s}#sidenav a:hover{color:#ffd700;background:rgba(255,215,0,.07);padding-left:20px;border-left:3px solid #ffd700}#nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;display:none}#nav-overlay.show{display:block}#game-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px;margin-top:12px}.game-card{background:#13131f;border:2px solid #252540;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}.game-card:active,.game-card.selected{border-color:#ffd700;box-shadow:0 0 14px rgba(255,215,0,.3)}.game-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}.game-card .game-label{font-size:9px;padding:5px 6px;color:#ffd700;text-align:center;letter-spacing:.5px;line-height:1.4;background:#0a0a14}#emulator-container{width:100%;background:#000;border-radius:10px;overflow:hidden;margin-top:14px;min-height:300px;position:relative}#emulator-container canvas{width:100%!important;height:100%!important;object-fit:contain}#emulator-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:12px;color:#55557a}#emu-game-title{font-size:11px;color:#ffd700;letter-spacing:1px;margin-top:8px;text-align:center;min-height:16px}.page-tile{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--bg-card);border:2px solid var(--gold-dim);border-radius:10px;padding:18px 10px;text-decoration:none;color:var(--gold);font-size:0.68rem;letter-spacing:1px;text-align:center;transition:all .15s}.page-tile:hover{border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow);transform:translateY(-2px)}</style></head><body>
-<div id="star-overlay" aria-hidden="true"></div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Synch Pipe Arcade — pewpi-infinity</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surf:#0f0f1c;--panel:#181828;--bord:#252540;--gold:#ffd700;--gold-dim:#7a6200;--gold-glow:rgba(255,215,0,.25);--green:#00ff88;--red:#ff3355;--text:#dde0ff;--dim:#55557a;--purple:#cc44ff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;-webkit-tap-highlight-color:transparent}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:9999}
+#ham{position:fixed;top:10px;left:10px;z-index:300;width:38px;height:38px;background:var(--panel);border:1px solid var(--bord);border-radius:7px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer}
+#ham span{display:block;width:18px;height:2px;background:var(--gold);border-radius:2px}
+#sidenav{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--surf);border-right:1px solid var(--bord);z-index:200;transform:translateX(-100%);transition:transform .25s;display:flex;flex-direction:column;padding:16px 0;overflow-y:auto}
+#sidenav.open{transform:translateX(0)}
+#sidenav .nav-logo{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--gold);padding:10px 16px 16px;border-bottom:1px solid var(--bord);margin-bottom:4px}
+#sidenav a{display:flex;align-items:center;gap:10px;padding:11px 16px;color:var(--dim);text-decoration:none;font-size:14px;font-weight:700;transition:all .15s}
+#sidenav a:hover,#sidenav a.active{color:var(--gold);background:rgba(255,215,0,.07);padding-left:20px;border-left:3px solid var(--gold)}
+#nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199;display:none}
+#nav-overlay.show{display:block}
+#site-header{padding:18px 16px 14px 60px;background:var(--surf);border-bottom:2px solid var(--gold-dim)}
+#site-header h1{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);text-shadow:0 0 20px var(--gold-glow)}
+#site-header .tagline{font-size:12px;color:var(--dim);margin-top:6px;letter-spacing:1px}
+/* WALLET BAR */
+#wallet-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--bord);flex-wrap:wrap}
+#wallet-bar .wbal{font-family:'Press Start 2P',monospace;font-size:7px;padding:5px 10px;background:var(--bg);border-radius:6px;border:1px solid var(--gold-dim)}
+#wallet-bar .wbal span{color:var(--gold)}
+#wallet-bar .wbal label{color:var(--dim);font-size:6px;display:block;margin-bottom:3px}
+#login-btn{margin-left:auto;padding:6px 12px;background:var(--panel);border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer}
+#login-btn.logged{border-color:var(--green);color:var(--green)}
+#main-content{padding:12px 14px 40px;display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--surf);border:1px solid var(--bord);border-radius:12px;padding:16px;overflow:hidden}
+.panel h2{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+/* GAMES GRID */
+#featured-games{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:10px;margin-top:4px}
+.game-card{background:var(--panel);border:2px solid var(--bord);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
+.game-card:active,.game-card.playing{border-color:var(--gold);box-shadow:0 0 14px var(--gold-glow)}
+.game-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#0a0a14}
+.game-card .glabel{font-family:'Press Start 2P',monospace;font-size:5px;padding:5px 4px;color:var(--gold);text-align:center;line-height:1.5;background:#0a0a14}
+.game-card .gsys{font-size:9px;color:var(--dim);text-align:center;padding:2px 4px 5px;background:#0a0a14}
+/* EMULATOR */
+#emu-section{position:relative}
+#emu-title{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);text-align:center;min-height:14px;margin-bottom:8px}
+#emu-container{width:100%;background:#000;border-radius:10px;overflow:hidden;min-height:280px;position:relative}
+#emu-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--dim)}
+#emu-placeholder .big{font-size:2.5rem}
+#emu-placeholder p{font-family:'Press Start 2P',monospace;font-size:6px;text-align:center;line-height:2}
+#emu-container canvas{width:100%!important;height:100%!important;object-fit:contain}
+.emu-controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.emu-btn{padding:6px 14px;background:var(--panel);border:1px solid var(--bord);border-radius:6px;color:var(--dim);font-size:12px;font-weight:700;cursor:pointer}
+.emu-btn:active{border-color:var(--gold);color:var(--gold)}
+/* VIDEO */
+#cartoon-iframe-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#000;margin-bottom:10px}
+#cartoon-iframe{width:100%;height:100%;border:0}
+.ep-list{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;margin-top:8px}
+.ep-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;transition:all .15s}
+.ep-item:hover,.ep-item.playing{border-color:var(--gold);color:var(--gold)}
+.ep-num{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--dim);width:24px;flex-shrink:0}
+.ep-earn{margin-left:auto;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--green)}
+/* TOKEN CARDS */
+#token-balances{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.bal-card{background:var(--bg);border:1px solid var(--bord);border-radius:8px;padding:10px;text-align:center}
+.bal-card .bl{font-size:9px;color:var(--dim);letter-spacing:1px;margin-bottom:4px}
+.bal-card .ba{font-family:'Press Start 2P',monospace;font-size:9px}
+.bal-card.gold .ba{color:var(--gold)}
+.bal-card.plat .ba{color:#c0c0c0}
+.bal-card.igt .ba{color:var(--purple)}
+.earn-bar{background:var(--bg);border:1px solid var(--green);border-radius:6px;padding:6px 10px;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--green);text-align:center;margin-top:8px}
+/* ACTION BTNS */
+.act-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.act-btn{padding:8px 14px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.act-btn:active{border-color:var(--gold);color:var(--gold)}
+/* SYSTEM TILES */
+#system-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.sys-tile{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--panel);border:2px solid var(--bord);border-radius:10px;padding:14px 10px;text-decoration:none;color:var(--text);font-size:12px;font-weight:700;text-align:center;transition:all .15s;letter-spacing:.5px}
+.sys-tile:hover{border-color:var(--gold);box-shadow:0 0 14px var(--gold-glow);transform:translateY(-2px)}
+.sys-tile .sys-icon{font-size:1.8rem}
+.sys-tile .sys-name{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--gold)}
+/* LOG */
+#event-log{max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.log-entry{font-size:11px;padding:4px 8px;border-radius:4px;border-left:3px solid var(--bord)}
+.log-entry.mint{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.05)}
+.log-entry.info{border-color:var(--dim);color:var(--dim)}
+.log-entry.earn{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.05)}
+.log-entry.sync{border-color:var(--purple);color:var(--purple)}
+/* GITHUB LOGIN MODAL */
+#gh-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+#gh-modal.open{display:flex}
+#gh-box{background:var(--surf);border:2px solid var(--gold);border-radius:14px;padding:24px;width:100%;max-width:360px}
+#gh-box h3{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);margin-bottom:16px;text-align:center}
+#gh-box p{font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}
+#gh-box input{width:100%;padding:10px;background:var(--bg);border:1px solid var(--bord);border-radius:6px;color:var(--text);font-size:13px;margin-bottom:10px}
+#gh-box .row{display:flex;gap:8px}
+#gh-box button{flex:1;padding:10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
+.gh-confirm{background:var(--gold);border:none;color:#000}
+.gh-cancel{background:var(--panel);border:1px solid var(--bord);color:var(--dim)}
+footer{text-align:center;padding:20px;font-size:11px;color:var(--dim)}
+footer a{color:var(--gold)}
+.blink{animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+</style></head><body>
 <button id="ham" onclick="toggleNav()"><span></span><span></span><span></span></button>
-<nav id="sidenav"><h3>► SYNCH PIPE</h3><a href="index.html">🏠 Hub</a><a href="pages/nes-emulator.html">🎮 NES Emulator</a><a href="pages/snes-emulator.html">🎮 SNES Emulator</a><a href="pages/genesis-emulator.html">🎮 Genesis Emulator</a><a href="pages/jukebox-aerobics.html">🎵 Jukebox</a><a href="pages/terminal-bot.html">💻 Terminal</a><a href="pages/ai-chat.html">🤖 AI Chat</a><a href="pages/character-builder.html">🎨 Character Builder</a><a href="pages/evolution-timeline.html">📈 Evolution</a><a href="pages/video-gallery.html">📺 Video Gallery</a><h3 style="margin-top:14px">► LINKS</h3><a href="https://github.com/pewpi-infinity/MARIO-TOKENS" target="_blank">GitHub</a><a href="https://archive.org" target="_blank">Internet Archive</a></nav>
+<nav id="sidenav">
+  <div class="nav-logo">► SYNCH PIPE</div>
+  <a href="index.html" class="active">🏠 Hub</a>
+  <a href="pages/nes-emulator.html">🎮 NES</a>
+  <a href="pages/snes-emulator.html">🎮 SNES</a>
+  <a href="pages/genesis-emulator.html">🎮 Genesis</a>
+  <a href="pages/gba-emulator.html">🎮 GBA</a>
+  <a href="pages/gb-emulator.html">🎮 Game Boy</a>
+  <a href="pages/n64-emulator.html">🎮 N64</a>
+  <a href="pages/ps1-emulator.html">🎮 PlayStation</a>
+  <a href="pages/arcade-emulator.html">🎮 Arcade</a>
+  <a href="pages/atari-emulator.html">🎮 Atari</a>
+  <a href="pages/segacd-emulator.html">🎮 Sega CD</a>
+  <a href="pages/jukebox-aerobics.html">🎵 Jukebox</a>
+  <a href="pages/terminal-bot.html">💻 Terminal</a>
+  <a href="pages/ai-chat.html">🤖 AI Chat</a>
+  <a href="https://pewpi-infinity.github.io/Mario-World-Tokens/" target="_blank">🪙 Mario World Tokens</a>
+  <a href="https://www.romsgames.net/roms/" target="_blank">🔍 Find ROMs</a>
+</nav>
 <div id="nav-overlay" onclick="closeNav()"></div>
-<header id="site-header" style="padding-left:60px"><h1>♥ Synch Pipe Arcade Hub</h1><p class="tagline">pewpi-infinity &nbsp;·&nbsp; token economy &nbsp;·&nbsp; retro infinity</p></header>
+<header id="site-header">
+  <h1>♥ SYNCH PIPE ARCADE</h1>
+  <div class="tagline">pewpi-infinity · retro gaming · token economy</div>
+</header>
+<div id="wallet-bar">
+  <div class="wbal gold"><label>GOLD MPT</label><span id="bal-gold">0.00</span></div>
+  <div class="wbal plat"><label>PLATINUM</label><span id="bal-plat">0</span></div>
+  <div class="wbal igt"><label>IGT</label><span id="bal-igt">0.00</span></div>
+  <button id="login-btn" onclick="openGHModal()">⚡ CONNECT GITHUB</button>
+</div>
 <main id="main-content">
-<section class="panel full-width"><h2><span class="icon">🗺️</span> Arcade Pages</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px"><a href="pages/nes-emulator.html" class="page-tile">🎮<br>NES Emulator</a><a href="pages/snes-emulator.html" class="page-tile">🎮<br>SNES Emulator</a><a href="pages/genesis-emulator.html" class="page-tile">🎮<br>Genesis Emulator</a><a href="pages/jukebox-aerobics.html" class="page-tile">🎵<br>Jukebox</a><a href="pages/terminal-bot.html" class="page-tile">💻<br>Terminal</a><a href="pages/ai-chat.html" class="page-tile">🤖<br>AI Chat</a><a href="pages/character-builder.html" class="page-tile">🎨<br>Character Builder</a><a href="pages/video-gallery.html" class="page-tile">📺<br>Video Gallery</a></div></section>
-<section id="emulator-panel" class="panel full-width"><h2><span class="icon">🕹️</span> NES Emulator</h2><p style="font-size:0.78rem;color:var(--text-dim);margin-bottom:4px;letter-spacing:1px">TAP A GAME TO PLAY INSTANTLY:</p>
-<div id="game-list"><div class="game-card selected" onclick="loadRom('roms/nes/Metroid.zip','METROID',this)"><img src="images/boxart/zelda.jpg" alt="Metroid" loading="lazy"><div class="game-label">METROID</div></div><div class="game-card" onclick="loadRom('roms/nes/PunchOut.zip','PUNCH-OUT!!',this)"><img src="images/boxart/punchout.jpg" alt="Punch-Out" loading="lazy"><div class="game-label">PUNCH-OUT!!</div></div><div class="game-card" onclick="loadRom('roms/nes/TMNT.zip','TMNT',this)"><img src="images/boxart/tmnt.jpg" alt="TMNT" loading="lazy"><div class="game-label">TMNT</div></div><div class="game-card" onclick="loadRom('roms/nes/Tetris.zip','TETRIS',this)"><img src="images/boxart/mario-duckhunt.jpg" alt="Tetris" loading="lazy"><div class="game-label">TETRIS</div></div><div class="game-card" onclick="loadRom('roms/nes/1200in1.zip','1200 IN 1',this)"><img src="images/boxart/mario3.jpg" alt="1200 in 1" loading="lazy"><div class="game-label">1200 IN 1</div></div></div>
-<div id="emu-game-title">— TAP A GAME ABOVE —</div>
-<div id="emulator-container"><div id="emulator-placeholder"><p style="font-size:2rem">🎮</p><p>Tap a game above to play instantly</p></div></div>
-<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"><button class="btn sm" onclick="if(window.EJS_emulator)window.EJS_emulator.saveState()">💾 Save</button><button class="btn sm" onclick="if(window.EJS_emulator)window.EJS_emulator.loadState()">📂 Load</button><button class="btn sm" onclick="if(window.EJS_emulator)window.EJS_emulator.restart()">↺ Reset</button></div></section>
-<section id="cartoon-panel" class="panel col-2"><h2><span class="icon">📺</span> Mario Cartoon Viewer <span class="token-badge gold" style="margin-left:auto">+10 MPT/hr</span></h2><p style="font-size:0.78rem;color:var(--text-dim);margin-bottom:8px">Watch cartoons from the Internet Archive to earn Gold Tokens.</p><div id="cartoon-iframe-wrap"><iframe id="cartoon-iframe" src="https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein" title="Mario Cartoon" allowfullscreen loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe></div><p class="earn-ticker" id="earn-ticker">■ WATCH-TO-EARN ACTIVE - +10 MPT/hr</p><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" onclick="ArcadeHub.startWatching()">▶ Start Earning</button><button class="btn sm danger" onclick="ArcadeHub.stopWatching()">■ Stop</button><button class="btn sm" onclick="ArcadeHub.changeCartoon()">↻ Next Episode</button></div></section>
-<section id="token-panel" class="panel"><h2><span class="icon">💰</span> Token Economy</h2><div id="token-balances"><div class="balance-card gold"><div class="label">Gold (MPT)</div><div class="amount" id="bal-gold">0.00</div></div><div class="balance-card plat"><div class="label">Platinum</div><div class="amount" id="bal-plat">0</div></div><div class="balance-card igt"><div class="label">IGT</div><div class="amount" id="bal-igt">0.00</div></div></div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px"><button class="btn sm" onclick="ArcadeHub.simulateStomp()">👟 Stomp</button><button class="btn sm" onclick="ArcadeHub.simulateCoin()">🪙 Coin</button><button class="btn sm" onclick="ArcadeHub.simulateOneUp()">🍄 1-UP</button><button class="btn sm" onclick="ArcadeHub.simulateFlagPole()">🚩 Flag</button></div></section>
-<section id="power-panel" class="panel"><h2><span class="icon">⭐</span> Power-Ups</h2><div id="power-ups-row"><button class="power-btn" id="btn-star" onclick="PowerUps.activateStar()"><span class="pu-icon">⭐</span>STAR<div style="font-size:0.65rem;margin-top:4px;color:var(--text-dim)">Invincibility · 15s</div></button><button class="power-btn" id="btn-mushroom" onclick="PowerUps.activateMushroom()"><span class="pu-icon">🍄</span>MUSHROOM<div style="font-size:0.65rem;margin-top:4px;color:var(--text-dim)">2× tokens · 30s</div></button><button class="power-btn" id="btn-brick" onclick="PowerUps.breakBrick('demo-brick')" data-brick><span class="pu-icon">🧱</span>BRICK<div style="font-size:0.65rem;margin-top:4px;color:var(--text-dim)">Script restructure</div></button></div></section>
-<section id="bot-panel" class="panel"><h2><span class="icon">🤖</span> Bot Farm</h2><div id="bot-status-grid"></div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"><button class="btn sm" onclick="ArcadeHub.runBotScan()">🔍 Scan</button><button class="btn sm" onclick="ArcadeHub.runBotFix()">🔧 Fix</button><button class="btn sm" onclick="ArcadeHub.runBotGenerate()">🥚 Generate</button><button class="btn sm" onclick="ArcadeHub.runScanAndFix()">⚡ Scan+Fix</button></div><p style="font-size:0.68rem;color:var(--text-dim);margin-top:8px">Queue: <span id="bot-queue-count">0</span> tasks</p></section>
-<section id="repair-panel" class="panel"><h2><span class="icon">🔧</span> Script Repair</h2><div style="font-size:0.78rem;margin-bottom:10px"><span style="color:var(--text-dim)">Fixes:</span> <span id="fix-count" style="color:var(--gold);font-weight:bold">0</span> &nbsp;|&nbsp; <span style="color:var(--text-dim)">Scriptwriter:</span> <span id="scriptwriter-status" style="color:var(--red-alert)">LOCKED</span></div><table style="width:100%;border-collapse:collapse;font-size:0.72rem"><thead><tr><th style="color:var(--gold);padding:4px 6px;border-bottom:1px solid var(--gold-dim);text-align:left">Chunk</th><th style="color:var(--gold);padding:4px 6px;border-bottom:1px solid var(--gold-dim);text-align:left">Status</th></tr></thead><tbody id="chunk-table-body"><tr><td style="padding:4px 6px;color:var(--text-dim)">No chunks registered</td><td></td></tr></tbody></table></section>
-<section id="log-panel" class="panel full-width"><h2><span class="icon">📋</span> Event Log <button class="btn sm" style="margin-left:auto" onclick="ArcadeHub.clearLog()">Clear</button></h2><div id="event-log" role="log" aria-live="polite"><div class="log-entry info">[SYSTEM] Synch Pipe Arcade Hub initializing...</div></div></section>
+<section class="panel">
+  <h2>🕹️ FEATURED GAMES <span style="margin-left:auto;font-size:10px;font-weight:400;color:var(--dim);font-family:sans-serif">tap to play</span></h2>
+  <div id="featured-games">
+    <div class="game-card" onclick="loadGame('roms/nes/SuperMarioBros2000.zip','SUPER MARIO BROS','nes',this)">
+      <img src="https://upload.wikimedia.org/wikipedia/en/0/03/Super_Mario_Bros._box.png" alt="SMB" onerror="this.style.minHeight='120px'">
+      <div class="glabel">SUPER MARIO BROS</div><div class="gsys">NES</div>
+    </div>
+    <div class="game-card" onclick="loadGame('roms/nes/Metroid.zip','METROID','nes',this)">
+      <img src="https://upload.wikimedia.org/wikipedia/en/5/5b/Metroid_boxart.jpg" alt="Metroid" onerror="this.style.minHeight='120px'">
+      <div class="glabel">METROID</div><div class="gsys">NES</div>
+    </div>
+    <div class="game-card" onclick="loadGame('roms/nes/PunchOut.zip','PUNCH-OUT!!','nes',this)">
+      <img src="https://upload.wikimedia.org/wikipedia/en/2/2e/PunchOut_NES.jpg" alt="Punch-Out" onerror="this.style.minHeight='120px'">
+      <div class="glabel">PUNCH-OUT!!</div><div class="gsys">NES</div>
+    </div>
+    <div class="game-card" onclick="loadGame('roms/nes/TMNT.zip','TMNT','nes',this)">
+      <img src="https://upload.wikimedia.org/wikipedia/en/1/1b/Teenage_Mutant_Ninja_Turtles_%28NES%29_box_art.jpg" alt="TMNT" onerror="this.style.minHeight='120px'">
+      <div class="glabel">TMNT</div><div class="gsys">NES</div>
+    </div>
+    <div class="game-card" onclick="loadGame('roms/nes/Tetris.zip','TETRIS','nes',this)">
+      <img src="https://upload.wikimedia.org/wikipedia/en/4/4e/Tetris_NES_Nintendo.png" alt="Tetris" onerror="this.style.minHeight='120px'">
+      <div class="glabel">TETRIS</div><div class="gsys">NES</div>
+    </div>
+  </div>
+  <div id="emu-title" style="margin-top:14px">— TAP A GAME ABOVE —</div>
+  <div id="emu-container">
+    <div id="emu-placeholder"><div class="big">🎮</div><p>TAP A GAME<br>TO PLAY<br><span class="blink">▮</span></p></div>
+  </div>
+  <div class="emu-controls">
+    <button class="emu-btn" onclick="if(window.EJS_emulator)window.EJS_emulator.saveState()">💾 Save</button>
+    <button class="emu-btn" onclick="if(window.EJS_emulator)window.EJS_emulator.loadState()">📂 Load</button>
+    <button class="emu-btn" onclick="if(window.EJS_emulator)window.EJS_emulator.restart()">↺ Reset</button>
+    <a href="pages/nes-emulator.html" class="emu-btn" style="text-decoration:none;color:var(--gold);border-color:var(--gold)">📚 Full Library</a>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>📺 MARIO CARTOON THEATER <span style="margin-left:auto;font-family:sans-serif;font-size:10px;font-weight:400;color:var(--green)">+10 MPT/hr</span></h2>
+  <div id="cartoon-iframe-wrap">
+    <iframe id="cartoon-iframe" src="https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein" allowfullscreen loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+  </div>
+  <div class="earn-bar" id="watch-bar">▶ PRESS START WATCHING TO EARN TOKENS</div>
+  <div class="act-row">
+    <button class="act-btn" onclick="Wallet.startWatch()">▶ START EARNING</button>
+    <button class="act-btn" onclick="Wallet.stopWatch()">■ STOP</button>
+    <button class="act-btn" onclick="nextEp()">⏭ NEXT EP</button>
+  </div>
+  <div class="ep-list" id="ep-list"></div>
+</section>
+
+<section class="panel">
+  <h2>💰 TOKEN WALLET</h2>
+  <div id="token-balances">
+    <div class="bal-card gold"><div class="bl">GOLD MPT</div><div class="ba" id="w-gold">0.00</div></div>
+    <div class="bal-card plat"><div class="bl">PLATINUM</div><div class="ba" id="w-plat">0</div></div>
+    <div class="bal-card igt"><div class="bl">IGT</div><div class="ba" id="w-igt">0.00</div></div>
+  </div>
+  <div class="act-row">
+    <button class="act-btn" onclick="Wallet.stomp()">👟 STOMP +1</button>
+    <button class="act-btn" onclick="Wallet.coin()">🪙 COIN +0.01</button>
+    <button class="act-btn" onclick="Wallet.oneup()">🍄 1-UP +1</button>
+    <button class="act-btn" onclick="Wallet.flag()">🚩 FLAG +5</button>
+    <button class="act-btn" onclick="Wallet.syncGH()" style="border-color:var(--purple);color:var(--purple)">⚡ SYNC</button>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>🎮 ALL SYSTEMS</h2>
+  <div id="system-grid">
+    <a href="pages/nes-emulator.html" class="sys-tile"><div class="sys-icon">🎮</div><div class="sys-name">NES</div></a>
+    <a href="pages/snes-emulator.html" class="sys-tile"><div class="sys-icon">🎮</div><div class="sys-name">SNES</div></a>
+    <a href="pages/genesis-emulator.html" class="sys-tile"><div class="sys-icon">🎮</div><div class="sys-name">GENESIS</div></a>
+    <a href="pages/gba-emulator.html" class="sys-tile"><div class="sys-icon">🎮</div><div class="sys-name">GBA</div></a>
+    <a href="pages/gb-emulator.html" class="sys-tile"><div class="sys-icon">🎮</div><div class="sys-name">GAME BOY</div></a>
+    <a href="pages/n64-emulator.html" class="sys-tile"><div class="sys-icon">🎮</div><div class="sys-name">N64</div></a>
+    <a href="pages/ps1-emulator.html" class="sys-tile"><div class="sys-icon">🎮</div><div class="sys-name">PLAYSTATION</div></a>
+    <a href="pages/arcade-emulator.html" class="sys-tile"><div class="sys-icon">🕹️</div><div class="sys-name">ARCADE</div></a>
+    <a href="pages/atari-emulator.html" class="sys-tile"><div class="sys-icon">🕹️</div><div class="sys-name">ATARI</div></a>
+    <a href="pages/segacd-emulator.html" class="sys-tile"><div class="sys-icon">💿</div><div class="sys-name">SEGA CD</div></a>
+    <a href="https://www.romsgames.net/roms/" target="_blank" class="sys-tile" style="border-color:var(--gold)"><div class="sys-icon">🔍</div><div class="sys-name" style="color:var(--gold)">FIND ROMS</div></a>
+    <a href="https://pewpi-infinity.github.io/Mario-World-Tokens/" target="_blank" class="sys-tile" style="border-color:var(--purple)"><div class="sys-icon">🪙</div><div class="sys-name" style="color:var(--purple)">MWT SITE</div></a>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>📋 EVENT LOG <button class="act-btn" style="margin-left:auto;padding:3px 10px;font-size:11px" onclick="clearLog()">Clear</button></h2>
+  <div id="event-log"><div class="log-entry info">[SYSTEM] Synch Pipe Arcade loaded.</div></div>
+</section>
 </main>
-<footer id="site-footer"><span>Synch Pipe Arcade Hub</span> &nbsp;·&nbsp; pewpi-infinity &nbsp;·&nbsp; <a href="https://github.com/pewpi-infinity/MARIO-TOKENS" target="_blank" style="color:var(--gold)">GitHub</a></footer>
-<script src="js/navigation.js"></script>
-<script src="js/mongoose-token-treasury.js"></script>
-<script src="js/script-repair.js"></script>
-<script src="js/power-ups.js"></script>
-<script src="js/bot-farm-hooks.js"></script>
-<script src="js/emulator-fix.js"></script>
+
+<div id="gh-modal">
+  <div id="gh-box">
+    <h3>⚡ GITHUB WALLET</h3>
+    <p>Connect your GitHub account to save tokens across sessions and sync with Mario World Tokens. Enter your GitHub username and a Personal Access Token with <b>repo</b> scope.</p>
+    <input type="text" id="gh-user" placeholder="GitHub username">
+    <input type="password" id="gh-token" placeholder="Personal Access Token (ghp_...)">
+    <div class="row">
+      <button class="gh-confirm" onclick="Wallet.ghLogin()">CONNECT</button>
+      <button class="gh-cancel" onclick="closeGHModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+<footer>Synch Pipe Arcade · pewpi-infinity · <a href="https://github.com/pewpi-infinity/MARIO-TOKENS" target="_blank">GitHub</a></footer>
 <script>
+var EPISODES=[
+  {id:'the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein',title:'Baby Mario Love / Koopenstein'},
+  {id:'the-super-mario-bros.-super-show-01x-01-the-bird-the-bird-naughty-word',title:'The Bird! The Bird!'},
+  {id:'the-super-mario-bros.-super-show-01x-02-king-mario-of-cramalot-george-washington-slept-here',title:'King Mario of Cramalot'},
+  {id:'SuperMarioBrosSuperShow101',title:'The Bird / Naughty Word'},
+  {id:'SuperMarioBrosSuperShow102',title:'King Mario of Cramalot'},
+  {id:'SuperMarioBrosSuperShow103',title:'Butch Mario & The Luigi Kid'},
+  {id:'SuperMarioBrosSuperShow104',title:'The Great Mario Chase'},
+  {id:'SuperMarioBrosSuperShow105',title:'Mario Meets Koop-Zilla'},
+  {id:'SuperMarioBrosSuperShow106',title:'Plumber\'s Academy'},
+  {id:'SuperMarioBrosSuperShow107',title:'The Mario Factor'},
+  {id:'SuperMarioBrosSuperShow108',title:'Do You Princess Toadstool Take This Koopa?'},
+  {id:'SuperMarioBrosSuperShow109',title:'The Pied Koopa'},
+  {id:'SuperMarioBrosSuperShow110',title:'Rolling Down the River'},
+  {id:'SuperMarioBrosSuperShow111',title:'Koopa Klaus'},
+  {id:'SuperMarioBrosSuperShow112',title:'Mario and the Red Baron Koopa'},
+  {id:'SuperMarioBrosSuperShow113',title:'Toad Warriors'},
+  {id:'SuperMarioBrosSuperShow114',title:'Jungle Fever'},
+  {id:'SuperMarioBrosSuperShow115',title:'Robo Koopa'},
+  {id:'SuperMarioBrosSuperShow116',title:'The Mario Monster Mash'},
+  {id:'SuperMarioBrosSuperShow117',title:'Pirates of Koopa'},
+  {id:'SuperMarioBrosSuperShow118',title:'Little Red Riding Princess'},
+  {id:'SuperMarioBrosSuperShow119',title:'Starman Stampede'},
+  {id:'SuperMarioBrosSuperShow120',title:'Mario Meets Koop-Zilla 2'},
+  {id:'SuperMarioBrosSuperShow121',title:'The Venice Menace'},
+  {id:'SuperMarioBrosSuperShow122',title:'Mario and Jolly Roger'},
+  {id:'SuperMarioBrosSuperShow123',title:'The Unzappables'},
+  {id:'SuperMarioBrosSuperShow124',title:'Escape from Koopahari'},
+  {id:'SuperMarioBrosSuperShow125',title:'Mighty McMario'},
+  {id:'SuperMarioBrosSuperShow126',title:'Two Plumbers and a Baby'},
+  {id:'SuperMarioBrosSuperShow127',title:'Mario of the Deep'},
+  {id:'SuperMarioBrosSuperShow128',title:'Flatbush Koopa'},
+  {id:'SuperMarioBrosSuperShow129',title:'On Her Majesty\'s Sewer Service'},
+  {id:'SuperMarioBrosSuperShow130',title:'20,000 Koopas Under the Sea'},
+  {id:'SuperMarioBrosSuperShow131',title:'Plummers Don\'t Wear Ties'},
+  {id:'SuperMarioBrosSuperShow132',title:'Koopenstein'},
+  {id:'SuperMarioBrosSuperShow133',title:'Mama Mia Mario'},
+  {id:'SuperMarioBrosSuperShow134',title:'Beware the Rainforest'},
+  {id:'SuperMarioBrosSuperShow135',title:'Count Koopula'},
+  {id:'SuperMarioBrosSuperShow136',title:'The Ugliest Toad on Earth'},
+  {id:'SuperMarioBrosSuperShow137',title:'Hooded Robin'},
+  {id:'SuperMarioBrosSuperShow138',title:'Mario Hillbillies'},
+  {id:'SuperMarioBrosSuperShow139',title:'Stars in Their Eyes'},
+  {id:'SuperMarioBrosSuperShow140',title:'Crocodile Mario'},
+  {id:'SuperMarioBrosSuperShow141',title:'Bad Rap'},
+  {id:'SuperMarioBrosSuperShow142',title:'Mario\'s Magic Carpet'},
+  {id:'SuperMarioBrosSuperShow143',title:'The Radical Squad'},
+  {id:'SuperMarioBrosSuperShow144',title:'Plumbers of the Year'},
+  {id:'SuperMarioBrosSuperShow145',title:'Party Line'},
+  {id:'SuperMarioBrosSuperShow146',title:'Never Koop a Koopa'},
+  {id:'SuperMarioBrosSuperShow147',title:'Toad Warriors 2'},
+  {id:'SuperMarioBrosSuperShow148',title:'The Mark of Zero'},
+  {id:'SuperMarioBrosSuperShow149',title:'Elvin Lives'},
+  {id:'SuperMarioBrosSuperShow150',title:'Love 'em and Leave 'em'},
+  {id:'SuperMarioBrosSuperShow151',title:'Mighty McMario 2'},
+  {id:'SuperMarioBrosSuperShow152',title:'The Artist'},
+];
+var curEp=0;
+(function(){
+  var list=document.getElementById('ep-list');
+  EPISODES.forEach(function(ep,i){
+    var div=document.createElement('div');
+    div.className='ep-item'+(i===0?' playing':'');
+    div.id='ep-'+i;
+    div.innerHTML='<span class="ep-num">'+(i+1)+'</span>'+ep.title+'<span class="ep-earn">+10/hr</span>';
+    div.onclick=function(){playEp(i)};
+    list.appendChild(div);
+  });
+})();
+function playEp(i){
+  curEp=i;
+  document.querySelectorAll('.ep-item').forEach(function(e){e.classList.remove('playing')});
+  var el=document.getElementById('ep-'+i);
+  if(el){el.classList.add('playing');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  document.getElementById('cartoon-iframe').src='https://archive.org/embed/'+EPISODES[i].id;
+  log('Now playing: '+EPISODES[i].title,'info');
+}
+function nextEp(){playEp((curEp+1)%EPISODES.length)}
+
+// WALLET ENGINE
+var Wallet=(function(){
+  var W={MPT:0,PLAT:0,IGT:0};
+  var _watchInterval=null;
+  var _gameInterval=null;
+  var _watchStart=null;
+  var ghUser=localStorage.getItem('gh_user')||'';
+  var ghToken=localStorage.getItem('gh_token')||'';
+
+  function load(){
+    var s=localStorage.getItem('synchpipe_wallet');
+    if(s){try{W=JSON.parse(s)}catch(e){}}
+    render();
+    if(ghUser)document.getElementById('login-btn').textContent='✓ '+ghUser,document.getElementById('login-btn').classList.add('logged');
+  }
+  function save(){localStorage.setItem('synchpipe_wallet',JSON.stringify(W));render();}
+  function render(){
+    ['gold','plat','igt'].forEach(function(k,i){
+      var keys=['MPT','PLAT','IGT'],el=document.getElementById('bal-'+k);
+      var el2=document.getElementById('w-'+k);
+      var v=W[keys[i]];
+      var str=i===1?Math.floor(v).toString():v.toFixed(2);
+      if(el)el.textContent=str;
+      if(el2)el2.textContent=str;
+    });
+    // Cross-post to MWT site via localStorage (same-origin won't work cross-domain, but BroadcastChannel could)
+    try{localStorage.setItem('mwt_wallet_sync',JSON.stringify({MPT:W.MPT,PLAT:W.PLAT,IGT:W.IGT,ts:Date.now()}));}catch(e){}
+  }
+  function mint(type,amount,reason){
+    W[type]=(W[type]||0)+amount;
+    save();
+    log('+'+amount+' '+type+(reason?' ('+reason+')':''),'mint');
+  }
+
+  return{
+    load:load,
+    mint:mint,
+    stomp:function(){mint('MPT',1,'stomp');},
+    coin:function(){mint('IGT',0.01,'coin');},
+    oneup:function(){mint('MPT',1,'1-up');},
+    flag:function(){mint('MPT',5,'flag');},
+    startWatch:function(){
+      if(_watchInterval){log('Already earning','info');return;}
+      _watchStart=Date.now();
+      log('Watch-to-earn started — +10 MPT/hr','earn');
+      document.getElementById('watch-bar').textContent='● EARNING — +10 MPT/hr ACTIVE';
+      _watchInterval=setInterval(function(){
+        mint('MPT',10/3600,'watch'); // drip every second
+        var mins=Math.floor((Date.now()-_watchStart)/60000);
+        document.getElementById('watch-bar').textContent='● EARNING '+mins+'min — '+((mins/60)*10).toFixed(3)+' MPT earned';
+      },1000);
+    },
+    stopWatch:function(){
+      if(_watchInterval){clearInterval(_watchInterval);_watchInterval=null;}
+      document.getElementById('watch-bar').textContent='■ STOPPED — TAP START EARNING TO RESUME';
+      log('Watch session ended','info');
+    },
+    startGame:function(){
+      if(_gameInterval)return;
+      _gameInterval=setInterval(function(){mint('MPT',10/3600,'gameplay');},1000);
+    },
+    stopGame:function(){
+      if(_gameInterval){clearInterval(_gameInterval);_gameInterval=null;}
+    },
+    ghLogin:function(){
+      var u=document.getElementById('gh-user').value.trim();
+      var t=document.getElementById('gh-token').value.trim();
+      if(!u||!t){alert('Enter both username and token');return;}
+      ghUser=u;ghToken=t;
+      localStorage.setItem('gh_user',u);
+      localStorage.setItem('gh_token',t);
+      document.getElementById('login-btn').textContent='✓ '+u;
+      document.getElementById('login-btn').classList.add('logged');
+      closeGHModal();
+      log('GitHub connected: '+u,'sync');
+      Wallet.syncGH();
+    },
+    syncGH:function(){
+      if(!ghUser||!ghToken){openGHModal();return;}
+      var payload=JSON.stringify({user:ghUser,wallet:W,ts:new Date().toISOString(),site:'synchpipe'});
+      var b64=btoa(unescape(encodeURIComponent(payload)));
+      var path='wallets/'+ghUser+'.json';
+      var api='https://api.github.com/repos/pewpi-infinity/MARIO-TOKENS/contents/'+path;
+      // Get current SHA first
+      fetch(api,{headers:{'Authorization':'token '+ghToken,'Accept':'application/vnd.github.v3+json'}})
+        .then(function(r){return r.ok?r.json():null})
+        .then(function(existing){
+          var body={message:'wallet sync: '+ghUser+' '+new Date().toISOString(),content:b64};
+          if(existing&&existing.sha)body.sha=existing.sha;
+          return fetch(api,{method:'PUT',headers:{'Authorization':'token '+ghToken,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},body:JSON.stringify(body)});
+        })
+        .then(function(r){
+          if(r&&r.ok){log('✓ Wallet synced to GitHub: '+ghUser,'sync');}
+          else{log('Sync failed — check token scope','info');}
+        })
+        .catch(function(e){log('Sync error: '+e.message,'info');});
+    }
+  };
+})();
+
+// EMULATOR
+function loadGame(url,title,core,el){
+  document.querySelectorAll('.game-card').forEach(function(c){c.classList.remove('playing')});
+  if(el)el.classList.add('playing');
+  document.getElementById('emu-title').textContent='▶ '+title;
+  document.getElementById('emu-container').innerHTML='<div id="game"></div>';
+  window.EJS_player='#game';
+  window.EJS_core=core;
+  window.EJS_gameUrl=url;
+  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
+  window.EJS_startOnLoaded=true;
+  window.EJS_VirtualGamepad=false;
+  var old=document.getElementById('ejs-loader');if(old)old.remove();
+  var s=document.createElement('script');
+  s.id='ejs-loader';
+  s.src='https://cdn.emulatorjs.org/stable/data/loader.js';
+  document.body.appendChild(s);
+  Wallet.startGame();
+  log('Loading: '+title,'info');
+}
+
+// NAV
 function toggleNav(){document.getElementById('sidenav').classList.toggle('open');document.getElementById('nav-overlay').classList.toggle('show')}
 function closeNav(){document.getElementById('sidenav').classList.remove('open');document.getElementById('nav-overlay').classList.remove('show')}
-function loadRom(url,title,el){document.querySelectorAll('.game-card').forEach(c=>c.classList.remove('selected'));if(el)el.classList.add('selected');document.getElementById('emu-game-title').textContent='▶ '+title;var container=document.getElementById('emulator-container');container.innerHTML='<div id="game"></div>';window.EJS_player='#game';window.EJS_core='nes';window.EJS_gameUrl=url;window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';window.EJS_startOnLoaded=true;window.EJS_VirtualGamepad=false;var old=document.getElementById('ejs-loader');if(old)old.remove();var s=document.createElement('script');s.id='ejs-loader';s.src='https://cdn.emulatorjs.org/stable/data/loader.js';document.body.appendChild(s)}
-(function(){var logLimit=200,_watchStop=null,_cartoonIdx=0;
-var CARTOONS=['https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein','https://archive.org/embed/the-super-mario-bros.-super-show-01x-01-the-bird-the-bird-naughty-word','https://archive.org/embed/the-super-mario-bros.-super-show-01x-02-king-mario-of-cramalot-george-washington-slept-here'];
-function _log(msg,cls){var log=document.getElementById('event-log');if(!log)return;var div=document.createElement('div');div.className='log-entry '+(cls||'info');div.textContent='['+new Date().toLocaleTimeString()+'] '+msg;log.appendChild(div);while(log.children.length>logLimit){log.removeChild(log.firstChild);}log.scrollTop=log.scrollHeight;}
-function _updateBalances(){if(!window.Treasury)return;var bal=Treasury.getBalance('player1');var g=document.getElementById('bal-gold');var p=document.getElementById('bal-plat');var i=document.getElementById('bal-igt');if(g)g.textContent=(bal.MPT||0).toFixed(2);if(p)p.textContent=(bal.PLAT||0).toFixed(0);if(i)i.textContent=(bal.IGT||0).toFixed(2);}
-function _updateBotStatus(){if(!window.BotFarm)return;var grid=document.getElementById('bot-status-grid');var bots=BotFarm.getBots();if(!grid)return;grid.innerHTML=bots.map(function(b){return'<div class="bot-card '+(b.status==='idle'?'active':'')+'"><div class="bot-name">'+b.botId+'</div><div class="bot-state">'+b.status.toUpperCase()+' · '+b.tasksCompleted+' done</div></div>';}).join('');var q=document.getElementById('bot-queue-count');var pending=BotFarm.getQueue().filter(function(t){return t.status==='pending';}).length;if(q)q.textContent=pending;}
-function _updateRepairPanel(){if(!window.ScriptRepair)return;var fc=document.getElementById('fix-count');var sw=document.getElementById('scriptwriter-status');var tb=document.getElementById('chunk-table-body');if(fc)fc.textContent=ScriptRepair.getFixCount();if(sw){sw.textContent=ScriptRepair.isScriptwriterUnlocked()?'UNLOCKED':'LOCKED';sw.style.color=ScriptRepair.isScriptwriterUnlocked()?'var(--green-token)':'var(--red-alert)';}if(tb){var chunks=ScriptRepair.getChunks();if(!chunks.length)return;tb.innerHTML=chunks.map(function(c){return'<tr><td style="padding:4px 6px;color:var(--text)">'+c.id+'</td><td style="color:'+(c.status==='fixed'?'var(--green-token)':'var(--red-alert)')+'">'+c.status.toUpperCase()+'</td></tr>';}).join('');}}
-window.ArcadeHub=window.ArcadeHub||{};
-ArcadeHub.startWatching=function(){if(_watchStop){_log('Already active','info');return;}if(!window.Treasury){_log('Treasury not loaded','error');return;}_watchStop=Treasury.startWatchSession('player1',function(entry){var m=window.PowerUps?PowerUps.getTokenRateMultiplier():1;if(m>1)Treasury.mint('player1','MPT',entry.amount*(m-1),'mushroom bonus');_updateBalances();_log('Watch earn: +'+entry.amount.toFixed(4)+' MPT','mint');});_log('Watch session started','info');};
-ArcadeHub.stopWatching=function(){if(_watchStop){_watchStop();_watchStop=null;}_log('Watch stopped','info');};
-ArcadeHub.changeCartoon=function(){_cartoonIdx=(_cartoonIdx+1)%CARTOONS.length;var iframe=document.getElementById('cartoon-iframe');if(iframe)iframe.src=CARTOONS[_cartoonIdx];_log('Cartoon episode '+(_cartoonIdx+1),'info');};
-ArcadeHub.simulateStomp=function(){if(window.ScriptRepair)ScriptRepair.onEnemyStomp('goomba-'+Date.now());_updateBalances();_log('Stomp +1 MPT','mint');};
-ArcadeHub.simulateCoin=function(){if(window.ScriptRepair)ScriptRepair.onCoinCollect('coin-'+Date.now());_updateBalances();_log('Coin +0.01 IGT','mint');};
-ArcadeHub.simulateOneUp=function(){if(window.ScriptRepair)ScriptRepair.onOneUp();_updateBalances();_log('1-UP +1 MPT','mint');};
-ArcadeHub.simulateFlagPole=function(){if(window.ScriptRepair)ScriptRepair.onFlagPole('world-1-1');_updateBalances();_updateRepairPanel();_log('Flag +5 MPT','mint');};
-ArcadeHub.runBotScan=function(){if(!window.BotFarm)return;var t=BotFarm.enqueueTask('scan',{target:'page'});BotFarm.runTask(t.id);_updateBotStatus();_log('Bot scan done','bot');};
-ArcadeHub.runBotFix=function(){if(!window.BotFarm)return;var s=BotFarm.enqueueTask('scan',{target:'page'});BotFarm.runTask(s.id);var f=BotFarm.enqueueTask('fix',{issues:(s.result&&s.result.issues)||[]});BotFarm.runTask(f.id);_updateBotStatus();_updateRepairPanel();_log('Bot fix done','fix');};
-ArcadeHub.runBotGenerate=function(){if(!window.BotFarm)return;var t=BotFarm.enqueueTask('generate',{pattern:'world-'+Date.now(),type:'script',userId:'player1'});BotFarm.runTask(t.id);_updateBalances();_updateBotStatus();_log('Bot generated','bot');};
-ArcadeHub.runScanAndFix=function(){if(!window.BotFarm)return;BotFarm.scanAndFix();_updateBotStatus();_updateRepairPanel();_log('Scan+Fix done','fix');};
-ArcadeHub.clearLog=function(){var log=document.getElementById('event-log');if(log)log.innerHTML='<div class="log-entry info">[SYSTEM] Log cleared.</div>';};
-window.addEventListener('treasury:event',function(e){var d=e.detail;if(!d)return;_updateBalances();_log('[TREASURY:'+d.type+'] '+(d.reason||d.action||''),d.type==='MINT'?'mint':'info');});
-window.addEventListener('powerup:star:activate',function(){_log('STAR activated','mint');});
-window.addEventListener('powerup:mushroom:activate',function(e){_log('MUSHROOM '+e.detail.multiplier+'x','mint');});
-window.addEventListener('powerup:brick:break',function(e){_log('BRICK: '+e.detail.restructuredScript,'fix');_updateRepairPanel();});
-window.addEventListener('botfarm:status',function(){_updateBotStatus();});
-document.addEventListener('DOMContentLoaded',function(){window.ARCADE_USER_ID='player1';if(window.BotFarm){BotFarm.initDefaultBots();_updateBotStatus();}if(window.Treasury){Treasury.registerScriptVersion('mario-jump','mario1','player1','Mario 1 jump');Treasury.registerScriptVersion('mario-fly','mario3','player1','Mario 3 fly');_updateBalances();}_updateRepairPanel();_log('[SYSTEM] All modules loaded. Welcome!','info');});
-}());
+function openGHModal(){document.getElementById('gh-modal').classList.add('open')}
+function closeGHModal(){document.getElementById('gh-modal').classList.remove('open')}
+
+// LOG
+function log(msg,type){
+  var el=document.getElementById('event-log');
+  var d=document.createElement('div');
+  d.className='log-entry '+(type||'info');
+  d.textContent='['+new Date().toLocaleTimeString()+'] '+msg;
+  el.appendChild(d);
+  while(el.children.length>100)el.removeChild(el.firstChild);
+  el.scrollTop=el.scrollHeight;
+}
+function clearLog(){document.getElementById('event-log').innerHTML='<div class="log-entry info">[SYSTEM] Log cleared.</div>'}
+
+// CROSS-SITE TOKEN SYNC (poll localStorage for MWT updates)
+setInterval(function(){
+  try{
+    var s=localStorage.getItem('mwt_wallet_sync');
+    if(s){var d=JSON.parse(s);if(d&&d.site==='mwt'){Wallet.mint('MPT',0,'sync from MWT');}}
+  }catch(e){}
+},5000);
+
+// INIT
+Wallet.load();
+log('Welcome to Synch Pipe Arcade. Tap a game or start watching to earn tokens.','info');
 </script></body></html>
