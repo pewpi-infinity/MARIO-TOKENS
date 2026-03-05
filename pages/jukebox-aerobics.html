@@ -16,7 +16,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 #sidenav.open{transform:translateX(0)}
 #sidenav h3{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);padding:8px 16px 14px;border-bottom:1px solid var(--bord);margin-bottom:6px;}
 #sidenav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--dim);text-decoration:none;font-size:14px;font-weight:700;}
-#sidenav a:hover,#sidenav a.active{color:var(--gold);background:rgba(255,215,0,.06);padding-left:20px;border-left:3px solid var(--gold);}
+#sidenav a:active,#sidenav a.active{color:var(--gold);background:rgba(255,215,0,.06);padding-left:20px;border-left:3px solid var(--gold);}
 #nav-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:299;display:none}
 #nav-ov.show{display:block}
 #topbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surf);border-bottom:3px solid;border-image:linear-gradient(90deg,var(--acc),var(--gold),var(--acc)) 1;position:sticky;top:0;z-index:100;}
@@ -61,7 +61,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .track-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .track-artist{font-size:11px;color:var(--dim);margin-top:1px}
 .track-dur{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--dim);flex-shrink:0}
-#search-section{background:var(--surf);border:1px solid var(--bord);border-radius:10px;padding:12px;margin-bottom:12px;}
+#search-section{background:var(--surf);border:1px solid var(--bord);border-radius:10px;padding:12px;}
 .search-label{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--dim);letter-spacing:1px;margin-bottom:8px}
 .search-row{display:flex;gap:6px}
 #search-input{flex:1;padding:8px 12px;background:var(--bg);border:1px solid var(--bord);border-radius:6px;color:var(--text);font-size:14px;}
@@ -87,6 +87,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   <a href="jukebox-aerobics.html" class="active">🎵 Jukebox</a>
   <a href="terminal-bot.html">💻 Terminal</a>
   <a href="ai-chat.html">🤖 AI Chat</a>
+  <a href="video-gallery.html">📺 Videos</a>
 </nav>
 <div id="yt-wrap"><div id="yt-player"></div></div>
 <div id="topbar">
@@ -131,126 +132,137 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 </div>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-let player=null,ytReady=false,curIdx=0,playing=false,shuffled=false,slist=[...PL],tab='mario',pi=null;
-window.onYouTubeIframeAPIReady=function(){
-  ytReady=true;
-  player=new YT.Player('yt-player',{height:'1',width:'1',
-    playerVars:{autoplay:0,controls:0,disablekb:1,enablejsapi:1,fs:0,iv_load_policy:3,modestbranding:1,playsinline:1,rel:0},
-    events:{onStateChange:onSt,onError:()=>setTimeout(nx,800)}});
-  notif('🎵 Jukebox ready!');
-};
-function onSt(e){
-  const S=YT.PlayerState;
-  if(e.data===S.PLAYING){playing=true;document.getElementById('btn-play').textContent='⏸';document.getElementById('album-art').classList.add('spinning');startPi();}
-  else if(e.data===S.PAUSED){playing=false;document.getElementById('btn-play').textContent='▶';document.getElementById('album-art').classList.remove('spinning');}
-  else if(e.data===S.ENDED){nx();}
-}
+var PL=[
+{id:1,title:'SMB Overworld Theme',artist:'Koji Kondo',type:'mario',yt:'NE3tNKFpXeM',dur:'1:37'},
+{id:2,title:'SMB Underground Theme',artist:'Koji Kondo',type:'mario',yt:'sXi5MdNyM58',dur:'0:44'},
+{id:3,title:'Starman Theme',artist:'Koji Kondo',type:'mario',yt:'JRzPEMBFJZo',dur:'0:36'},
+{id:4,title:'SMB3 World Map',artist:'Koji Kondo',type:'mario',yt:'0-tSRMHKvYY',dur:'1:52'},
+{id:5,title:'Super Mario World Overworld',artist:'Koji Kondo',type:'mario',yt:'eNSN0GXaKSw',dur:'2:12'},
+{id:6,title:'Mario Kart 64 Rainbow Road',artist:'Soyo Oka',type:'mario',yt:'tToNHc41-nI',dur:'3:20'},
+{id:7,title:'SMB3 Athletic Theme',artist:'Koji Kondo',type:'mario',yt:'KXOhKOqGb4o',dur:'1:05'},
+{id:8,title:'Gusty Garden Galaxy',artist:'Koji Kondo',type:'mario',yt:'5-5UQ3oMDEI',dur:'3:28'},
+{id:9,title:'Dire Dire Docks',artist:'Koji Kondo',type:'mario',yt:'xRWFyReCH8Y',dur:'3:38'},
+{id:10,title:'SMB Underwater Theme',artist:'Koji Kondo',type:'mario',yt:'8LJnNFbqagA',dur:'0:49'},
+{id:11,title:'Smells Like Teen Spirit',artist:'Nirvana',type:'rock',yt:'hTWKbfoikeg',dur:'5:01'},
+{id:12,title:'Back in Black',artist:'AC/DC',type:'rock',yt:'pAgnJDJN4VA',dur:'4:15'},
+{id:13,title:'Welcome to the Jungle',artist:'Guns N Roses',type:'rock',yt:'o1tj2zJ2Wvg',dur:'4:33'},
+{id:14,title:'Enter Sandman',artist:'Metallica',type:'rock',yt:'CD-E-LDc384',dur:'5:32'},
+{id:15,title:'Black Hole Sun',artist:'Soundgarden',type:'rock',yt:'3mbBbFH9fAg',dur:'5:18'},
+{id:16,title:'Lithium',artist:'Nirvana',type:'rock',yt:'pkcJEvMcnEg',dur:'4:17'},
+{id:17,title:'Sweet Child O Mine',artist:'Guns N Roses',type:'rock',yt:'1w7OgIMMRc4',dur:'5:55'},
+{id:18,title:'Under the Bridge',artist:'RHCP',type:'rock',yt:'glen_Nzmgf4',dur:'4:24'},
+{id:19,title:'Everlong',artist:'Foo Fighters',type:'rock',yt:'eBG7P-K-r1Y',dur:'4:11'},
+{id:20,title:'Jeremy',artist:'Pearl Jam',type:'rock',yt:'MS91knuzoOA',dur:'5:18'},
+{id:21,title:'Man in the Box',artist:'Alice in Chains',type:'rock',yt:'5Sr7DJiPZEA',dur:'4:45'},
+{id:22,title:'Alive',artist:'Pearl Jam',type:'rock',yt:'5n0PstJk2Qo',dur:'5:41'},
+{id:23,title:'Creep',artist:'Radiohead',type:'rock',yt:'XFkzRNyygfk',dur:'3:56'},
+{id:24,title:'Hunger Strike',artist:'Temple of the Dog',type:'rock',yt:'M2tO8hIxWQo',dur:'4:08'},
+{id:25,title:'Black',artist:'Pearl Jam',type:'rock',yt:'E8gmARGvPlI',dur:'5:42'},
+{id:26,title:'Outshined',artist:'Soundgarden',type:'rock',yt:'-Hy6qTpZXMo',dur:'4:55'},
+{id:27,title:'Basket Case',artist:'Green Day',type:'rock',yt:'NUTGr5t3MoY',dur:'3:01'},
+{id:28,title:'When I Come Around',artist:'Green Day',type:'rock',yt:'TdER4JaMF5I',dur:'2:58'},
+{id:29,title:'Say It Aint So',artist:'Weezer',type:'rock',yt:'ENXvZ9YRjbo',dur:'4:18'},
+{id:30,title:'Buddy Holly',artist:'Weezer',type:'rock',yt:'kemivMKGDUE',dur:'2:39'},
+{id:31,title:'No Excuses',artist:'Alice in Chains',type:'rock',yt:'_B-TqNpP7E4',dur:'4:16'},
+{id:32,title:'Today',artist:'Smashing Pumpkins',type:'rock',yt:'4aeETEoNfOg',dur:'3:21'},
+{id:33,title:'Semi-Charmed Life',artist:'Third Eye Blind',type:'rock',yt:'GnWIGnAK-oU',dur:'4:24'},
+{id:34,title:'Come as You Are',artist:'Nirvana',type:'rock',yt:'vabnZ9-ex7o',dur:'3:39'},
+{id:35,title:'Heart-Shaped Box',artist:'Nirvana',type:'rock',yt:'8AHCfZTRGiI',dur:'4:41'},
+{id:36,title:'Even Flow',artist:'Pearl Jam',type:'rock',yt:'CxKWTzr-k6s',dur:'4:54'},
+{id:37,title:'Californication',artist:'RHCP',type:'rock',yt:'YlUKcNNmywk',dur:'5:21'},
+{id:38,title:'Learn to Fly',artist:'Foo Fighters',type:'rock',yt:'1VQ_3sBZEm0',dur:'3:56'},
+{id:39,title:'Best of You',artist:'Foo Fighters',type:'rock',yt:'LnNBMjLhTYI',dur:'4:15'},
+{id:40,title:'In the End',artist:'Linkin Park',type:'rock',yt:'eVTXPUF4Oz4',dur:'3:36'},
+{id:41,title:'Numb',artist:'Linkin Park',type:'rock',yt:'kXYiU_JCYtU',dur:'3:05'},
+{id:42,title:'Highway to Hell',artist:'AC/DC',type:'rock',yt:'l482T0yNkeo',dur:'3:28'},
+{id:43,title:'Thunderstruck',artist:'AC/DC',type:'rock',yt:'v2AC41dglnM',dur:'4:52'},
+{id:44,title:'Paradise City',artist:'Guns N Roses',type:'rock',yt:'Rbm6GXllBiw',dur:'6:46'},
+{id:45,title:'Master of Puppets',artist:'Metallica',type:'rock',yt:'E0ozmU9cJDg',dur:'8:35'},
+{id:46,title:'Nothing Else Matters',artist:'Metallica',type:'rock',yt:'tAGnKpE4NCI',dur:'6:28'},
+{id:47,title:'Karma Police',artist:'Radiohead',type:'rock',yt:'1uYWywWkTQI',dur:'4:21'},
+{id:48,title:'Good Riddance',artist:'Green Day',type:'rock',yt:'CnQ8N1KgrQs',dur:'2:34'},
+{id:49,title:'American Idiot',artist:'Green Day',type:'rock',yt:'Ee_uujKuJMI',dur:'2:54'},
+{id:50,title:'Killing in the Name',artist:'Rage Against the Machine',type:'rock',yt:'bWXazVeUs00',dur:'5:14'},
+{id:51,title:'Down in a Hole',artist:'Alice in Chains',type:'rock',yt:'pvn9Reu8Py0',dur:'5:35'},
+{id:52,title:'Rooster',artist:'Alice in Chains',type:'rock',yt:'oEBRCnQFSwA',dur:'6:14'},
+{id:53,title:'Plush',artist:'Stone Temple Pilots',type:'rock',yt:'Q0ElVPIAE_A',dur:'4:32'},
+{id:54,title:'Glycerine',artist:'Bush',type:'rock',yt:'e8X_uPFBjEE',dur:'4:25'},
+{id:55,title:'Santeria',artist:'Sublime',type:'rock',yt:'2stiSz1AmNQ',dur:'3:41'},
+{id:56,title:'What I Got',artist:'Sublime',type:'rock',yt:'6wGSiO5ALos',dur:'2:51'},
+{id:57,title:'Possum Kingdom',artist:'Toadies',type:'rock',yt:'fkBe6JZOB3g',dur:'4:12'},
+{id:58,title:'No Rain',artist:'Blind Melon',type:'rock',yt:'NG4bsGYFNFQ',dur:'3:36'},
+{id:59,title:'She Talks to Angels',artist:'Black Crowes',type:'rock',yt:'_Qi_-89i5SM',dur:'5:21'},
+{id:60,title:'Bulls on Parade',artist:'Rage Against the Machine',type:'rock',yt:'3L4YrGaR8E4',dur:'3:50'},
+{id:61,title:'Given to Fly',artist:'Pearl Jam',type:'rock',yt:'6vz0TgLHSsc',dur:'3:54'},
+{id:62,title:'Scar Tissue',artist:'RHCP',type:'rock',yt:'1oBRGY0vimk',dur:'3:37'},
+{id:63,title:'The Pretender',artist:'Foo Fighters',type:'rock',yt:'SBjQ9tuuTJQ',dur:'4:29'},
+{id:64,title:'Walk',artist:'Foo Fighters',type:'rock',yt:'ea51LHWNQY4',dur:'5:00'},
+{id:65,title:'All My Life',artist:'Foo Fighters',type:'rock',yt:'qvVQGBxIJDk',dur:'4:23'},
+{id:66,title:'Crawling',artist:'Linkin Park',type:'rock',yt:'Gd9OhYroLN0',dur:'3:29'},
+{id:67,title:'Bleed It Out',artist:'Linkin Park',type:'rock',yt:'0-Hg5HhsY1A',dur:'2:44'},
+{id:68,title:'Vasoline',artist:'Stone Temple Pilots',type:'rock',yt:'Fj0p7x1d3HU',dur:'3:01'},
+{id:69,title:'Machinehead',artist:'Bush',type:'rock',yt:'gHE-9xBt3oQ',dur:'3:45'},
+{id:70,title:'Pride and Joy',artist:'Stevie Ray Vaughan',type:'rock',yt:'AkHQa2Hfhus',dur:'3:53'},
+{id:71,title:'Boulevard of Broken Dreams',artist:'Green Day',type:'rock',yt:'Soa3gO7tL-c',dur:'4:21'},
+{id:72,title:'Burden in My Hand',artist:'Soundgarden',type:'rock',yt:'LTvxAmLEDSw',dur:'5:10'},
+{id:73,title:'Brother',artist:'Alice in Chains',type:'rock',yt:'YKT7e-tPNOA',dur:'4:46'},
+{id:74,title:'Times Like These',artist:'Foo Fighters',type:'rock',yt:'rhzmNRtIp8k',dur:'4:24'},
+{id:75,title:'Higher Ground',artist:'RHCP',type:'rock',yt:'Wc9B4L2UPCE',dur:'3:33'},
+{id:76,title:'In Bloom',artist:'Nirvana',type:'rock',yt:'PbgKEjNBHqM',dur:'4:15'},
+{id:77,title:'Last Kiss',artist:'Pearl Jam',type:'rock',yt:'GQTMJFkWNHM',dur:'4:05'},
+{id:78,title:'Fake Plastic Trees',artist:'Radiohead',type:'rock',yt:'n3GoPHGSIoE',dur:'4:50'},
+{id:79,title:'Holiday',artist:'Green Day',type:'rock',yt:'_Yhyp-_hX2s',dur:'3:52'},
+{id:80,title:'High and Dry',artist:'Radiohead',type:'rock',yt:'7oZNoPGOUoA',dur:'4:17'},
+{id:81,title:'Walking on the Sun',artist:'Smash Mouth',type:'rock',yt:'0jDXHyMWNx0',dur:'4:17'},
+{id:82,title:'Sex and Candy',artist:'Marcy Playground',type:'rock',yt:'GFMD9ZtC0GY',dur:'3:17'},
+{id:83,title:'One Step Closer',artist:'Linkin Park',type:'rock',yt:'4qqDCTH7LKs',dur:'2:36'},
+{id:84,title:'You Shook Me All Night Long',artist:'AC/DC',type:'rock',yt:'To07IIypeRE',dur:'3:30'},
+{id:85,title:'November Rain',artist:'Guns N Roses',type:'rock',yt:'8SbUC-UaAxE',dur:'8:57'},
+{id:86,title:'One',artist:'Metallica',type:'rock',yt:'WM8bTdBs-cw',dur:'7:26'},
+{id:87,title:'Fake Plastic Trees',artist:'Radiohead',type:'rock',yt:'n3GoPHGSIoE',dur:'4:50'},
+{id:88,title:'Give It Away',artist:'RHCP',type:'rock',yt:'Mr_uHJPUlO8',dur:'4:43'},
+{id:89,title:'Blow Up the Outside World',artist:'Soundgarden',type:'rock',yt:'8DVCgmE7EhA',dur:'5:46'},
+{id:90,title:'Otherside',artist:'RHCP',type:'rock',yt:'Brkjt0Ei4RM',dur:'4:15'},
+{id:91,title:'All Apologies',artist:'Nirvana',type:'rock',yt:'a6f_TZZuFes',dur:'3:50'},
+{id:92,title:'Bullet With Butterfly Wings',artist:'Smashing Pumpkins',type:'rock',yt:'hOEFTDyLxZg',dur:'4:17'},
+{id:93,title:'Longview',artist:'Green Day',type:'rock',yt:'KOGFJDzmPeQ',dur:'3:59'},
+{id:94,title:'Black Hole Sun Live',artist:'Soundgarden',type:'rock',yt:'3mbBbFH9fAg',dur:'5:18'},
+{id:95,title:'Everlong Acoustic',artist:'Foo Fighters',type:'rock',yt:'eBG7P-K-r1Y',dur:'4:11'},
+{id:96,title:'Spin the Black Circle',artist:'Pearl Jam',type:'rock',yt:'5n0PstJk2Qo',dur:'2:56'},
+{id:97,title:'Would',artist:'Alice in Chains',type:'rock',yt:'pvn9Reu8Py0',dur:'3:28'},
+{id:98,title:'Grunge Classics Mix',artist:'Various',type:'rock',yt:'hTWKbfoikeg',dur:'5:01'},
+{id:99,title:'Today Live',artist:'Smashing Pumpkins',type:'rock',yt:'4aeETEoNfOg',dur:'3:21'},
+{id:100,title:'Give It Away Live',artist:'RHCP',type:'rock',yt:'Mr_uHJPUlO8',dur:'4:43'},
+];
+var player=null,ytReady=false,curIdx=0,playing=false,shuffled=false,slist=[...PL],tab='mario',pi=null;
+window.onYouTubeIframeAPIReady=function(){ytReady=true;player=new YT.Player('yt-player',{height:'1',width:'1',playerVars:{autoplay:0,controls:0,disablekb:1,enablejsapi:1,fs:0,iv_load_policy:3,modestbranding:1,playsinline:1,rel:0},events:{onStateChange:onSt,onError:function(){setTimeout(nx,800)}}});notif('🎵 Jukebox ready!');};
+function onSt(e){var S=YT.PlayerState;if(e.data===S.PLAYING){playing=true;document.getElementById('btn-play').textContent='⏸';document.getElementById('album-art').classList.add('spinning');startPi();}else if(e.data===S.PAUSED){playing=false;document.getElementById('btn-play').textContent='▶';document.getElementById('album-art').classList.remove('spinning');}else if(e.data===S.ENDED){nx();}}
 function gl(){return shuffled?slist:PL;}
 function ct(){return gl()[curIdx]||null;}
-function load(i,auto){
-  const l=gl();if(i<0||i>=l.length)return;
-  curIdx=i;const t=l[i];upNP(t);hilite(t.id);
-  if(auto&&ytReady&&player){player.loadVideoById(t.yt);playing=true;}
-  else if(ytReady&&player)player.cueVideoById(t.yt);
-}
-function togglePlay(){
-  if(!ytReady){notif('⏳ Loading...');return;}
-  if(!ct()){load(0,true);return;}
-  if(playing){player.pauseVideo();}
-  else{const s=player.getPlayerState();(s===-1||s===5)?player.loadVideoById(ct().yt):player.playVideo();playing=true;}
-}
-function nx(){const l=gl();load((curIdx+1)%l.length,playing);}
-function prevTrack(){const l=gl();load((curIdx-1+l.length)%l.length,playing);}
+function load(i,auto){var l=gl();if(i<0||i>=l.length)return;curIdx=i;var t=l[i];upNP(t);hilite(t.id);if(auto&&ytReady&&player){player.loadVideoById(t.yt);playing=true;}else if(ytReady&&player)player.cueVideoById(t.yt);}
+function togglePlay(){if(!ytReady){notif('Loading...');return;}if(!ct()){load(0,true);return;}if(playing){player.pauseVideo();}else{var s=player.getPlayerState();(s===-1||s===5)?player.loadVideoById(ct().yt):player.playVideo();playing=true;}}
+function nx(){var l=gl();load((curIdx+1)%l.length,playing);}
+function prevTrack(){var l=gl();load((curIdx-1+l.length)%l.length,playing);}
 function nextTrack(){nx();}
-function toggleShuffle(){
-  shuffled=!shuffled;if(shuffled){slist=[...PL].sort(()=>Math.random()-.5);curIdx=0;}
-  document.getElementById('btn-shuffle').classList.toggle('active',shuffled);
-  notif(shuffled?'⇄ SHUFFLE ON':'⇄ SHUFFLE OFF');
-}
+function toggleShuffle(){shuffled=!shuffled;if(shuffled){slist=[...PL].sort(function(){return Math.random()-.5;});curIdx=0;}document.getElementById('btn-shuffle').classList.toggle('active',shuffled);notif(shuffled?'SHUFFLE ON':'SHUFFLE OFF');}
 function setVol(v){if(ytReady&&player&&player.setVolume)player.setVolume(parseInt(v));}
-function startPi(){
-  if(pi)clearInterval(pi);
-  pi=setInterval(()=>{
-    if(!ytReady||!player||!player.getDuration)return;
-    const c=player.getCurrentTime()||0,d=player.getDuration()||0;
-    if(d>0){document.getElementById('prog-fill').style.width=(c/d*100)+'%';document.getElementById('np-time').textContent=ft(c)+' / '+ft(d);}
-  },500);
-}
+function startPi(){if(pi)clearInterval(pi);pi=setInterval(function(){if(!ytReady||!player||!player.getDuration)return;var c=player.getCurrentTime()||0,d=player.getDuration()||0;if(d>0){document.getElementById('prog-fill').style.width=(c/d*100)+'%';document.getElementById('np-time').textContent=ft(c)+' / '+ft(d);}},500);}
 function ft(s){if(!s||isNaN(s))return'0:00';return Math.floor(s/60)+':'+(Math.floor(s%60)<10?'0':'')+Math.floor(s%60);}
-function seekClick(e){
-  if(!ytReady||!player||!player.getDuration)return;
-  const r=e.currentTarget.getBoundingClientRect();
-  const d=player.getDuration();if(d>0)player.seekTo(((e.clientX-r.left)/r.width)*d,true);
-}
-function upNP(t){
-  if(!t)return;
-  document.getElementById('np-title').textContent=t.title;
-  document.getElementById('np-artist').textContent=t.artist;
-  document.getElementById('album-art').textContent=t.type==='mario'?'🍄':'🎸';
-  document.getElementById('np-time').textContent='0:00 / '+t.dur;
-  document.getElementById('prog-fill').style.width='0%';
-}
-function hilite(id){
-  document.querySelectorAll('.track-item').forEach(e=>e.classList.remove('playing'));
-  const el=document.querySelector('.track-item[data-id="'+id+'"]');
-  if(el){el.classList.add('playing');el.scrollIntoView({block:'nearest',behavior:'smooth'});}
-}
-function renderList(type){
-  const c=document.getElementById('track-list');
-  c.innerHTML=PL.filter(t=>t.type===type).map((t,i)=>{
-    const gi=PL.indexOf(t);
-    return'<div class="track-item" data-id="'+t.id+'" onclick="load('+gi+',true)">'
-      +'<span class="track-num">'+(i+1)+'</span>'
-      +'<div class="track-info"><div class="track-name">'+t.title+'</div>'
-      +'<div class="track-artist">'+t.artist+'</div></div>'
-      +'<span class="track-dur">'+t.dur+'</span></div>';
-  }).join('');
-}
-function switchTab(type){
-  tab=type;
-  document.getElementById('tab-mario').classList.toggle('active',type==='mario');
-  document.getElementById('tab-rock').classList.toggle('active',type==='rock');
-  renderList(type);const t=ct();if(t)hilite(t.id);
-}
-function doSearch(){
-  const q=document.getElementById('search-input').value.trim().toLowerCase();if(!q)return;
-  const c=document.getElementById('search-results');
-  const f=PL.filter(t=>t.title.toLowerCase().includes(q)||t.artist.toLowerCase().includes(q));
-  if(f.length){
-    c.innerHTML=f.slice(0,8).map(t=>{
-      const gi=PL.indexOf(t);
-      return'<div class="search-result" onclick="load('+gi+',true);switchTab(\''+t.type+'\')">'
-        +(t.type==='mario'?'🍄':'🎸')+' <b>'+t.title+'</b> — '+t.artist+'</div>';
-    }).join('');
-    notif('Found '+f.length+' track'+(f.length!==1?'s':''));
-  }else{
-    c.innerHTML='<div style="padding:10px"><div style="font-size:12px;color:var(--dim);margin-bottom:6px">Not found locally.</div>'
-      +'<a href="https://www.youtube.com/results?search_query='+encodeURIComponent(q)+'" target="_blank" style="color:#00ffcc;font-size:13px;font-weight:700">'
-      +'Search YouTube for "'+q+'" →</a></div>';
-  }
-}
-const vb=Array.from({length:32},()=>({h:Math.random()*.3,v:Math.random()*.05+.01}));
-function dv(){
-  requestAnimationFrame(dv);
-  const c=document.getElementById('viz-canvas'),x=c.getContext('2d');
-  c.width=c.offsetWidth||640;c.height=50;
-  x.clearRect(0,0,c.width,50);
-  const bw=(c.width/32)-2;
-  vb.forEach((b,i)=>{
-    if(playing){b.h+=b.v*(Math.random()>.5?1:-1);b.h=Math.max(.04,Math.min(1,b.h));}
-    else b.h=Math.max(.04,b.h*.95);
-    const bh=b.h*50,gx=x.createLinearGradient(0,50-bh,0,50);
-    gx.addColorStop(0,'#cc44ff');gx.addColorStop(.4,'#ffd700');gx.addColorStop(1,'#664400');
-    x.fillStyle=gx;x.fillRect(i*(bw+2),50-bh,bw,bh);
-  });
-}
+function seekClick(e){if(!ytReady||!player||!player.getDuration)return;var r=e.currentTarget.getBoundingClientRect();var d=player.getDuration();if(d>0)player.seekTo(((e.clientX-r.left)/r.width)*d,true);}
+function upNP(t){if(!t)return;document.getElementById('np-title').textContent=t.title;document.getElementById('np-artist').textContent=t.artist;document.getElementById('album-art').textContent=t.type==='mario'?'🍄':'🎸';document.getElementById('np-time').textContent='0:00 / '+t.dur;document.getElementById('prog-fill').style.width='0%';}
+function hilite(id){document.querySelectorAll('.track-item').forEach(function(e){e.classList.remove('playing');});var el=document.querySelector('.track-item[data-id="'+id+'"]');if(el){el.classList.add('playing');el.scrollIntoView({block:'nearest',behavior:'smooth'});}}
+function renderList(type){var c=document.getElementById('track-list');c.innerHTML=PL.filter(function(t){return t.type===type;}).map(function(t,i){var gi=PL.indexOf(t);return'<div class="track-item" data-id="'+t.id+'" onclick="load('+gi+',true)">'+'<span class="track-num">'+(i+1)+'</span>'+'<div class="track-info"><div class="track-name">'+t.title+'</div><div class="track-artist">'+t.artist+'</div></div>'+'<span class="track-dur">'+t.dur+'</span></div>';}).join('');}
+function switchTab(type){tab=type;document.getElementById('tab-mario').classList.toggle('active',type==='mario');document.getElementById('tab-rock').classList.toggle('active',type==='rock');renderList(type);var t=ct();if(t)hilite(t.id);}
+function doSearch(){var q=document.getElementById('search-input').value.trim().toLowerCase();if(!q)return;var c=document.getElementById('search-results');var f=PL.filter(function(t){return t.title.toLowerCase().indexOf(q)>=0||t.artist.toLowerCase().indexOf(q)>=0;});if(f.length){c.innerHTML=f.slice(0,8).map(function(t){var gi=PL.indexOf(t);return'<div class="search-result" onclick="load('+gi+',true);switchTab(\''+t.type+'\')">'+(t.type==='mario'?'🍄':'🎸')+' '+t.title+' — '+t.artist+'</div>';}).join('');notif('Found '+f.length+' tracks');}else{c.innerHTML='<div style="padding:10px"><div style="font-size:12px;color:var(--dim)">Not found.</div><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(q)+'" target="_blank" style="color:#00ffcc;font-size:13px">Search YouTube for "'+q+'" →</a></div>';}}
+var vb=Array.from({length:32},function(){return{h:Math.random()*.3,v:Math.random()*.05+.01};});
+function dv(){requestAnimationFrame(dv);var c=document.getElementById('viz-canvas'),x=c.getContext('2d');c.width=c.offsetWidth||640;c.height=50;x.clearRect(0,0,c.width,50);var bw=(c.width/32)-2;vb.forEach(function(b,i){if(playing){b.h+=b.v*(Math.random()>.5?1:-1);b.h=Math.max(.04,Math.min(1,b.h));}else b.h=Math.max(.04,b.h*.95);var bh=b.h*50,gx=x.createLinearGradient(0,50-bh,0,50);gx.addColorStop(0,'#cc44ff');gx.addColorStop(.4,'#ffd700');gx.addColorStop(1,'#664400');x.fillStyle=gx;x.fillRect(i*(bw+2),50-bh,bw,bh);});}
 dv();
 function toggleNav(){document.getElementById('sidenav').classList.toggle('open');document.getElementById('nav-ov').classList.toggle('show');}
 function closeNav(){document.getElementById('sidenav').classList.remove('open');document.getElementById('nav-ov').classList.remove('show');}
-let nt=null;
-function notif(m){const e=document.getElementById('notif');e.innerHTML=m;e.classList.add('show');if(nt)clearTimeout(nt);nt=setTimeout(()=>e.classList.remove('show'),2200);}
+var nt=null;
+function notif(m){var e=document.getElementById('notif');e.innerHTML=m;e.classList.add('show');if(nt)clearTimeout(nt);nt=setTimeout(function(){e.classList.remove('show');},2200);}
 renderList('mario');upNP(PL[0]);
-setTimeout(()=>{if(!ytReady)notif('⏳ Loading player...');},2500);
+setTimeout(function(){if(!ytReady)notif('Loading YouTube player...');},2500);
 </script>
 </body>
 </html>

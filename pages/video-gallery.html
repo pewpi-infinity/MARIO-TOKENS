@@ -2,166 +2,95 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 <title>Video Gallery — Synch Pipe Arcade</title>
-<link rel="stylesheet" href="../css/infinity-theme.css"/>
-<link rel="stylesheet" href="../css/fixes.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Barlow+Condensed:wght@400;700;900&display=swap" rel="stylesheet"/>
 <style>
-.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;width:100%}
-.vcard{background:var(--bg-card,#0d0d1f);border:2px solid rgba(255,204,0,.2);border-radius:10px;overflow:hidden;transition:border-color .2s}
-.vcard.playing{border-color:var(--gold,#ffcc00);box-shadow:0 0 20px rgba(255,204,0,.3)}
-.vthumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a0a1a,#1a1a3e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.vthumb:active{opacity:.8}
-.play-btn{width:56px;height:56px;border-radius:50%;background:var(--gold,#ffcc00);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#000}
-.vlabel{font-size:.65rem;color:#888;letter-spacing:2px}
-.vembed{width:100%;aspect-ratio:16/9;display:none}
-.vembed iframe{width:100%;height:100%;border:none;display:block}
-.vinfo{padding:10px 14px}
-.vtitle{font-size:.85rem;color:var(--gold,#ffcc00);font-weight:bold;margin-bottom:4px}
-.vmeta{font-size:.65rem;color:#888;display:flex;gap:10px}
-.vfact{background:rgba(255,204,0,.08);border-left:3px solid var(--gold,#ffcc00);padding:8px 12px;margin:0 14px 12px;border-radius:0 6px 6px 0;font-size:.7rem;color:#e0e0e0;display:none;line-height:1.5}
-.vfact.show{display:block}
-.search-box{display:flex;gap:8px;margin-bottom:10px}
-.search-box input{flex:1;padding:10px 12px;background:#0d0d1f;border:2px solid rgba(255,204,0,.2);border-radius:8px;color:#e0e0e0;font-size:.8rem;outline:none}
-.search-box input:focus{border-color:var(--gold,#ffcc00)}
-.search-box button{padding:10px 16px;background:var(--gold,#ffcc00);color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;flex-shrink:0}
-.qtags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.qtag{padding:5px 10px;background:rgba(255,204,0,.1);color:var(--gold,#ffcc00);border:1px solid rgba(255,204,0,.25);border-radius:20px;font-size:.65rem;cursor:pointer}
-.scard{background:#0d0d1f;border:2px solid rgba(255,204,0,.2);border-radius:8px;overflow:hidden;cursor:pointer;margin-bottom:10px}
-.sthumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0a0a1a,#1a1a3e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-.scard-info{padding:8px 12px}
-.scard-title{font-size:.8rem;color:var(--gold,#ffcc00);font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.scard-meta{font-size:.65rem;color:#888;margin-top:3px}
+:root{--bg:#04040c;--surf:#0a0a18;--panel:#12121e;--bord:#1e1e38;--gold:#ffd700;--text:#dde0ff;--dim:#44446a;--cyan:#00ffcc;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;}
+#ham{position:fixed;top:10px;left:10px;z-index:300;width:38px;height:38px;background:var(--panel);border:1px solid var(--bord);border-radius:6px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;}
+#ham span{display:block;width:18px;height:2px;background:var(--gold);border-radius:2px}
+#sidenav{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--surf);border-right:1px solid var(--bord);z-index:400;transform:translateX(-100%);transition:transform .25s;display:flex;flex-direction:column;padding:16px 0;overflow-y:auto;}
+#sidenav.open{transform:translateX(0)}
+#sidenav h3{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);padding:8px 16px 14px;border-bottom:1px solid var(--bord);margin-bottom:6px;}
+#sidenav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--dim);text-decoration:none;font-size:14px;font-weight:700;}
+#sidenav a:active,#sidenav a.active{color:var(--gold);background:rgba(255,215,0,.06);padding-left:20px;border-left:3px solid var(--gold);}
+#nav-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:399;display:none}
+#nav-ov.show{display:block}
+#topbar{padding:14px 14px 14px 56px;background:var(--surf);border-bottom:3px solid;border-image:linear-gradient(90deg,var(--cyan),var(--gold),var(--cyan)) 1;position:sticky;top:0;z-index:200;}
+.t1{font-family:'Press Start 2P',monospace;font-size:8px;background:linear-gradient(90deg,var(--gold),#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.t2{font-size:11px;color:var(--dim);letter-spacing:2px;margin-top:3px}
+#player-wrap{position:sticky;top:58px;z-index:100;background:#000;aspect-ratio:16/9;width:100%;}
+#player-wrap iframe{width:100%;height:100%;border:0;}
+#now-bar{padding:8px 14px;background:var(--surf);border-bottom:1px solid var(--bord);font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:12px;}
+.vid-card{background:var(--surf);border:2px solid var(--bord);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.vid-card:active,.vid-card.vactive{border-color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,.3);}
+.vid-thumb{width:100%;aspect-ratio:16/9;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;overflow:hidden;}
+.vid-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.vid-play-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
+.vid-title{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--gold);padding:7px 8px 4px;line-height:1.8;}
+.vid-cat{font-size:11px;color:var(--dim);padding:0 8px 8px;font-weight:700;}
 </style>
 </head>
 <body>
-<div id="star-overlay" aria-hidden="true"></div>
-<input type="checkbox" id="nav-toggle"/>
-<label class="hamburger" for="nav-toggle"><span></span><span></span><span></span></label>
-<nav class="nav-drawer">
-  <h3>&#9658; Navigate</h3>
-  <a href="../index.html">&#x1F3E0; Hub</a>
-  <h3 style="margin-top:16px">&#9658; Pages</h3>
-  <a href="nes-emulator.html">&#x1F3AE; NES Emulator</a>
-  <a href="snes-emulator.html">&#x1F3AE; SNES Emulator</a>
-  <a href="genesis-emulator.html">&#x1F3AE; Genesis Emulator</a>
-  <a href="evolution-timeline.html">&#x1F4C8; Evolution Timeline</a>
-  <a href="jukebox-aerobics.html">&#x1F3B5; Jukebox Aerobics</a>
-  <a href="terminal-bot.html">&#x1F4BB; Terminal &amp; Bot</a>
-  <a href="character-builder.html">&#x1F3A8; Character Builder</a>
-  <a href="ai-chat.html">&#x1F916; AI Chat</a>
-  <a href="video-gallery.html">&#x1F4FA; Video Gallery</a>
+<button id="ham" onclick="toggleNav()"><span></span><span></span><span></span></button>
+<div id="nav-ov" onclick="closeNav()"></div>
+<nav id="sidenav">
+  <h3>► SYNCH PIPE ARCADE</h3>
+  <a href="../index.html">🏠 Hub</a>
+  <a href="nes-emulator.html">🎮 NES</a>
+  <a href="snes-emulator.html">🎮 SNES</a>
+  <a href="jukebox-aerobics.html">🎵 Jukebox</a>
+  <a href="video-gallery.html" class="active">📺 Video Gallery</a>
 </nav>
-<header id="site-header">
-  <h1>&#x1F4FA; Video Gallery</h1>
-  <p class="tagline">Synch Pipe Arcade &#9679; Cartoons &amp; Gaming &#9679; Internet Archive</p>
-</header>
-<main id="main-content">
-<section class="panel full-width">
-  <h3 style="font-size:.75rem;letter-spacing:2px;color:var(--gold,#ffcc00);margin-bottom:12px">&#x1F4FA; FEATURED</h3>
-  <div class="vgrid" id="vgrid"></div>
-</section>
-<section class="panel full-width" style="margin-top:16px">
-  <h3 style="font-size:.75rem;letter-spacing:2px;color:var(--gold,#ffcc00);margin-bottom:10px">&#x1F50D; SEARCH CARTOONS</h3>
-  <div class="search-box">
-    <input type="text" id="vid-q" placeholder="Mario, Sonic, DuckTales, X-Men, Batman…"/>
-    <button onclick="doVidSearch()">&#x1F50D;</button>
-  </div>
-  <div class="qtags" id="qtags"></div>
-  <div id="sresults"></div>
-</section>
-</main>
-<script src="../js/navigation.js"></script>
+<div id="topbar"><div class="t1">📺 VIDEO GALLERY</div><div class="t2">MARIO CARTOONS · GAME MUSIC · RETRO TV</div></div>
+<div id="player-wrap">
+  <iframe id="main-player" src="https://www.youtube.com/embed/Gs069dndIYk?playsinline=1&rel=0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+</div>
+<div id="now-bar">▶ NOW PLAYING: Super Mario Bros Super Show — Ep 1</div>
+<div id="vid-grid"></div>
 <script>
-var VIDEOS=[
-  {id:'ep1',icon:'🍄',title:'Super Mario Super Show — Ep.1',year:'1989',type:'Cartoon',
-   embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-01-the-bird-the-bird-naughty-word',
-   fact:'Lou Albano played Mario live-action. Each episode ends with Do the Mario!'},
-  {id:'ep2',icon:'🍄',title:'Super Mario Super Show — Ep.2',year:'1989',type:'Cartoon',
-   embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-02-king-mario-of-cramalot-george-washington-slept-here',
-   fact:'The show ran 65 episodes and included Legend of Zelda segments.'},
-  {id:'ep21',icon:'🍄',title:'Super Mario Super Show — Baby Mario Love',year:'1989',type:'Cartoon',
-   embed:'https://archive.org/embed/the-super-mario-bros.-super-show-01x-21-baby-mario-love-koopenstein',
-   fact:'Danny Wells played Luigi. Princess Peach was called Princess Toadstool.'}
+var VIDS=[
+  {yt:'Gs069dndIYk',title:'Super Mario Bros Super Show Ep 1',cat:'Mario Cartoon'},
+  {yt:'oEBzgfz3OZY',title:'Super Mario Bros Super Show Ep 2',cat:'Mario Cartoon'},
+  {yt:'Bj9jjbnbzN4',title:'Adventures of Mario Bros 3 — Ep 1',cat:'Mario Cartoon'},
+  {yt:'FqnYyWnWP8M',title:'Super Mario World Cartoon Ep 1',cat:'Mario Cartoon'},
+  {yt:'NE3tNKFpXeM',title:'SMB All Music — Full Soundtrack',cat:'Game Music'},
+  {yt:'5-5UQ3oMDEI',title:'Mario Galaxy — Best Music',cat:'Game Music'},
+  {yt:'xRWFyReCH8Y',title:'Dire Dire Docks — Super Mario 64',cat:'Game Music'},
+  {yt:'tToNHc41-nI',title:'Mario Kart 64 Rainbow Road',cat:'Game Music'},
+  {yt:'0-tSRMHKvYY',title:'SMB3 World Map Theme',cat:'Game Music'},
+  {yt:'eNSN0GXaKSw',title:'Super Mario World Overworld',cat:'Game Music'},
+  {yt:'8LJnNFbqagA',title:'SMB Underwater Theme',cat:'Game Music'},
+  {yt:'KXOhKOqGb4o',title:'SMB3 Athletic Theme',cat:'Game Music'},
+  {yt:'GTqNuGdP5B0',title:'Mario Kart 64 — All Tracks',cat:'Game Music'},
+  {yt:'JRzPEMBFJZo',title:'Starman / Invincibility Theme',cat:'Game Music'},
+  {yt:'sXi5MdNyM58',title:'SMB Underground Theme',cat:'Game Music'},
+  {yt:'hTWKbfoikeg',title:'Nirvana — Smells Like Teen Spirit',cat:'Rock Classic'},
+  {yt:'pAgnJDJN4VA',title:'AC/DC — Back in Black',cat:'Rock Classic'},
+  {yt:'CD-E-LDc384',title:'Metallica — Enter Sandman',cat:'Rock Classic'},
+  {yt:'o1tj2zJ2Wvg',title:'Guns N Roses — Welcome to Jungle',cat:'Rock Classic'},
+  {yt:'3mbBbFH9fAg',title:'Soundgarden — Black Hole Sun',cat:'Rock Classic'},
 ];
-function playVideo(id){
-  var v=VIDEOS.find(function(x){return x.id===id;});if(!v)return;
-  var card=document.getElementById('vc-'+id);
-  card.querySelector('.vthumb').style.display='none';
-  var em=card.querySelector('.vembed');
-  em.style.display='block';
-  em.innerHTML='<iframe src="'+v.embed+'" allowfullscreen allow="autoplay;fullscreen;pointer-lock" title="'+v.title+'"></iframe>';
-  card.classList.add('playing');
-  card.querySelector('.vfact').classList.add('show');
-  if(navigator.vibrate)navigator.vibrate(15);
-  card.scrollIntoView({behavior:'smooth',block:'nearest'});
+var curVid=0;
+function playVid(i){
+  curVid=i;
+  document.querySelectorAll('.vid-card').forEach(function(c){c.classList.remove('vactive');});
+  var el=document.getElementById('vc-'+i);if(el)el.classList.add('vactive');
+  document.getElementById('main-player').src='https://www.youtube.com/embed/'+VIDS[i].yt+'?autoplay=1&playsinline=1&rel=0';
+  document.getElementById('now-bar').textContent='▶ '+VIDS[i].title;
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-(function(){
-  var g=document.getElementById('vgrid');
-  VIDEOS.forEach(function(v){
-    var d=document.createElement('div');
-    d.className='vcard';d.id='vc-'+v.id;
-    d.innerHTML='<div class="vthumb" onclick="playVideo(\''+v.id+'\')" role="button">'+
-      '<div class="play-btn">&#9654;</div><div class="vlabel">'+v.icon+' TAP TO PLAY</div></div>'+
-      '<div class="vembed"></div>'+
-      '<div class="vinfo"><div class="vtitle">'+v.icon+' '+v.title+'</div>'+
-      '<div class="vmeta"><span>&#x1F4C5; '+v.year+'</span><span>'+v.type+'</span></div></div>'+
-      '<div class="vfact">&#x1F4A1; '+v.fact+'</div>';
-    g.appendChild(d);
-  });
-})();
-var TAGS=['Mario','Sonic','Zelda','DuckTales','Darkwing Duck','X-Men','Spider-Man','Batman','Ninja Turtles','Disney','Looney Tunes','Tom and Jerry','He-Man','Transformers','GI Joe'];
-(function(){
-  var c=document.getElementById('qtags');
-  TAGS.forEach(function(t){
-    var b=document.createElement('button');b.className='qtag';b.textContent=t;
-    b.onclick=function(){document.getElementById('vid-q').value=t;doVidSearch();};
-    c.appendChild(b);
-  });
-})();
-function doVidSearch(){
-  var q=document.getElementById('vid-q').value.trim();if(!q)return;
-  if(navigator.vibrate)navigator.vibrate(10);
-  var c=document.getElementById('sresults');
-  c.innerHTML='<div style="padding:12px;color:#aaa;font-size:.75rem">Searching…</div>';
-  var query='('+q+') AND mediatype:movies AND (subject:animation OR subject:cartoon OR subject:"animated series" OR collection:animation OR collection:classic_tv) AND NOT subject:gameplay AND NOT subject:AMV AND NOT subject:"fan made"';
-  var params=new URLSearchParams({q:query,fl:'identifier,title,year',rows:18,output:'json',sort:'downloads desc'});
-  fetch('https://archive.org/advancedsearch.php?'+params)
-    .then(function(r){return r.json();})
-    .then(function(data){
-      var docs=(data&&data.response&&data.response.docs)||[];
-      var junk=['amv','gameplay','fan made','fandub','reupload','240p'];
-      docs=docs.filter(function(d){var t=(d.title||'').toLowerCase();return !junk.some(function(j){return t.includes(j);});});
-      renderSearch(docs,c);
-    })
-    .catch(function(){c.innerHTML='<div style="padding:12px;color:#f66;font-size:.75rem">Search failed.</div>';});
-}
-function renderSearch(docs,container){
-  container.innerHTML='';
-  if(!docs.length){container.innerHTML='<div style="padding:12px;color:#aaa;font-size:.75rem">Nothing found. Try: Mario · Sonic · DuckTales</div>';return;}
-  var grid=document.createElement('div');
-  grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px';
-  docs.forEach(function(item){
-    var card=document.createElement('div');card.className='scard';
-    var thumb=document.createElement('div');thumb.className='sthumb';
-    thumb.innerHTML='<div style="width:46px;height:46px;border-radius:50%;background:var(--gold,#ffcc00);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#000">&#9654;</div>'+
-      '<div style="font-size:.6rem;color:#888;letter-spacing:2px">TAP TO PLAY</div>';
-    var info=document.createElement('div');info.className='scard-info';
-    info.innerHTML='<div class="scard-title">'+(item.title||item.identifier)+'</div>'+
-      '<div class="scard-meta">'+(item.year?'&#x1F4C5; '+item.year+' · ':'')+'Internet Archive</div>';
-    card.appendChild(thumb);card.appendChild(info);
-    card.addEventListener('click',function(){
-      if(navigator.vibrate)navigator.vibrate(15);
-      thumb.className='';thumb.style.cssText='width:100%;aspect-ratio:16/9';
-      thumb.innerHTML='<iframe src="https://archive.org/embed/'+item.identifier+'" style="width:100%;height:100%;border:none" allowfullscreen allow="autoplay;fullscreen"></iframe>';
-      card.style.borderColor='var(--gold,#ffcc00)';
-      card.scrollIntoView({behavior:'smooth',block:'nearest'});
-    });
-    grid.appendChild(card);
-  });
-  container.appendChild(grid);
-}
-document.getElementById('vid-q').addEventListener('keypress',function(e){if(e.key==='Enter')doVidSearch();});
+var g=document.getElementById('vid-grid');
+VIDS.forEach(function(v,i){
+  var d=document.createElement('div');d.className='vid-card'+(i===0?' vactive':'');d.id='vc-'+i;d.onclick=function(){playVid(i);};
+  d.innerHTML='<div class="vid-thumb"><img src="https://img.youtube.com/vi/'+v.yt+'/mqdefault.jpg" alt="'+v.title+'" onerror="this.parentNode.textContent=\'📺\'"/><div class="vid-play-ov">▶</div></div><div class="vid-title">'+v.title+'</div><div class="vid-cat">'+v.cat+'</div>';
+  g.appendChild(d);
+});
+function toggleNav(){document.getElementById('sidenav').classList.toggle('open');document.getElementById('nav-ov').classList.toggle('show');}
+function closeNav(){document.getElementById('sidenav').classList.remove('open');document.getElementById('nav-ov').classList.remove('show');}
 </script>
 </body>
 </html>
