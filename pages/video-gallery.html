@@ -1,96 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Video Gallery — Synch Pipe Arcade</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Barlow+Condensed:wght@400;700;900&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Video Gallery — MARIO TOKENS</title>
 <style>
-:root{--bg:#04040c;--surf:#0a0a18;--panel:#12121e;--bord:#1e1e38;--gold:#ffd700;--text:#dde0ff;--dim:#44446a;--cyan:#00ffcc;}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;}
-#ham{position:fixed;top:10px;left:10px;z-index:300;width:38px;height:38px;background:var(--panel);border:1px solid var(--bord);border-radius:6px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;}
-#ham span{display:block;width:18px;height:2px;background:var(--gold);border-radius:2px}
-#sidenav{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--surf);border-right:1px solid var(--bord);z-index:400;transform:translateX(-100%);transition:transform .25s;display:flex;flex-direction:column;padding:16px 0;overflow-y:auto;}
-#sidenav.open{transform:translateX(0)}
-#sidenav h3{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);padding:8px 16px 14px;border-bottom:1px solid var(--bord);margin-bottom:6px;}
-#sidenav a{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--dim);text-decoration:none;font-size:14px;font-weight:700;}
-#sidenav a:active,#sidenav a.active{color:var(--gold);background:rgba(255,215,0,.06);padding-left:20px;border-left:3px solid var(--gold);}
-#nav-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:399;display:none}
-#nav-ov.show{display:block}
-#topbar{padding:14px 14px 14px 56px;background:var(--surf);border-bottom:3px solid;border-image:linear-gradient(90deg,var(--cyan),var(--gold),var(--cyan)) 1;position:sticky;top:0;z-index:200;}
-.t1{font-family:'Press Start 2P',monospace;font-size:8px;background:linear-gradient(90deg,var(--gold),#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.t2{font-size:11px;color:var(--dim);letter-spacing:2px;margin-top:3px}
-#player-wrap{position:sticky;top:58px;z-index:100;background:#000;aspect-ratio:16/9;width:100%;}
-#player-wrap iframe{width:100%;height:100%;border:0;}
-#now-bar{padding:8px 14px;background:var(--surf);border-bottom:1px solid var(--bord);font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-#vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:12px;}
-.vid-card{background:var(--surf);border:2px solid var(--bord);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
-.vid-card:active,.vid-card.vactive{border-color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,.3);}
-.vid-thumb{width:100%;aspect-ratio:16/9;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;overflow:hidden;}
-.vid-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.vid-play-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
-.vid-title{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--gold);padding:7px 8px 4px;line-height:1.8;}
-.vid-cat{font-size:11px;color:var(--dim);padding:0 8px 8px;font-weight:700;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0f;color:#eee;font-family:'Courier New',monospace;}
+header{background:#111;border-bottom:2px solid #f7c948;padding:.7rem 1rem;display:flex;align-items:center;gap:.75rem;}
+.brand{font-size:.9rem;font-weight:700;color:#f7c948;text-transform:uppercase;letter-spacing:1px;}
+.sub{font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:1px;}
+.player-wrap{background:#000;position:relative;aspect-ratio:16/9;width:100%;}
+.player-wrap iframe{width:100%;height:100%;border:none;display:block;}
+.now{padding:.5rem 1rem;font-size:.75rem;color:#f7c948;background:#111;border-bottom:1px solid #222;}
+.tabs{display:flex;gap:.5rem;padding:.75rem 1rem;overflow-x:auto;background:#0d0d17;border-bottom:1px solid #1a1a2e;}
+.tab{background:#1a1a2e;border:1px solid #2a2a3e;border-radius:20px;padding:.3rem .85rem;font-size:.72rem;cursor:pointer;color:#888;white-space:nowrap;font-family:'Courier New',monospace;}
+.tab.active{border-color:#f7c948;color:#f7c948;background:#1a1500;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;padding:.75rem 1rem;}
+.vcard{background:#111;border:1px solid #1a1a2e;border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.vcard:hover,.vcard.active{border-color:#f7c948;}
+.vcard img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a1a;}
+.vcard-body{padding:.45rem .55rem;}
+.vtitle{font-size:.7rem;font-weight:700;color:#eee;line-height:1.3;margin-bottom:.2rem;}
+.vcat{font-size:.62rem;color:#888;text-transform:uppercase;}
+.vcard.active .vtitle{color:#f7c948;}
 </style>
 </head>
 <body>
-<button id="ham" onclick="toggleNav()"><span></span><span></span><span></span></button>
-<div id="nav-ov" onclick="closeNav()"></div>
-<nav id="sidenav">
-  <h3>► SYNCH PIPE ARCADE</h3>
-  <a href="../index.html">🏠 Hub</a>
-  <a href="nes-emulator.html">🎮 NES</a>
-  <a href="snes-emulator.html">🎮 SNES</a>
-  <a href="jukebox-aerobics.html">🎵 Jukebox</a>
-  <a href="video-gallery.html" class="active">📺 Video Gallery</a>
-</nav>
-<div id="topbar"><div class="t1">📺 VIDEO GALLERY</div><div class="t2">MARIO CARTOONS · GAME MUSIC · RETRO TV</div></div>
-<div id="player-wrap">
-  <iframe id="main-player" src="https://www.youtube.com/embed/Gs069dndIYk?playsinline=1&rel=0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+<header>
+  <div>
+    <div class="brand">📺 Video Gallery</div>
+    <div class="sub">Mario Cartoons · Game Music · Retro TV</div>
+  </div>
+</header>
+<div class="player-wrap">
+  <iframe id="player" src="https://archive.org/embed/super-mario-bros-super-show-ep-1" allowfullscreen allow="autoplay"></iframe>
 </div>
-<div id="now-bar">▶ NOW PLAYING: Super Mario Bros Super Show — Ep 1</div>
-<div id="vid-grid"></div>
+<div class="now" id="now-playing">▶ NOW PLAYING: Super Mario Bros Super Show — Ep 1</div>
+<div class="tabs" id="tabs">
+  <button class="tab active" data-cat="all">All</button>
+  <button class="tab" data-cat="Mario Cartoon">Cartoons</button>
+  <button class="tab" data-cat="Game Music">Game Music</button>
+  <button class="tab" data-cat="Retro TV">Retro TV</button>
+</div>
+<div class="grid" id="grid"></div>
 <script>
-var VIDS=[
-  {yt:'Gs069dndIYk',title:'Super Mario Bros Super Show Ep 1',cat:'Mario Cartoon'},
-  {yt:'oEBzgfz3OZY',title:'Super Mario Bros Super Show Ep 2',cat:'Mario Cartoon'},
-  {yt:'Bj9jjbnbzN4',title:'Adventures of Mario Bros 3 — Ep 1',cat:'Mario Cartoon'},
-  {yt:'FqnYyWnWP8M',title:'Super Mario World Cartoon Ep 1',cat:'Mario Cartoon'},
-  {yt:'NE3tNKFpXeM',title:'SMB All Music — Full Soundtrack',cat:'Game Music'},
-  {yt:'5-5UQ3oMDEI',title:'Mario Galaxy — Best Music',cat:'Game Music'},
-  {yt:'xRWFyReCH8Y',title:'Dire Dire Docks — Super Mario 64',cat:'Game Music'},
-  {yt:'tToNHc41-nI',title:'Mario Kart 64 Rainbow Road',cat:'Game Music'},
-  {yt:'0-tSRMHKvYY',title:'SMB3 World Map Theme',cat:'Game Music'},
-  {yt:'eNSN0GXaKSw',title:'Super Mario World Overworld',cat:'Game Music'},
-  {yt:'8LJnNFbqagA',title:'SMB Underwater Theme',cat:'Game Music'},
-  {yt:'KXOhKOqGb4o',title:'SMB3 Athletic Theme',cat:'Game Music'},
-  {yt:'GTqNuGdP5B0',title:'Mario Kart 64 — All Tracks',cat:'Game Music'},
-  {yt:'JRzPEMBFJZo',title:'Starman / Invincibility Theme',cat:'Game Music'},
-  {yt:'sXi5MdNyM58',title:'SMB Underground Theme',cat:'Game Music'},
-  {yt:'hTWKbfoikeg',title:'Nirvana — Smells Like Teen Spirit',cat:'Rock Classic'},
-  {yt:'pAgnJDJN4VA',title:'AC/DC — Back in Black',cat:'Rock Classic'},
-  {yt:'CD-E-LDc384',title:'Metallica — Enter Sandman',cat:'Rock Classic'},
-  {yt:'o1tj2zJ2Wvg',title:'Guns N Roses — Welcome to Jungle',cat:'Rock Classic'},
-  {yt:'3mbBbFH9fAg',title:'Soundgarden — Black Hole Sun',cat:'Rock Classic'},
+const VIDS=[
+  {id:'super-mario-bros-super-show-ep-1',cat:'Mario Cartoon',title:'Super Mario Bros Super Show Ep 1',thumb:'https://archive.org/services/img/super-mario-bros-super-show-ep-1'},
+  {id:'super-mario-bros-super-show-ep-2',cat:'Mario Cartoon',title:'Super Mario Bros Super Show Ep 2',thumb:'https://archive.org/services/img/super-mario-bros-super-show-ep-2'},
+  {id:'super-mario-bros-3-cartoon-ep1',cat:'Mario Cartoon',title:'Adventures of Mario Bros 3 — Ep 1',thumb:'https://archive.org/services/img/super-mario-bros-3-cartoon-ep1'},
+  {id:'SuperMarioWorldCartoon',cat:'Mario Cartoon',title:'Super Mario World Cartoon Ep 1',thumb:'https://archive.org/services/img/SuperMarioWorldCartoon'},
+  {id:'TheLegendOfZeldaCartoon',cat:'Mario Cartoon',title:'Legend of Zelda Cartoon Ep 1',thumb:'https://archive.org/services/img/TheLegendOfZeldaCartoon'},
+  {id:'super-mario-bros-all-music',cat:'Game Music',title:'SMB All Music — Full Soundtrack',thumb:'https://archive.org/services/img/super-mario-bros-all-music'},
+  {id:'mario-galaxy-music',cat:'Game Music',title:'Mario Galaxy — Best Music',thumb:'https://archive.org/services/img/mario-galaxy-music'},
+  {id:'smb3-world-map-theme',cat:'Game Music',title:'SMB3 World Map Theme',thumb:'https://archive.org/services/img/smb3-world-map-theme'},
+  {id:'super-mario-world-overworld',cat:'Game Music',title:'Super Mario World Overworld',thumb:'https://archive.org/services/img/super-mario-world-overworld'},
+  {id:'smb-underwater-theme',cat:'Game Music',title:'SMB Underwater Theme',thumb:'https://archive.org/services/img/smb-underwater-theme'},
+  {id:'smb3-athletic-theme',cat:'Game Music',title:'SMB3 Athletic Theme',thumb:'https://archive.org/services/img/smb3-athletic-theme'},
+  {id:'mario-kart-64-music',cat:'Game Music',title:'Mario Kart 64 — All Tracks',thumb:'https://archive.org/services/img/mario-kart-64-music'},
+  {id:'starman-invincibility',cat:'Game Music',title:'Starman / Invincibility Theme',thumb:'https://archive.org/services/img/starman-invincibility'},
+  {id:'smb-underground-theme',cat:'Game Music',title:'SMB Underground Theme',thumb:'https://archive.org/services/img/smb-underground-theme'},
 ];
-var curVid=0;
-function playVid(i){
-  curVid=i;
-  document.querySelectorAll('.vid-card').forEach(function(c){c.classList.remove('vactive');});
-  var el=document.getElementById('vc-'+i);if(el)el.classList.add('vactive');
-  document.getElementById('main-player').src='https://www.youtube.com/embed/'+VIDS[i].yt+'?autoplay=1&playsinline=1&rel=0';
-  document.getElementById('now-bar').textContent='▶ '+VIDS[i].title;
-  window.scrollTo({top:0,behavior:'smooth'});
+const FB='https://archive.org/images/notfound.png';
+let cur=0,filtered=[...VIDS];
+function render(arr){
+  document.getElementById('grid').innerHTML=arr.map((v,i)=>`
+    <div class="vcard${i===0?' active':''}" onclick="play(${VIDS.indexOf(v)},this)">
+      <img src="${v.thumb}" loading="lazy" onerror="this.src='${FB}'">
+      <div class="vcard-body"><div class="vtitle">${v.title}</div><div class="vcat">${v.cat}</div></div>
+    </div>`).join('');
 }
-var g=document.getElementById('vid-grid');
-VIDS.forEach(function(v,i){
-  var d=document.createElement('div');d.className='vid-card'+(i===0?' vactive':'');d.id='vc-'+i;d.onclick=function(){playVid(i);};
-  d.innerHTML='<div class="vid-thumb"><img src="https://img.youtube.com/vi/'+v.yt+'/mqdefault.jpg" alt="'+v.title+'" onerror="this.parentNode.textContent=\'📺\'"/><div class="vid-play-ov">▶</div></div><div class="vid-title">'+v.title+'</div><div class="vid-cat">'+v.cat+'</div>';
-  g.appendChild(d);
+function play(i,el){
+  cur=i;
+  document.getElementById('player').src='https://archive.org/embed/'+VIDS[i].id+'?autoplay=1';
+  document.getElementById('now-playing').textContent='▶ NOW PLAYING: '+VIDS[i].title;
+  document.querySelectorAll('.vcard').forEach(c=>c.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
+document.getElementById('tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab');if(!t)return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const c=t.dataset.cat;
+  filtered=c==='all'?[...VIDS]:VIDS.filter(v=>v.cat===c);
+  render(filtered);
 });
-function toggleNav(){document.getElementById('sidenav').classList.toggle('open');document.getElementById('nav-ov').classList.toggle('show');}
-function closeNav(){document.getElementById('sidenav').classList.remove('open');document.getElementById('nav-ov').classList.remove('show');}
+render(filtered);
 </script>
 </body>
 </html>
