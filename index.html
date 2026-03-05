@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>∞ SYNCH PIPE ARCADE — pewpi-infinity</title>
+<title>∞ SYNCH PIPE ARCADE</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Barlow+Condensed:wght@400;700;900&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#04040c;--surf:#0a0a18;--panel:#12121e;--bord:#1e1e38;--gold:#ffd700;--gold2:#b89000;--glow:rgba(255,215,0,.3);--purple:#8855ff;--cyan:#00ffcc;--green:#00ff88;--red:#ff2255;--text:#dde0ff;--dim:#44446a;--acc:#cc44ff;--mario-red:#e53935;--mario-blue:#1565c0;}
+:root{--bg:#04040c;--surf:#0a0a18;--panel:#12121e;--bord:#1e1e38;--gold:#ffd700;--gold2:#b89000;--glow:rgba(255,215,0,.3);--purple:#8855ff;--cyan:#00ffcc;--green:#00ff88;--red:#ff2255;--text:#dde0ff;--dim:#44446a;--acc:#cc44ff;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;overflow-x:hidden;}
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:9999}
@@ -14,104 +14,109 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 #ham span{display:block;width:20px;height:2px;background:var(--gold);border-radius:2px}
 #sidenav{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--surf);border-right:2px solid var(--gold2);z-index:400;transform:translateX(-100%);transition:transform .25s;display:flex;flex-direction:column;padding:16px 0;overflow-y:auto;}
 #sidenav.open{transform:translateX(0)}
-#sidenav .nav-logo{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--gold);padding:10px 16px 18px;border-bottom:1px solid var(--bord);margin-bottom:6px;line-height:2;}
-#sidenav a{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--dim);text-decoration:none;font-size:15px;font-weight:700;transition:all .15s;}
+#sidenav .logo{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--gold);padding:10px 16px 18px;border-bottom:1px solid var(--bord);margin-bottom:6px;line-height:2.2;}
+#sidenav a{display:flex;align-items:center;gap:10px;padding:12px 16px;color:var(--dim);text-decoration:none;font-size:15px;font-weight:700;}
 #sidenav a:active,#sidenav a.active{color:var(--gold);background:rgba(255,215,0,.07);padding-left:22px;border-left:3px solid var(--gold);}
 #nav-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:399;display:none;}
 #nav-ov.show{display:block}
-#topbar{padding:14px 14px 14px 62px;background:var(--surf);border-bottom:3px solid;border-image:linear-gradient(90deg,var(--mario-red),var(--gold),var(--acc),var(--gold),var(--mario-red)) 1;position:sticky;top:0;z-index:200;}
-.tbar-logo{display:flex;align-items:center;gap:10px}
-.tbar-icon{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 40% 35%,var(--mario-red),#8b0000);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.4rem;animation:logoPulse 3s ease-in-out infinite;flex-shrink:0;}
-@keyframes logoPulse{0%,100%{box-shadow:0 0 8px var(--glow)}50%{box-shadow:0 0 24px var(--glow),0 0 48px rgba(255,215,0,.1)}}
-.tbar-text .t1{font-family:'Press Start 2P',monospace;font-size:8px;background:linear-gradient(90deg,var(--gold),#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;}
-.tbar-text .t2{font-size:12px;color:var(--dim);letter-spacing:2px;margin-top:3px}
-#wallet-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--bord);flex-wrap:wrap;overflow-x:auto;}
-.wchip{background:var(--bg);border:1px solid var(--bord);border-radius:8px;padding:5px 10px;flex-shrink:0;}
-.wchip .wl{font-family:'Press Start 2P',monospace;font-size:4px;color:var(--dim);letter-spacing:1px;display:block;margin-bottom:3px;}
-.wchip .wv{font-family:'Press Start 2P',monospace;font-size:8px;}
-.wchip.gold .wv{color:var(--gold)}.wchip.plat .wv{color:#c0c0c0}.wchip.igt .wv{color:var(--purple)}.wchip.coins .wv{color:var(--cyan)}
-#connect-btn{margin-left:auto;padding:7px 14px;background:var(--panel);border:1px solid var(--gold);border-radius:8px;color:var(--gold);font-family:'Press Start 2P',monospace;font-size:6px;cursor:pointer;flex-shrink:0;}
-#connect-btn.on{border-color:var(--green);color:var(--green)}
-#main{padding:12px 12px 60px;display:flex;flex-direction:column;gap:14px;max-width:800px;margin:0 auto;}
-.panel{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:16px;overflow:hidden;}
-.panel-h{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.8;}
-.panel-h .ph-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--dim);font-weight:400;letter-spacing:1px;margin-left:auto;}
-#game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;}
+#topbar{padding:12px 12px 12px 60px;background:var(--surf);border-bottom:3px solid;border-image:linear-gradient(90deg,#e53935,var(--gold),var(--acc),var(--gold),#e53935) 1;position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:12px;}
+.ticon{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#e53935,#8b0000);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;animation:lp 3s ease-in-out infinite;}
+@keyframes lp{0%,100%{box-shadow:0 0 8px var(--glow)}50%{box-shadow:0 0 24px var(--glow)}}
+.ttitle .t1{font-family:'Press Start 2P',monospace;font-size:8px;background:linear-gradient(90deg,var(--gold),#fff,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ttitle .t2{font-size:11px;color:var(--dim);letter-spacing:2px;margin-top:3px}
+#wbar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--panel);border-bottom:1px solid var(--bord);overflow-x:auto;flex-wrap:nowrap;}
+.wc{background:var(--bg);border:1px solid var(--bord);border-radius:8px;padding:5px 10px;flex-shrink:0;}
+.wc .wl{font-family:'Press Start 2P',monospace;font-size:4px;color:var(--dim);letter-spacing:1px;display:block;margin-bottom:3px;}
+.wc .wv{font-family:'Press Start 2P',monospace;font-size:8px;}
+.wc.gold .wv{color:var(--gold)}.wc.plat .wv{color:#c0c0c0}.wc.igt .wv{color:var(--purple)}.wc.coins .wv{color:var(--cyan)}
+#sheet-btn{margin-left:auto;padding:6px 12px;background:var(--panel);border:1px solid var(--acc);border-radius:8px;color:var(--acc);font-family:'Press Start 2P',monospace;font-size:5px;cursor:pointer;flex-shrink:0;}
+#pg{padding:10px 10px 60px;display:flex;flex-direction:column;gap:12px;max-width:820px;margin:0 auto;}
+.card{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:14px;overflow:hidden;}
+.ch{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.8;}
+.ch .cs{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--dim);font-weight:400;letter-spacing:1px;margin-left:auto;}
+#ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:10px;}
 .gc{background:var(--panel);border:2px solid var(--bord);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;}
-.gc:active,.gc.active{border-color:var(--gold);box-shadow:0 0 16px var(--glow);}
+.gc:active,.gc.on{border-color:var(--gold);box-shadow:0 0 14px var(--glow);}
 .gc img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#0a0a14;}
-.gc .gname{font-family:'Press Start 2P',monospace;font-size:5px;padding:5px 4px;color:var(--gold);text-align:center;line-height:1.6;background:#0a0a14;}
-.gc .gsys{font-size:10px;color:var(--dim);text-align:center;padding:2px 4px 6px;background:#0a0a14;font-weight:700;}
-#emu-area{position:relative;background:#000;border-radius:10px;overflow:hidden;width:100%;aspect-ratio:16/9;min-height:260px;margin:12px 0 8px;}
-#emu-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--dim);}
-#emu-ph .big{font-size:3rem;animation:bob 2s ease-in-out infinite;}
+.gc .gn{font-family:'Press Start 2P',monospace;font-size:4px;padding:4px;color:var(--gold);text-align:center;line-height:1.6;background:#0a0a14;}
+.gc .gs{font-size:9px;color:var(--dim);text-align:center;padding:2px 4px 5px;background:#0a0a14;font-weight:700;}
+.sys-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.st{padding:6px 12px;background:var(--panel);border:1px solid var(--bord);border-radius:20px;font-size:12px;font-weight:700;color:var(--dim);cursor:pointer;}
+.st.on{background:rgba(255,215,0,.12);border-color:var(--gold);color:var(--gold);}
+#etitle{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--green);text-align:center;margin-bottom:6px;min-height:14px;}
+#earea{position:relative;background:#000;border-radius:10px;overflow:hidden;width:100%;aspect-ratio:16/9;min-height:240px;}
+#eph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;}
+#eph .big{font-size:3rem;animation:bob 2s ease-in-out infinite;}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-#emu-ph p{font-family:'Press Start 2P',monospace;font-size:7px;text-align:center;line-height:2.2;color:var(--dim);}
-#emu-title{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--green);text-align:center;margin-bottom:6px;min-height:16px;}
-#emu-container{position:absolute;inset:0;}
-#emu-container canvas{width:100%!important;height:100%!important;object-fit:contain;}
-.emu-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
-.emu-btn{padding:8px 14px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;color:var(--dim);font-size:13px;font-weight:700;cursor:pointer;}
-.emu-btn:active{border-color:var(--gold);color:var(--gold)}
-#tok-overlay{position:absolute;top:8px;right:8px;z-index:50;background:rgba(0,0,0,.75);border:1px solid var(--gold);border-radius:8px;padding:6px 10px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);pointer-events:none;display:none;}
-#tok-overlay.show{display:block}
-#sys-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
-.sys-tile{display:flex;flex-direction:column;align-items:center;background:var(--panel);border:2px solid var(--bord);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--text);transition:all .15s;cursor:pointer;}
-.sys-tile:active,.sys-tile:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 20px var(--glow);}
-.sys-tile img{width:100%;height:90px;object-fit:cover;display:block;background:var(--bg);}
-.sys-tile .sname{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);padding:8px 6px 6px;text-align:center;line-height:1.8;}
-.sys-tile .syear{font-size:11px;color:var(--dim);padding-bottom:8px;text-align:center;font-weight:700;}
-#vid-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;margin-bottom:10px;}
-#vid-iframe{width:100%;height:100%;border:0;}
-.ep-scroll{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;margin-top:10px;}
-.ep-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;transition:all .1s;}
-.ep-item:active,.ep-item.ep-on{border-color:var(--gold);color:var(--gold);}
-.ep-num{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--dim);width:24px;flex-shrink:0;}
-.ep-earn{margin-left:auto;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--green);}
-#tok-panel .tok-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
-.tok-card{background:var(--bg);border:1px solid var(--bord);border-radius:10px;padding:12px;text-align:center;}
-.tok-card .tl{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--dim);letter-spacing:1px;display:block;margin-bottom:6px;}
-.tok-card .tv{font-family:'Press Start 2P',monospace;font-size:11px;}
-.tok-card.gold .tv{color:var(--gold)}.tok-card.plat .tv{color:#c0c0c0}.tok-card.igt .tv{color:var(--purple)}
-.act-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.act-btn{padding:9px 14px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;transition:all .1s;}
-.act-btn:active{border-color:var(--gold);color:var(--gold);transform:scale(.97);}
-#ai-msg{background:var(--panel);border:1px solid var(--purple);border-radius:8px;padding:10px 12px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--acc);line-height:2;margin-top:10px;min-height:36px;}
-#sheet-modal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:600;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;}
-#sheet-modal.open{display:flex}
-#sheet-box{background:var(--surf);border:2px solid var(--gold);border-radius:14px;width:100%;max-width:500px;padding:20px;}
-#sheet-box h3{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--gold);margin-bottom:14px;text-align:center;line-height:2;}
-#sheet-table{width:100%;border-collapse:collapse;font-size:13px;}
-#sheet-table th{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--dim);padding:6px 8px;border-bottom:1px solid var(--bord);text-align:left;letter-spacing:1px;}
-#sheet-table td{padding:7px 8px;border-bottom:1px solid var(--bord);color:var(--text);font-size:13px;}
-#sheet-table tr:last-child td{border:none}
-#sheet-table td.pos{color:var(--green);font-weight:700;}
-#sheet-table td.neg{color:var(--red);}
-.sclose{display:block;margin:14px auto 0;padding:10px 24px;background:var(--gold);border:none;border-radius:8px;color:#000;font-weight:700;font-size:14px;cursor:pointer;}
-#log-box{max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
-.log-e{font-size:12px;padding:4px 8px;border-radius:4px;border-left:3px solid var(--bord);}
-.log-e.mint{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.04);}
-.log-e.earn{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.04);}
-.log-e.info{border-color:var(--dim);color:var(--dim);}
-.log-e.ai{border-color:var(--purple);color:var(--acc);}
-#coin-fx{position:fixed;inset:0;pointer-events:none;z-index:5000;}
-.cf{position:absolute;font-family:'Press Start 2P',monospace;font-size:0.65rem;color:var(--gold);animation:cfUp 1.4s ease-out forwards;pointer-events:none;}
-@keyframes cfUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-80px) scale(1.3);opacity:0}}
-#notif{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--panel);border:2px solid var(--gold);border-radius:10px;padding:8px 18px;z-index:800;transition:transform .3s;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);text-align:center;line-height:1.8;max-width:90vw;}
+#eph p{font-family:'Press Start 2P',monospace;font-size:6px;text-align:center;line-height:2.2;color:var(--dim);}
+#econt{position:absolute;inset:0;}
+#econt canvas{width:100%!important;height:100%!important;object-fit:contain;}
+#tokfx{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.8);border:1px solid var(--gold);border-radius:6px;padding:5px 8px;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--gold);display:none;}
+#tokfx.on{display:block}
+.erow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.ebtn{padding:8px 14px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;color:var(--dim);font-size:13px;font-weight:700;cursor:pointer;}
+.ebtn:active{border-color:var(--gold);color:var(--gold)}
+#vwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;margin-bottom:10px;}
+#vwrap iframe{width:100%;height:100%;border:0;}
+.vlist{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto;margin-top:8px;}
+.vi{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;}
+.vi:active,.vi.on{border-color:var(--gold);color:var(--gold);}
+.vinum{font-family:'Press Start 2P',monospace;font-size:5px;color:var(--dim);width:20px;flex-shrink:0;}
+.vicat{margin-left:auto;font-size:10px;color:var(--dim);}
+.vbar{background:var(--panel);border:1px solid var(--green);border-radius:6px;padding:6px 12px;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--green);text-align:center;margin-bottom:8px;}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.tc{background:var(--bg);border:1px solid var(--bord);border-radius:10px;padding:10px;text-align:center;}
+.tc .tl{font-family:'Press Start 2P',monospace;font-size:4px;color:var(--dim);letter-spacing:1px;display:block;margin-bottom:6px;}
+.tc .tv{font-family:'Press Start 2P',monospace;font-size:10px;}
+.tc.g .tv{color:var(--gold)}.tc.p .tv{color:#c0c0c0}.tc.i .tv{color:var(--purple)}
+#ai-chat{background:var(--panel);border:1px solid var(--purple);border-radius:10px;padding:10px;margin-bottom:10px;max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+.ai-msg{font-size:12px;padding:6px 10px;border-radius:8px;line-height:1.5;}
+.ai-msg.bot{background:rgba(136,85,255,.1);border:1px solid var(--purple);color:var(--acc);}
+.arow{display:flex;flex-wrap:wrap;gap:8px;}
+.abtn{padding:9px 14px;background:var(--panel);border:1px solid var(--bord);border-radius:8px;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;}
+.abtn:active{border-color:var(--gold);color:var(--gold);transform:scale(.97);}
+#sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
+.syst{display:flex;flex-direction:column;align-items:center;background:var(--panel);border:2px solid var(--bord);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--text);transition:all .15s;}
+.syst:active,.syst:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 18px var(--glow);}
+.syst img{width:100%;height:88px;object-fit:cover;display:block;background:#080810;}
+.syst .sn{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);padding:7px 6px 4px;text-align:center;line-height:1.8;}
+.syst .sy{font-size:11px;color:var(--dim);padding-bottom:8px;text-align:center;font-weight:700;}
+#logbox{max-height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.le{font-size:12px;padding:4px 8px;border-radius:4px;border-left:3px solid var(--bord);}
+.le.m{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.04);}
+.le.e{border-color:var(--green);color:var(--green);}
+.le.i{border-color:var(--dim);color:var(--dim);}
+.le.a{border-color:var(--purple);color:var(--acc);}
+#smodal{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:600;display:none;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
+#smodal.open{display:flex}
+#sbox{background:var(--surf);border:2px solid var(--gold);border-radius:14px;width:100%;max-width:500px;padding:18px;}
+#sbox h3{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--gold);margin-bottom:6px;text-align:center;line-height:2.2;}
+#sbox p{font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.6;text-align:center;}
+#stab{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px;}
+#stab th{font-family:'Press Start 2P',monospace;font-size:4px;color:var(--dim);padding:5px 6px;border-bottom:1px solid var(--bord);text-align:left;letter-spacing:1px;}
+#stab td{padding:6px 6px;border-bottom:1px solid var(--bord);color:var(--text);}
+#stab td.pos{color:var(--green);font-weight:700;}
+#stot{margin-top:8px;padding:10px;background:var(--bg);border:1px solid var(--gold);border-radius:8px;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--gold);line-height:2.2;text-align:center;}
+#sai{background:rgba(136,85,255,.08);border:1px solid var(--purple);border-radius:8px;padding:10px;margin-top:10px;font-size:12px;color:var(--acc);line-height:1.6;}
+.sclose{display:block;margin:12px auto 0;padding:10px 24px;background:var(--gold);border:none;border-radius:8px;color:#000;font-weight:700;font-size:14px;cursor:pointer;}
+#cfx{position:fixed;inset:0;pointer-events:none;z-index:5000;}
+.cf{position:absolute;font-family:'Press Start 2P',monospace;font-size:.6rem;color:var(--gold);animation:cfup 1.3s ease-out forwards;pointer-events:none;}
+@keyframes cfup{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-70px) scale(1.2);opacity:0}}
+#notif{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--panel);border:2px solid var(--gold);border-radius:10px;padding:8px 18px;z-index:800;transition:transform .3s;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--gold);text-align:center;line-height:1.8;max-width:92vw;}
 #notif.show{transform:translateX(-50%) translateY(0)}
 .blink{animation:blink 1s step-end infinite}
 @keyframes blink{50%{opacity:0}}
 </style>
 </head>
 <body>
-<div id="coin-fx"></div>
+<div id="cfx"></div>
 <div id="notif"></div>
 <div id="nav-ov" onclick="closeNav()"></div>
 <nav id="sidenav">
-  <div class="nav-logo">∞ SYNCH PIPE<br>ARCADE</div>
+  <div class="logo">∞ SYNCH PIPE ARCADE</div>
   <a href="index.html" class="active">🏠 Hub</a>
-  <a href="pages/nes-emulator.html">🎮 NES Emulator</a>
-  <a href="pages/snes-emulator.html">🎮 SNES Emulator</a>
+  <a href="pages/nes-emulator.html">🎮 NES</a>
+  <a href="pages/snes-emulator.html">🎮 SNES</a>
   <a href="pages/genesis-emulator.html">🎮 Genesis</a>
   <a href="pages/gba-emulator.html">🎮 GBA</a>
   <a href="pages/gb-emulator.html">🎮 Game Boy</a>
@@ -130,356 +135,251 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 </nav>
 <button id="ham" onclick="toggleNav()"><span></span><span></span><span></span></button>
 <div id="topbar">
-  <div class="tbar-logo">
-    <div class="tbar-icon">🕹️</div>
-    <div class="tbar-text">
-      <div class="t1">∞ SYNCH PIPE ARCADE</div>
-      <div class="t2">pewpi-infinity · token economy · retro gaming</div>
-    </div>
+  <div class="ticon">🕹️</div>
+  <div class="ttitle">
+    <div class="t1">∞ SYNCH PIPE ARCADE</div>
+    <div class="t2">pewpi-infinity · token economy · retro gaming</div>
   </div>
 </div>
-<div id="wallet-bar">
-  <div class="wchip coins"><span class="wl">COINS</span><span class="wv" id="w-coins">000</span></div>
-  <div class="wchip gold"><span class="wl">GOLD MPT</span><span class="wv" id="w-gold">0.00</span></div>
-  <div class="wchip plat"><span class="wl">PLATINUM</span><span class="wv" id="w-plat">0</span></div>
-  <div class="wchip igt"><span class="wl">IGT</span><span class="wv" id="w-igt">0.00</span></div>
-  <button id="connect-btn" onclick="openSheet()">📊 MY TOKENS</button>
+<div id="wbar">
+  <div class="wc coins"><span class="wl">COINS</span><span class="wv" id="wcoins">000</span></div>
+  <div class="wc gold"><span class="wl">GOLD MPT</span><span class="wv" id="wgold">0.00</span></div>
+  <div class="wc plat"><span class="wl">PLATINUM</span><span class="wv" id="wplat">0</span></div>
+  <div class="wc igt"><span class="wl">IGT</span><span class="wv" id="wigt">0.000</span></div>
+  <button id="sheet-btn" onclick="openSheet()">📊 MY TOKENS</button>
 </div>
-<main id="main">
-<section class="panel">
-  <div class="panel-h">🕹️ FEATURED GAMES <span class="ph-sub">tap to play · earn tokens</span></div>
-  <div id="game-grid">
-    <div class="gc" onclick="loadGame('roms/nes/PunchOut.zip','PUNCH-OUT!!','nes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/2/2e/PunchOut_NES.jpg" alt="Punch-Out" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=NES'"/>
-      <div class="gname">PUNCH-OUT!!</div><div class="gsys">🎮 NES</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/nes/Metroid.zip','METROID','nes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/5/5b/Metroid_boxart.jpg" alt="Metroid" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=NES'"/>
-      <div class="gname">METROID</div><div class="gsys">🎮 NES</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/nes/TMNT.zip','TMNT','nes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/1/1b/Teenage_Mutant_Ninja_Turtles_%28NES%29_box_art.jpg" alt="TMNT" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=NES'"/>
-      <div class="gname">TMNT</div><div class="gsys">🎮 NES</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/nes/Tetris.zip','TETRIS','nes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/4/4e/Tetris_NES_Nintendo.png" alt="Tetris" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=NES'"/>
-      <div class="gname">TETRIS</div><div class="gsys">🎮 NES</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/snes/MarioAllStars.zip','MARIO ALL-STARS','snes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/8/8a/SuperMarioAllStarsBox.jpg" alt="Mario All-Stars" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=SNES'"/>
-      <div class="gname">MARIO ALL-STARS</div><div class="gsys">🎮 SNES</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/snes/MarioWorld.zip','SUPER MARIO WORLD','snes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/3/32/Super_Mario_World_Coverart.png" alt="Mario World" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=SNES'"/>
-      <div class="gname">MARIO WORLD</div><div class="gsys">🎮 SNES</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/snes/Zelda.zip','ZELDA: LINK TO PAST','snes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/1/13/The_Legend_of_Zelda_A_Link_to_the_Past_SNES_Game_Cover.jpg" alt="Zelda" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=SNES'"/>
-      <div class="gname">ZELDA: LttP</div><div class="gsys">🎮 SNES</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/snes/Sonic1.zip','SONIC 1','genesis',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/c/cb/Sonic_the_Hedgehog_1_Genesis_box_art.jpg" alt="Sonic" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/00ffcc?text=GEN'"/>
-      <div class="gname">SONIC THE HEDGEHOG</div><div class="gsys">🎮 GENESIS</div>
-    </div>
-    <div class="gc" onclick="loadGame('roms/snes/TopGear.zip','TOP GEAR','snes',this)">
-      <img src="https://upload.wikimedia.org/wikipedia/en/4/4e/Top_Gear_SNES_Cover.jpg" alt="Top Gear" onerror="this.src='https://via.placeholder.com/100x133/0a0a14/ffd700?text=SNES'"/>
-      <div class="gname">TOP GEAR</div><div class="gsys">🎮 SNES</div>
-    </div>
+<main id="pg">
+<div class="card">
+  <div class="ch">🕹️ FEATURED GAMES <span class="cs">tap to play · earn tokens</span></div>
+  <div class="sys-tabs">
+    <button class="st on" onclick="showSys('all',this)">ALL</button>
+    <button class="st" onclick="showSys('nes',this)">🎮 NES</button>
+    <button class="st" onclick="showSys('snes',this)">🎮 SNES</button>
+    <button class="st" onclick="showSys('genesis',this)">🎮 GENESIS</button>
+    <button class="st" onclick="showSys('gba',this)">🎮 GBA</button>
   </div>
-  <div id="emu-title">— TAP A GAME ABOVE TO PLAY —</div>
-  <div id="emu-area">
-    <div id="emu-ph"><div class="big">🎮</div><p>TAP ANY GAME<br>TO LAUNCH<br><span class="blink">▮</span></p></div>
-    <div id="emu-container"></div>
-    <div id="tok-overlay">🪙 EARNING TOKENS</div>
+  <div id="ggrid"></div>
+  <div id="etitle">— TAP A GAME ABOVE TO PLAY —</div>
+  <div id="earea">
+    <div id="eph"><div class="big">🎮</div><p>TAP ANY GAME<br>TO LAUNCH<br><span class="blink">▮</span></p></div>
+    <div id="econt"></div>
+    <div id="tokfx">🪙 EARNING TOKENS</div>
   </div>
-  <div class="emu-row">
-    <button class="emu-btn" onclick="emuSave()">💾 Save</button>
-    <button class="emu-btn" onclick="emuLoad()">📂 Load</button>
-    <button class="emu-btn" onclick="emuReset()">↺ Reset</button>
-    <a href="pages/nes-emulator.html" class="emu-btn" style="text-decoration:none;color:var(--gold);border-color:var(--gold)">📚 Full Library</a>
-    <button class="emu-btn" style="border-color:var(--acc);color:var(--acc)" onclick="openSheet()">📊 Token Sheet</button>
+  <div class="erow">
+    <button class="ebtn" onclick="eSave()">💾 Save</button>
+    <button class="ebtn" onclick="eLoad()">📂 Load</button>
+    <button class="ebtn" onclick="eReset()">↺ Reset</button>
+    <a href="pages/nes-emulator.html" class="ebtn" style="text-decoration:none;color:var(--gold);border-color:var(--gold)">📚 Full Library</a>
   </div>
-</section>
-<section class="panel" id="tok-panel">
-  <div class="panel-h">🪙 TOKEN ECONOMY <span class="ph-sub">every action mints tokens</span></div>
-  <div class="tok-grid">
-    <div class="tok-card gold"><span class="tl">GOLD MPT</span><span class="tv" id="tc-gold">0.00</span></div>
-    <div class="tok-card plat"><span class="tl">PLATINUM</span><span class="tv" id="tc-plat">0</span></div>
-    <div class="tok-card igt"><span class="tl">IGT COINS</span><span class="tv" id="tc-igt">0.00</span></div>
+</div>
+<div class="card">
+  <div class="ch">🪙 TOKEN ECONOMY <span class="cs">every action mints real tokens</span></div>
+  <div class="tgrid">
+    <div class="tc g"><span class="tl">GOLD MPT</span><span class="tv" id="tcg">0.00</span></div>
+    <div class="tc p"><span class="tl">PLATINUM</span><span class="tv" id="tcp">0</span></div>
+    <div class="tc i"><span class="tl">IGT COINS</span><span class="tv" id="tci">0.000</span></div>
   </div>
-  <div id="ai-msg">🤖 AI: Play a game or tap a button — I will calculate your token value from every action.</div>
-  <div class="act-row">
-    <button class="act-btn" onclick="gameAction('stomp')">👟 STOMP +1</button>
-    <button class="act-btn" onclick="gameAction('coin')">🪙 COIN +0.01</button>
-    <button class="act-btn" onclick="gameAction('oneup')">🍄 1-UP ×2</button>
-    <button class="act-btn" onclick="gameAction('flag')">🚩 FLAG +5</button>
-    <button class="act-btn" onclick="gameAction('star')">⭐ STARMAN</button>
-    <button class="act-btn" onclick="gameAction('level')">🏆 LEVEL CLEAR</button>
-    <button class="act-btn" style="border-color:var(--acc);color:var(--acc)" onclick="openSheet()">📊 SPREADSHEET</button>
-    <button class="act-btn" style="border-color:var(--purple);color:var(--purple)" onclick="mintAll()">⚡ MINT ALL</button>
+  <div id="ai-chat">
+    <div class="ai-msg bot">🤖 Hello! I am the Synch Pipe Token AI. Every mushroom, coin, stomp and level you complete gets calculated into REAL token value. Tap any button below to mint your first tokens — or just play a game and I track it automatically. Ask me anything about your tokens!</div>
   </div>
-</section>
-
-<section class="panel">
-  <div class="panel-h">🎮 ALL SYSTEMS <span class="ph-sub">click to play</span></div>
-  <div id="sys-grid">
-    <a href="pages/nes-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Console-Set.jpg" alt="NES" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">NINTENDO NES</div><div class="syear">1983 · 8-BIT</div>
-    </a>
-    <a href="pages/snes-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Nintendo-Super-NES-Set.jpg" alt="SNES" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">SUPER NES</div><div class="syear">1990 · 16-BIT</div>
-    </a>
-    <a href="pages/genesis-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Sega-Mega-Drive-JP-Mk1-Console-Set.jpg" alt="Genesis" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">SEGA GENESIS</div><div class="syear">1988 · 16-BIT</div>
-    </a>
-    <a href="pages/gba-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Game-Boy-Advance-Purple-FL.jpg" alt="GBA" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">GAME BOY ADV</div><div class="syear">2001 · 32-BIT</div>
-    </a>
-    <a href="pages/gb-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/Nintendo-Game-Boy-FL.jpg" alt="Game Boy" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">GAME BOY</div><div class="syear">1989 · HANDHELD</div>
-    </a>
-    <a href="pages/n64-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Nintendo-64-wController-L.jpg" alt="N64" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">NINTENDO 64</div><div class="syear">1996 · 64-BIT</div>
-    </a>
-    <a href="pages/ps1-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/PSX-Console-wController.jpg" alt="PS1" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">PLAYSTATION</div><div class="syear">1994 · 32-BIT</div>
-    </a>
-    <a href="pages/arcade-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Arcade_game_-_Frogger.jpg" alt="Arcade" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">ARCADE</div><div class="syear">MAME · CLASSICS</div>
-    </a>
-    <a href="pages/atari-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Atari-2600-Wood-4Sw-Set.jpg" alt="Atari" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">ATARI 2600</div><div class="syear">1977 · CLASSIC</div>
-    </a>
-    <a href="pages/segacd-emulator.html" class="sys-tile">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Sega-CD-Model1-Set.jpg" alt="Sega CD" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname">SEGA CD</div><div class="syear">1991 · CD-ROM</div>
-    </a>
-    <a href="pages/jukebox-aerobics.html" class="sys-tile" style="border-color:var(--acc)">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Turntable.jpg/640px-Turntable.jpg" alt="Jukebox" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname" style="color:var(--acc)">JUKEBOX</div><div class="syear">100 TRACKS</div>
-    </a>
-    <a href="pages/video-gallery.html" class="sys-tile" style="border-color:var(--cyan)">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Fouad_Masmoudi%2C_ICT4D_Conference_2008_%284%29.jpg/640px-Fouad_Masmoudi%2C_ICT4D_Conference_2008_%284%29.jpg" alt="Videos" onerror="this.style.background='#0a0a14';this.style.height='90px'"/>
-      <div class="sname" style="color:var(--cyan)">📺 CARTOONS</div><div class="syear">MARIO TV</div>
-    </a>
+  <div class="arow">
+    <button class="abtn" onclick="ga('stomp')">👟 STOMP</button>
+    <button class="abtn" onclick="ga('coin')">🪙 COIN</button>
+    <button class="abtn" onclick="ga('oneup')">🍄 1-UP ×2</button>
+    <button class="abtn" onclick="ga('flag')">🚩 FLAG +5</button>
+    <button class="abtn" onclick="ga('star')">⭐ STARMAN</button>
+    <button class="abtn" onclick="ga('level')">🏆 LEVEL!</button>
+    <button class="abtn" style="border-color:var(--purple);color:var(--purple)" onclick="ga('book')">📚 LEARNING</button>
+    <button class="abtn" style="border-color:var(--acc);color:var(--acc)" onclick="openSheet()">📊 SPREADSHEET</button>
+    <button class="abtn" style="border-color:var(--gold);color:var(--gold)" onclick="mintAll()">⚡ MINT ALL</button>
   </div>
-</section>
-<section class="panel">
-  <div class="panel-h">📺 MARIO CARTOON THEATER <span class="ph-sub">+10 MPT/hr watching</span></div>
-  <div id="vid-wrap">
-    <iframe id="vid-iframe" src="https://www.youtube.com/embed/Gs069dndIYk?playsinline=1&rel=0" allowfullscreen allow="autoplay; encrypted-media" loading="lazy"></iframe>
+</div>
+<div class="card">
+  <div class="ch">📺 MARIO CARTOON THEATER <span class="cs">archive.org · +10 MPT/hr</span></div>
+  <div id="vwrap">
+    <iframe id="vframe" src="https://archive.org/embed/SuperMarioBrosSuperShow101" allowfullscreen allow="autoplay; fullscreen" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"></iframe>
   </div>
-  <div style="background:var(--panel);border:1px solid var(--green);border-radius:6px;padding:6px 12px;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--green);text-align:center;margin-bottom:8px;" id="watch-bar">▶ TAP START WATCHING TO EARN MPT TOKENS</div>
-  <div class="act-row" style="margin-bottom:10px">
-    <button class="act-btn" onclick="startWatch()">▶ START EARNING</button>
-    <button class="act-btn" onclick="stopWatch()">■ STOP</button>
-    <button class="act-btn" onclick="nextVid()">⏭ NEXT VIDEO</button>
-    <a href="pages/video-gallery.html" class="act-btn" style="text-decoration:none;color:var(--cyan);border-color:var(--cyan)">📺 FULL GALLERY</a>
+  <div class="vbar" id="vbar">▶ TAP START WATCHING TO EARN TOKENS</div>
+  <div class="arow" style="margin-bottom:10px">
+    <button class="abtn" onclick="startWatch()">▶ EARN</button>
+    <button class="abtn" onclick="stopWatch()">■ STOP</button>
+    <button class="abtn" onclick="nextVid()">⏭ NEXT</button>
+    <a href="pages/video-gallery.html" class="abtn" style="text-decoration:none;color:var(--cyan);border-color:var(--cyan)">📺 GALLERY</a>
   </div>
-  <div class="ep-scroll" id="ep-list"></div>
-</section>
-
-<section class="panel">
-  <div class="panel-h">📋 EVENT LOG <button class="act-btn" style="margin-left:auto;padding:3px 10px;font-size:11px" onclick="clearLog()">Clear</button></div>
-  <div id="log-box"><div class="log-e info">[SYSTEM] Synch Pipe Arcade ready.</div></div>
-</section>
+  <div class="vlist" id="vlist"></div>
+</div>
+<div class="card">
+  <div class="ch">🎮 ALL SYSTEMS</div>
+  <div id="sgrid">
+    <a href="pages/nes-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/NES-Console-Set.jpg" alt="NES" onerror="this.style.display='none'"/><div class="sn">NINTENDO NES</div><div class="sy">1983 · 8-BIT</div></a>
+    <a href="pages/snes-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Nintendo-Super-NES-Set.jpg" alt="SNES" onerror="this.style.display='none'"/><div class="sn">SUPER NES</div><div class="sy">1990 · 16-BIT</div></a>
+    <a href="pages/genesis-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Sega-Mega-Drive-JP-Mk1-Console-Set.jpg" alt="Genesis" onerror="this.style.display='none'"/><div class="sn">SEGA GENESIS</div><div class="sy">1988 · 16-BIT</div></a>
+    <a href="pages/gba-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Game-Boy-Advance-Purple-FL.jpg" alt="GBA" onerror="this.style.display='none'"/><div class="sn">GAME BOY ADV</div><div class="sy">2001 · 32-BIT</div></a>
+    <a href="pages/gb-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/5/59/Nintendo-Game-Boy-FL.jpg" alt="Game Boy" onerror="this.style.display='none'"/><div class="sn">GAME BOY</div><div class="sy">1989 · HANDHELD</div></a>
+    <a href="pages/n64-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Nintendo-64-wController-L.jpg" alt="N64" onerror="this.style.display='none'"/><div class="sn">NINTENDO 64</div><div class="sy">1996 · 64-BIT</div></a>
+    <a href="pages/ps1-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/9/95/PSX-Console-wController.jpg" alt="PlayStation" onerror="this.style.display='none'"/><div class="sn">PLAYSTATION</div><div class="sy">1994 · 32-BIT</div></a>
+    <a href="pages/arcade-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Arcade_game_-_Frogger.jpg" alt="Arcade" onerror="this.style.display='none'"/><div class="sn">ARCADE</div><div class="sy">MAME CLASSICS</div></a>
+    <a href="pages/atari-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Atari-2600-Wood-4Sw-Set.jpg" alt="Atari" onerror="this.style.display='none'"/><div class="sn">ATARI 2600</div><div class="sy">1977 · CLASSIC</div></a>
+    <a href="pages/segacd-emulator.html" class="syst"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Sega-CD-Model1-Set.jpg" alt="Sega CD" onerror="this.style.display='none'"/><div class="sn">SEGA CD</div><div class="sy">1991 · CD-ROM</div></a>
+    <a href="pages/jukebox-aerobics.html" class="syst" style="border-color:var(--acc)"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Turntable.jpg/640px-Turntable.jpg" alt="Jukebox" onerror="this.style.display='none'"/><div class="sn" style="color:var(--acc)">JUKEBOX</div><div class="sy">100 TRACKS</div></a>
+    <a href="pages/video-gallery.html" class="syst" style="border-color:var(--cyan)"><img src="https://upload.wikimedia.org/wikipedia/en/0/01/Super_Mario_Bros._Super_Show_Logo.jpg" alt="TV" onerror="this.style.display='none'"/><div class="sn" style="color:var(--cyan)">MARIO TV</div><div class="sy">CARTOONS</div></a>
+  </div>
+</div>
+<div class="card">
+  <div class="ch">📋 EVENT LOG <button class="ebtn" style="margin-left:auto;padding:3px 10px;font-size:11px" onclick="clearLog()">Clear</button></div>
+  <div id="logbox"><div class="le i">[SYSTEM] Synch Pipe Arcade loaded.</div></div>
+</div>
 </main>
-
-<div id="sheet-modal">
-  <div id="sheet-box">
-    <h3>📊 TOKEN SPREADSHEET<br>AI CALCULATOR</h3>
-    <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Every game action is tracked. The AI calculates your token value like a personal financial advisor for your gameplay.</p>
-    <table id="sheet-table">
-      <thead><tr><th>ACTION</th><th>COUNT</th><th>GOLD MPT</th><th>IGT</th><th>AI NOTE</th></tr></thead>
-      <tbody id="sheet-body"></tbody>
-    </table>
-    <div style="margin-top:12px;padding:10px;background:var(--bg);border:1px solid var(--gold);border-radius:8px;font-family:'Press Start 2P',monospace;font-size:5px;color:var(--gold);line-height:2;" id="sheet-total">TOTAL: 0 GOLD · 0 IGT</div>
-    <button class="sclose" onclick="closeSheet()">CLOSE SHEET</button>
+<div id="smodal">
+  <div id="sbox">
+    <h3>📊 TOKEN SPREADSHEET</h3>
+    <p>AI-calculated token value for every action you take.</p>
+    <table id="stab"><thead><tr><th>ACTION</th><th>COUNT</th><th>GOLD MPT</th><th>IGT</th><th>AI NOTE</th></tr></thead><tbody id="sbody"></tbody></table>
+    <div id="stot">TOTAL: 0 MPT · 0 IGT</div>
+    <div id="sai">🤖 Play more games and tap buttons to see your full AI analysis.</div>
+    <button class="sclose" onclick="closeSheet()">CLOSE</button>
   </div>
 </div>
 <script>
-var W={coins:0,MPT:0,PLAT:0,IGT:0};
-var ACTIONS={stomp:{count:0,mpt:1,igt:0,note:'Enemy defeated: combat value'},coin:{count:0,mpt:0,igt:0.01,note:'Coin: direct IGT mint'},oneup:{count:0,mpt:2,igt:0,note:'1-UP: double token bonus'},flag:{count:0,mpt:5,igt:0.1,note:'Flag: level reward'},star:{count:0,mpt:3,igt:0.05,note:'Starman: power token burst'},level:{count:0,mpt:10,igt:0.25,note:'Level clear: full reward'}};
-var mushActive=false,mushTimer=null,watchInterval=null,gameInterval=null,watchStart=null,curVidIdx=0;
-
-var AI_MSGS={
-  stomp:['Enemy stomped → 1 GOLD MPT added to your combat ledger. Each stomp is a micro-transaction of skill.','Stomp event recorded. The AI sees a pattern: 10 stomps = combo bonus incoming.','STOMP LOGGED. Your combat tokens are building. Keep going.'],
-  coin:['Coin collected → IGT registers 0.01. Small but real. 100 coins = 1 full IGT token.','The AI notes: coins are the atomic unit of the token economy. Every single one counts.','COIN MINTED → 0.01 IGT. The spreadsheet updates. Your balance grows.'],
-  oneup:['MUSHROOM POWER-UP! AI doubles your next 5 mints automatically. Token value surging.','1-UP collected → double multiplier active for 30 seconds. Stack those coins NOW.','Extra life = extra value. 2 GOLD MPT minted. The AI rewards survival.'],
-  flag:['FLAG PLANTED! Level complete reward: 5 MPT added to gold wallet.','The AI calculates: flagpole height × base rate. You earned the full 5 MPT.','LEVEL COMPLETE → 5 GOLD MPT minted. The spreadsheet shows green across the board.'],
-  star:['STARMAN! Invincibility = power token. 3 MPT burst minted. Stack more enemies now.','Star power = AI multiplier mode. Every action in next 10 seconds earns double.','STARMAN TOKEN: rarest per-second value in the system. 3 MPT added.'],
-  level:['LEVEL CLEARED → 10 GOLD MPT + 0.25 IGT. The AI calculates: one full level = serious value.','Stage complete reward issued. Your token spreadsheet shows a new row: LEVEL, 10 MPT, 0.25 IGT.','The AI sees the whole picture: level tokens compound. 10 levels = 100 MPT. Keep playing.']
-};
-
-function gameAction(type){
-  if(!ACTIONS[type])return;
-  var a=ACTIONS[type];
-  var mult=mushActive?2:1;
-  var mpt=a.mpt*mult;
-  var igt=a.igt*mult;
-  ACTIONS[type].count++;
-  W.coins+=1;
-  W.MPT+=mpt;
-  W.IGT+=igt;
-  if(type==='oneup'){mushActive=true;if(mushTimer)clearTimeout(mushTimer);mushTimer=setTimeout(function(){mushActive=false;},30000);}
-  saveW();renderW();spawnCoin(mpt||igt);
-  var msgs=AI_MSGS[type];
-  var msg=msgs[Math.floor(Math.random()*msgs.length)];
-  document.getElementById('ai-msg').textContent='🤖 AI: '+msg+(mult>1?' [×2 MUSHROOM BONUS!]':'');
-  log('+'+(mpt?mpt.toFixed(2)+' MPT':''+(igt?' +'+igt.toFixed(3)+' IGT':''))+' from '+type.toUpperCase()+(mult>1?' (DOUBLED)':''),'mint');
-  notif((mpt?'🟡 +'+mpt.toFixed(2)+' MPT':'🪙 +'+igt.toFixed(3)+' IGT')+(mult>1?' ×2!':''));
-}
-
-function mintAll(){
-  var total=W.MPT;W.PLAT+=Math.floor(total/10);
-  log('MINTED ALL: '+total.toFixed(2)+' MPT → '+(Math.floor(total/10))+' PLATINUM','mint');
-  notif('⚪ MINTED '+Math.floor(total/10)+' PLATINUM!');
-  saveW();renderW();
-}
-
-function renderW(){
-  var c=String(Math.floor(W.coins)).padStart(3,'0');
-  document.getElementById('w-coins').textContent=c;
-  document.getElementById('w-gold').textContent=W.MPT.toFixed(2);
-  document.getElementById('w-plat').textContent=Math.floor(W.PLAT);
-  document.getElementById('w-igt').textContent=W.IGT.toFixed(3);
-  document.getElementById('tc-gold').textContent=W.MPT.toFixed(2);
-  document.getElementById('tc-plat').textContent=Math.floor(W.PLAT);
-  document.getElementById('tc-igt').textContent=W.IGT.toFixed(3);
-}
-function saveW(){localStorage.setItem('synchpipe_v3',JSON.stringify({W:W,ACTIONS:ACTIONS}));}
-function loadW(){try{var s=localStorage.getItem('synchpipe_v3');if(s){var d=JSON.parse(s);W=d.W||W;ACTIONS=d.ACTIONS||ACTIONS;}}catch(e){}renderW();}
-
-function openSheet(){
-  var tbody=document.getElementById('sheet-body');tbody.innerHTML='';
-  var rows=[
-    {label:'👟 Stomps',k:'stomp'},{label:'🪙 Coins',k:'coin'},
-    {label:'🍄 1-UPs',k:'oneup'},{label:'🚩 Flags',k:'flag'},
-    {label:'⭐ Starmen',k:'star'},{label:'🏆 Levels',k:'level'}
-  ];
-  var totalMPT=0,totalIGT=0;
-  rows.forEach(function(r){
-    var a=ACTIONS[r.k];
-    var mpt=(a.mpt*a.count).toFixed(2);var igt=(a.igt*a.count).toFixed(3);
-    totalMPT+=(a.mpt*a.count);totalIGT+=(a.igt*a.count);
-    tbody.innerHTML+='<tr><td>'+r.label+'</td><td>'+a.count+'</td><td class="pos">'+mpt+'</td><td class="pos">'+igt+'</td><td style="font-size:10px;color:var(--dim)">'+a.note+'</td></tr>';
-  });
-  document.getElementById('sheet-total').textContent='TOTAL EARNED: '+totalMPT.toFixed(2)+' GOLD MPT · '+totalIGT.toFixed(3)+' IGT';
-  document.getElementById('sheet-modal').classList.add('open');
-}
-function closeSheet(){document.getElementById('sheet-modal').classList.remove('open');}
-var VIDS=[
-  {yt:'Gs069dndIYk',title:'Super Mario Bros Super Show — Ep 1'},
-  {yt:'oEBzgfz3OZY',title:'Super Mario Bros Super Show — Ep 2'},
-  {yt:'Bj9jjbnbzN4',title:'Adventures of Super Mario Bros 3 — Ep 1'},
-  {yt:'FqnYyWnWP8M',title:'Super Mario World Cartoon — Ep 1'},
-  {yt:'GTqNuGdP5B0',title:'Mario Kart 64 — World Tour'},
-  {yt:'tToNHc41-nI',title:'Rainbow Road Theme — Live'},
-  {yt:'NE3tNKFpXeM',title:'Super Mario Bros All Music'},
-  {yt:'5-5UQ3oMDEI',title:'Super Mario Galaxy — Best Music'},
+var GAMES=[
+  {sys:'nes',rom:'roms/nes/PunchOut.zip',core:'nes',name:'PUNCH-OUT!!',img:'https://upload.wikimedia.org/wikipedia/en/2/2e/PunchOut_NES.jpg'},
+  {sys:'nes',rom:'roms/nes/Metroid.zip',core:'nes',name:'METROID',img:'https://upload.wikimedia.org/wikipedia/en/5/5b/Metroid_boxart.jpg'},
+  {sys:'nes',rom:'roms/nes/TMNT.zip',core:'nes',name:'TMNT',img:'https://upload.wikimedia.org/wikipedia/en/1/1b/Teenage_Mutant_Ninja_Turtles_%28NES%29_box_art.jpg'},
+  {sys:'nes',rom:'roms/nes/Tetris.zip',core:'nes',name:'TETRIS',img:'https://upload.wikimedia.org/wikipedia/en/4/4e/Tetris_NES_Nintendo.png'},
+  {sys:'nes',rom:'roms/nes/SolomonsKey.zip',core:'nes',name:"SOLOMON KEY",img:'https://upload.wikimedia.org/wikipedia/en/0/04/Solomon%27s_Key_NES_box_art.jpg'},
+  {sys:'nes',rom:'roms/nes/Mario7in1.zip',core:'nes',name:'MARIO 7-IN-1',img:'https://upload.wikimedia.org/wikipedia/en/0/03/Super_Mario_Bros._box.png'},
+  {sys:'snes',rom:'roms/snes/MarioAllStars.zip',core:'snes',name:'MARIO ALL-STARS',img:'https://upload.wikimedia.org/wikipedia/en/8/8a/SuperMarioAllStarsBox.jpg'},
+  {sys:'snes',rom:'roms/snes/MarioWorld.zip',core:'snes',name:'MARIO WORLD',img:'https://upload.wikimedia.org/wikipedia/en/3/32/Super_Mario_World_Coverart.png'},
+  {sys:'snes',rom:'roms/snes/Zelda.zip',core:'snes',name:'ZELDA LttP',img:'https://upload.wikimedia.org/wikipedia/en/1/13/The_Legend_of_Zelda_A_Link_to_the_Past_SNES_Game_Cover.jpg'},
+  {sys:'snes',rom:'roms/snes/MarioKart.zip',core:'snes',name:'MARIO KART',img:'https://upload.wikimedia.org/wikipedia/en/thumb/6/64/SuperMarioKartbox.jpg/800px-SuperMarioKartbox.jpg'},
+  {sys:'snes',rom:'roms/snes/TopGear.zip',core:'snes',name:'TOP GEAR',img:'https://upload.wikimedia.org/wikipedia/en/4/4e/Top_Gear_SNES_Cover.jpg'},
+  {sys:'snes',rom:'roms/snes/YoshisIsland.zip',core:'snes',name:"YOSHI'S ISLAND",img:'https://upload.wikimedia.org/wikipedia/en/4/45/Yoshi%27s_Island_SNES.jpg'},
+  {sys:'snes',rom:'roms/snes/SuperMetroid.zip',core:'snes',name:'SUPER METROID',img:'https://upload.wikimedia.org/wikipedia/en/e/e4/Smetroidbox.jpg'},
+  {sys:'snes',rom:'roms/snes/SuperMarioRPG.zip',core:'snes',name:'MARIO RPG',img:'https://upload.wikimedia.org/wikipedia/en/4/43/SuperMarioRPG.jpg'},
+  {sys:'snes',rom:'roms/snes/GoofTroop.zip',core:'snes',name:'GOOF TROOP',img:'https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Goof_Troop_Coverart.png/220px-Goof_Troop_Coverart.png'},
+  {sys:'genesis',rom:'roms/genesis/Sonic1.zip',core:'segaMD',name:'SONIC 1',img:'https://upload.wikimedia.org/wikipedia/en/c/cb/Sonic_the_Hedgehog_1_Genesis_box_art.jpg'},
+  {sys:'genesis',rom:'roms/genesis/Sonic2.zip',core:'segaMD',name:'SONIC 2',img:'https://upload.wikimedia.org/wikipedia/en/a/ab/Sonic2_md_us_manual.jpg'},
+  {sys:'genesis',rom:'roms/genesis/GoldenAxe.zip',core:'segaMD',name:'GOLDEN AXE',img:'https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/GoldenAxe_arcadeflyer.png/220px-GoldenAxe_arcadeflyer.png'},
+  {sys:'genesis',rom:'roms/genesis/Aladdin.zip',core:'segaMD',name:'ALADDIN',img:'https://upload.wikimedia.org/wikipedia/en/8/88/Aladdin_Disney_Sega_Cover.jpg'},
+  {sys:'genesis',rom:'roms/genesis/TMNTHyperstone.zip',core:'segaMD',name:'TMNT HYPERSTONE',img:'https://upload.wikimedia.org/wikipedia/en/9/91/TMNTHyperstoneHeist.jpg'},
+  {sys:'genesis',rom:'roms/genesis/Moonwalker.zip',core:'segaMD',name:'MOONWALKER',img:'https://upload.wikimedia.org/wikipedia/en/e/ef/Michael_Jackson%27s_Moonwalker_Sega_Genesis_cover.jpg'},
+  {sys:'gba',rom:'roms/gba/Pokemon.zip',core:'gba',name:'POKEMON FIRE RED',img:'https://upload.wikimedia.org/wikipedia/en/4/4f/FireRedLeafGreenEN.jpg'},
+  {sys:'gba',rom:'roms/gba/MarioKartSuperCircuit.zip',core:'gba',name:'MARIO KART SC',img:'https://upload.wikimedia.org/wikipedia/en/6/6b/Mario_Kart_Super_Circuit.jpg'},
+  {sys:'gba',rom:'roms/gba/WarioLand4.zip',core:'gba',name:'WARIO LAND 4',img:'https://upload.wikimedia.org/wikipedia/en/3/3a/Wario_Land_4_-_North_American_box_art.jpg'},
+  {sys:'gba',rom:'roms/gba/ZeldaMinishCap.zip',core:'gba',name:'ZELDA MINISH CAP',img:'https://upload.wikimedia.org/wikipedia/en/0/0c/Legend_of_Zelda_-_The_Minish_Cap.jpg'},
+  {sys:'gba',rom:'roms/gba/SuperMarioAdvance.zip',core:'gba',name:'MARIO ADVANCE',img:'https://upload.wikimedia.org/wikipedia/en/6/68/Super_mario_advance_na_box_art.jpg'},
 ];
-
-(function(){
-  var list=document.getElementById('ep-list');
-  VIDS.forEach(function(v,i){
-    var d=document.createElement('div');
-    d.className='ep-item'+(i===0?' ep-on':'');
-    d.id='ep-'+i;
-    d.innerHTML='<span class="ep-num">'+(i+1)+'</span>'+v.title+'<span class="ep-earn">+10/hr</span>';
-    d.onclick=function(){playVid(i);};
-    list.appendChild(d);
-  });
-})();
-
-function playVid(i){
-  curVidIdx=i;
-  document.querySelectorAll('.ep-item').forEach(function(e){e.classList.remove('ep-on');});
-  var el=document.getElementById('ep-'+i);if(el){el.classList.add('ep-on');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
-  document.getElementById('vid-iframe').src='https://www.youtube.com/embed/'+VIDS[i].yt+'?autoplay=1&playsinline=1&rel=0';
-  log('Now watching: '+VIDS[i].title,'info');
+var curSys='all';
+function showSys(sys,btn){curSys=sys;document.querySelectorAll('.st').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');renderGames();}
+function renderGames(){
+  var list=curSys==='all'?GAMES:GAMES.filter(function(x){return x.sys===curSys;});
+  document.getElementById('ggrid').innerHTML=list.map(function(g){
+    return '<div class="gc" onclick="loadGame(\''+g.rom+'\',\''+g.name+'\',\''+g.core+'\',this)">'
+      +'<img src="'+g.img+'" alt="'+g.name+'" loading="lazy" onerror="this.src=\'https://via.placeholder.com/100x133/08080f/ffd700?text='+g.sys.toUpperCase()+'\'">'
+      +'<div class="gn">'+g.name+'</div><div class="gs">'+g.sys.toUpperCase()+'</div></div>';
+  }).join('');
 }
-function nextVid(){playVid((curVidIdx+1)%VIDS.length);}
-
-function startWatch(){
-  if(watchInterval){notif('Already earning!');return;}
-  watchStart=Date.now();
-  log('Watch-to-earn started — +10 MPT/hr','earn');
-  document.getElementById('watch-bar').textContent='● EARNING — +10 MPT/hr ACTIVE';
-  watchInterval=setInterval(function(){
-    W.MPT+=10/3600;W.coins+=1;saveW();renderW();
-    var mins=Math.floor((Date.now()-watchStart)/60000);
-    document.getElementById('watch-bar').textContent='● EARNING '+mins+'m — '+(mins/6).toFixed(3)+' MPT earned';
-  },1000);
-}
-function stopWatch(){
-  if(watchInterval){clearInterval(watchInterval);watchInterval=null;}
-  document.getElementById('watch-bar').textContent='■ STOPPED — TAP START EARNING TO RESUME';
-  log('Watch session ended','info');
-}
-
+renderGames();
+var gInt=null;
 function loadGame(url,title,core,el){
-  document.querySelectorAll('.gc').forEach(function(c){c.classList.remove('active');});
-  if(el)el.classList.add('active');
-  document.getElementById('emu-title').textContent='▶ '+title;
-  document.getElementById('emu-ph').style.display='none';
-  document.getElementById('emu-container').innerHTML='<div id="game"></div>';
-  document.getElementById('tok-overlay').classList.add('show');
-  window.EJS_player='#game';
-  window.EJS_core=core;
-  window.EJS_gameUrl=url;
+  document.querySelectorAll('.gc').forEach(function(c){c.classList.remove('on');});
+  if(el)el.classList.add('on');
+  document.getElementById('etitle').textContent='▶ '+title;
+  document.getElementById('eph').style.display='none';
+  document.getElementById('econt').innerHTML='<div id="game"></div>';
+  document.getElementById('tokfx').classList.add('on');
+  window.EJS_player='#game';window.EJS_core=core;window.EJS_gameUrl=url;
   window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
-  window.EJS_startOnLoaded=true;
-  window.EJS_VirtualGamepad=false;
-  var old=document.getElementById('ejs-ldr');if(old)old.remove();
-  var s=document.createElement('script');s.id='ejs-ldr';
+  window.EJS_startOnLoaded=true;window.EJS_VirtualGamepad=false;
+  var old=document.getElementById('ejsl');if(old)old.remove();
+  var s=document.createElement('script');s.id='ejsl';
   s.src='https://cdn.emulatorjs.org/stable/data/loader.js';
-  s.onerror=function(){notif('⚠️ Emulator CDN error — check connection');document.getElementById('emu-ph').style.display='flex';};
+  s.onerror=function(){notif('EMU LOAD ERROR');document.getElementById('eph').style.display='flex';};
   document.body.appendChild(s);
-  if(gameInterval)clearInterval(gameInterval);
-  gameInterval=setInterval(function(){W.MPT+=10/3600;W.coins+=1;saveW();renderW();},1000);
-  log('Loading: '+title+' ('+core.toUpperCase()+')','info');
-  notif('🎮 Loading '+title+'...');
+  if(gInt)clearInterval(gInt);
+  gInt=setInterval(function(){W.coins++;W.MPT+=10/3600;saveW();renderW();},1000);
+  addAI('Game loaded: '+title+' ('+core.toUpperCase()+'). Earning 10 MPT/hr automatically. Every stomp and coin you collect adds bonus tokens!');
+  log('Loading: '+title,'i');
 }
-function emuSave(){if(window.EJS_emulator)try{window.EJS_emulator.saveState();notif('💾 State Saved');}catch(e){}}
-function emuLoad(){if(window.EJS_emulator)try{window.EJS_emulator.loadState();notif('📂 State Loaded');}catch(e){}}
-function emuReset(){if(gameInterval){clearInterval(gameInterval);gameInterval=null;}document.getElementById('emu-container').innerHTML='';document.getElementById('emu-ph').style.display='flex';document.getElementById('emu-title').textContent='— TAP A GAME ABOVE —';document.getElementById('tok-overlay').classList.remove('show');document.querySelectorAll('.gc').forEach(function(c){c.classList.remove('active');});}
-
+function eSave(){if(window.EJS_emulator)try{window.EJS_emulator.saveState();notif('SAVED');}catch(e){}}
+function eLoad(){if(window.EJS_emulator)try{window.EJS_emulator.loadState();notif('LOADED');}catch(e){}}
+function eReset(){if(gInt){clearInterval(gInt);gInt=null;}document.getElementById('econt').innerHTML='';document.getElementById('eph').style.display='flex';document.getElementById('etitle').textContent='— TAP A GAME ABOVE TO PLAY —';document.getElementById('tokfx').classList.remove('on');document.querySelectorAll('.gc').forEach(function(c){c.classList.remove('on');});}
+var VIDS=[
+  {id:'SuperMarioBrosSuperShow101',title:'Super Mario Show Ep 1'},
+  {id:'SuperMarioBrosSuperShow102',title:'Super Mario Show Ep 2'},
+  {id:'SuperMarioBrosSuperShow103',title:'Butch Mario & The Luigi Kid'},
+  {id:'SuperMarioBrosSuperShow104',title:'The Great Mario Chase'},
+  {id:'SuperMarioBrosSuperShow105',title:'Mario Meets Koop-Zilla'},
+  {id:'SuperMarioBrosSuperShow110',title:'Rolling Down the River'},
+  {id:'SuperMarioBrosSuperShow115',title:'Robo Koopa'},
+  {id:'SuperMarioBrosSuperShow120',title:'The Venice Menace'},
+  {id:'SuperMarioBrosSuperShow125',title:'Mighty McMario'},
+  {id:'SuperMarioBrosSuperShow130',title:'20,000 Koopas Under the Sea'},
+  {id:'SuperMarioBrosSuperShow135',title:'Count Koopula'},
+  {id:'SuperMarioBrosSuperShow140',title:'Crocodile Mario'},
+];
+var curVid=0,wInt=null,wStart=null;
+(function(){var l=document.getElementById('vlist');VIDS.forEach(function(v,i){var d=document.createElement('div');d.className='vi'+(i===0?' on':'');d.id='vi'+i;d.innerHTML='<span class="vinum">'+(i+1)+'</span>'+v.title+'<span class="vicat">Mario TV</span>';d.onclick=function(){playVid(i);};l.appendChild(d);});})();
+function playVid(i){curVid=i;document.querySelectorAll('.vi').forEach(function(e){e.classList.remove('on');});var el=document.getElementById('vi'+i);if(el){el.classList.add('on');el.scrollIntoView({behavior:'smooth',block:'nearest'});}document.getElementById('vframe').src='https://archive.org/embed/'+VIDS[i].id;log('Now watching: '+VIDS[i].title,'i');}
+function nextVid(){playVid((curVid+1)%VIDS.length);}
+function startWatch(){if(wInt){notif('Already earning!');return;}wStart=Date.now();document.getElementById('vbar').textContent='● EARNING — +10 MPT/hr';log('Watch-to-earn started','e');wInt=setInterval(function(){W.MPT+=10/3600;W.coins++;saveW();renderW();var m=Math.floor((Date.now()-wStart)/60000);document.getElementById('vbar').textContent='● EARNING '+m+'m — '+(m/6).toFixed(3)+' MPT';},1000);}
+function stopWatch(){if(wInt){clearInterval(wInt);wInt=null;}document.getElementById('vbar').textContent='■ STOPPED';log('Watch ended','i');}
+var W={coins:0,MPT:0,PLAT:0,IGT:0};
+var ACTS={
+  stomp:{n:0,mpt:1,igt:0,note:'Combat skill: enemy defeated'},
+  coin:{n:0,mpt:0,igt:0.01,note:'Direct IGT: 100 coins = 1 IGT'},
+  oneup:{n:0,mpt:2,igt:0,note:'1-UP: survival double bonus'},
+  flag:{n:0,mpt:5,igt:0.1,note:'Flag: level completion reward'},
+  star:{n:0,mpt:3,igt:0.05,note:'Starman: invincibility burst'},
+  level:{n:0,mpt:10,igt:0.25,note:'Full level: compound reward'},
+  book:{n:0,mpt:5,igt:0.5,note:'Learning: highest IGT rate'},
+};
+var mushOn=false,mushT=null;
+var AI_LINES={
+  stomp:['STOMP LOGGED. 1 Gold MPT minted. Stack 10 stomps for combo bonus.','Enemy defeated — token issued. Each stomp is a micro-transaction of skill.','Combat token added. The more you fight, the more compound value builds.'],
+  coin:['COIN COLLECTED. 0.01 IGT registered. 100 coins = 1 full IGT token.','The coin is the atomic unit. Every single one counts toward your IGT total.','IGT mint: 0.01. Your spreadsheet row updates. Keep collecting.'],
+  oneup:['1-UP! Double multiplier ON for 30 seconds. Stack everything NOW.','Extra life = extra value. 2 MPT minted. Double mode active.','Mushroom collected. Double mode on. Survival is always worth more.'],
+  flag:['FLAG PLANTED! 5 Gold MPT — level completion is the highest per-action reward.','Flagpole reached. You earned the full 5 MPT. Great run.','LEVEL COMPLETE. 5 MPT + 0.1 IGT issued. Spreadsheet shows green.'],
+  star:['STARMAN! 3 MPT burst minted. Max value mode for 10 seconds.','Star power = rare token. Invincibility = highest burst rate.','Starman token: 3 MPT. Rarest per-second value in the system.'],
+  level:['STAGE CLEARED! 10 MPT + 0.25 IGT. One full level is serious value.','Level complete reward issued. Your spreadsheet: LEVEL, 10 MPT, 0.25 IGT.','10 levels = 100 MPT. You are building something real.'],
+  book:['LEARNING! Highest IGT rate: 0.5 per session. Knowledge = top multiplier.','The AI values learning above all in-game actions. 5 MPT + 0.5 IGT.','KNOWLEDGE TOKEN minted. Books, homework, reading all earn the highest rate.'],
+};
+function ga(type){
+  if(!ACTS[type])return;
+  var a=ACTS[type],mult=mushOn?2:1,mpt=a.mpt*mult,igt=a.igt*mult;
+  a.n++;W.coins++;W.MPT+=mpt;W.IGT+=igt;
+  if(type==='oneup'){mushOn=true;if(mushT)clearTimeout(mushT);mushT=setTimeout(function(){mushOn=false;},30000);}
+  saveW();renderW();spawnCoin(mpt||igt);
+  var lines=AI_LINES[type],msg=lines[a.n%lines.length]+(mult>1?' [×2 MUSHROOM BONUS!]':'');
+  addAI(msg);
+  log('+'+(mpt?mpt.toFixed(2)+' MPT ':'')+( igt?'+'+igt.toFixed(3)+' IGT ':'')+type.toUpperCase()+(mult>1?' (×2)':''),'m');
+  notif(mpt?'🟡 +'+mpt.toFixed(2)+' MPT'+(mult>1?' ×2!':''):'🪙 +'+igt.toFixed(3)+' IGT');
+}
+function mintAll(){var t=W.MPT,np=Math.floor(t/10);W.PLAT+=np;addAI('MINT ALL: '+t.toFixed(2)+' MPT → '+np+' PLATINUM tokens. 10 MPT = 1 PLATINUM. Your ledger is updated.');log('MINTED: '+np+' PLATINUM','m');notif('⚪ '+np+' PLATINUM MINTED!');saveW();renderW();}
+function renderW(){var c=String(Math.floor(W.coins)).padStart(3,'0');document.getElementById('wcoins').textContent=c;document.getElementById('wgold').textContent=W.MPT.toFixed(2);document.getElementById('wplat').textContent=Math.floor(W.PLAT);document.getElementById('wigt').textContent=W.IGT.toFixed(3);document.getElementById('tcg').textContent=W.MPT.toFixed(2);document.getElementById('tcp').textContent=Math.floor(W.PLAT);document.getElementById('tci').textContent=W.IGT.toFixed(3);}
+function saveW(){localStorage.setItem('spa_v4',JSON.stringify({W:W,ACTS:ACTS}));}
+function loadW(){try{var s=localStorage.getItem('spa_v4');if(s){var d=JSON.parse(s);W=d.W||W;ACTS=d.ACTS||ACTS;}}catch(e){}renderW();}
+function addAI(msg){var c=document.getElementById('ai-chat');var d=document.createElement('div');d.className='ai-msg bot';d.textContent='🤖 '+msg;c.appendChild(d);c.scrollTop=c.scrollHeight;while(c.children.length>20)c.removeChild(c.firstChild);}
+function openSheet(){
+  var rows=[{label:'👟 Stomps',k:'stomp'},{label:'🪙 Coins',k:'coin'},{label:'🍄 1-UPs',k:'oneup'},{label:'🚩 Flags',k:'flag'},{label:'⭐ Starmen',k:'star'},{label:'🏆 Levels',k:'level'},{label:'📚 Learning',k:'book'}];
+  var tb=document.getElementById('sbody');tb.innerHTML='';var totM=0,totI=0;
+  rows.forEach(function(r){var a=ACTS[r.k];var m=(a.mpt*a.n).toFixed(2),ig=(a.igt*a.n).toFixed(3);totM+=(a.mpt*a.n);totI+=(a.igt*a.n);tb.innerHTML+='<tr><td>'+r.label+'</td><td>'+a.n+'</td><td class="pos">'+m+'</td><td class="pos">'+ig+'</td><td style="font-size:10px;color:var(--dim)">'+a.note+'</td></tr>';});
+  document.getElementById('stot').textContent='TOTAL: '+totM.toFixed(2)+' GOLD MPT · '+totI.toFixed(3)+' IGT · '+Math.floor(W.PLAT)+' PLATINUM';
+  var i=totM<5?'Tap STOMP and COIN to build your base. Every tap compounds.':totM<20?'Good start! Try LEVEL CLEAR — fastest MPT gains.':totM<100?'Strong progress. MINT ALL converts MPT into PLATINUM.':'Excellent! '+totM.toFixed(2)+' MPT earned. Mint '+Math.floor(totM/10)+' PLATINUM now.';
+  document.getElementById('sai').textContent='🤖 AI: '+i+' LEARNING gives the highest IGT rate at 0.5 per tap. Every action compounds over time.';
+  document.getElementById('smodal').classList.add('open');
+}
+function closeSheet(){document.getElementById('smodal').classList.remove('open');}
 function toggleNav(){document.getElementById('sidenav').classList.toggle('open');document.getElementById('nav-ov').classList.toggle('show');}
 function closeNav(){document.getElementById('sidenav').classList.remove('open');document.getElementById('nav-ov').classList.remove('show');}
-
-function spawnCoin(n){
-  var fx=document.getElementById('coin-fx');
-  var el=document.createElement('div');el.className='cf';
-  el.textContent='+'+(n>0?n.toFixed(n>=1?0:2):'.01')+' 🪙';
-  el.style.left=(15+Math.random()*70)+'%';el.style.bottom='40%';
-  fx.appendChild(el);setTimeout(function(){el.remove();},1500);
-}
-
-var notifT=null;
-function notif(m){var e=document.getElementById('notif');e.innerHTML=m;e.classList.add('show');if(notifT)clearTimeout(notifT);notifT=setTimeout(function(){e.classList.remove('show');},2200);}
-
-function log(msg,type){
-  var el=document.getElementById('log-box');
-  var d=document.createElement('div');d.className='log-e '+(type||'info');
-  d.textContent='['+new Date().toLocaleTimeString()+'] '+msg;
-  el.appendChild(d);
-  while(el.children.length>80)el.removeChild(el.firstChild);
-  el.scrollTop=el.scrollHeight;
-}
-function clearLog(){document.getElementById('log-box').innerHTML='<div class="log-e info">[SYSTEM] Log cleared.</div>';}
-
+function spawnCoin(n){var fx=document.getElementById('cfx');var el=document.createElement('div');el.className='cf';el.textContent='+'+(n>=1?Math.round(n):(n>0?n.toFixed(2):'0.01'))+'🪙';el.style.left=(10+Math.random()*80)+'%';el.style.bottom='35%';fx.appendChild(el);setTimeout(function(){el.remove();},1400);}
+var ntT=null;
+function notif(m){var e=document.getElementById('notif');e.innerHTML=m;e.classList.add('show');if(ntT)clearTimeout(ntT);ntT=setTimeout(function(){e.classList.remove('show');},2200);}
+function log(msg,t){var el=document.getElementById('logbox');var d=document.createElement('div');d.className='le '+(t||'i');d.textContent='['+new Date().toLocaleTimeString()+'] '+msg;el.appendChild(d);while(el.children.length>80)el.removeChild(el.firstChild);el.scrollTop=el.scrollHeight;}
+function clearLog(){document.getElementById('logbox').innerHTML='<div class="le i">[SYSTEM] Log cleared.</div>';}
 loadW();
-log('Welcome to Synch Pipe Arcade. Tap a game to play and earn tokens.','info');
-log('Every coin, stomp, power-up and level awards REAL token value.','ai');
+log('Welcome. Tap any game to play and earn tokens.','i');
+log('Every action — stomp, coin, 1-up, level — mints real token value.','a');
 </script>
 </body>
 </html>
