@@ -1,7 +1,0 @@
-/* playlist enhancements */
-.playlist-info{padding:.45rem .6rem .6rem;}
-.playlist-topic{font-size:.68rem;color:var(--accent);margin-top:.2rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
-.playlist-desc{font-size:.68rem;color:#666;margin-top:.3rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.playlist-item.active .playlist-title{color:var(--gold);}
-.playlist-item.active .playlist-topic{color:var(--gold);}
-#video-desc{margin:.75rem 0 .5rem;font-size:.88rem;color:var(--text-secondary);line-height:1.55;padding:.6rem .8rem;background:var(--bg-card);border-radius:8px;border-left:3px solid var(--accent);}
